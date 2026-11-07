@@ -22,6 +22,15 @@ const careers: { value: SpecialCareer; label: string }[] = [
 ];
 
 const sections = ['교사 기본정보', '공적연금·퇴직수당', '교직원공제회', 'IRP·연금저축', '명퇴·정년 비교', '은퇴 현금흐름', 'AI 분석 요청문'];
+const stepGuides = [
+  '생년월일·최초 임용일과 실제 가입 연금제도를 확인해 주세요. 특수 경력 선택만으로 인정기간을 계산하지 않습니다.',
+  '금액·단위, 세전/세후, 조회 기준일·가정 퇴직일을 입력해 주세요. 월연금은 지급개시일도 필요합니다. 자동 산정은 검증 대기 중입니다.',
+  '잔액 기준일·현재 적립금·향후 월 납입액·납입 종료일·퇴직일·이율을 확인해 주세요. 공식 조회액과 자체 적립·가상 인출은 별개입니다.',
+  '사용할 계좌별 잔액·연간 납입액·주기·수익률·수수료·날짜를 입력해 주세요. 인출에는 개시일·기간이 필요하며 세액공제 조건은 별도로 확인합니다.',
+  '명퇴·정년 퇴직일과 해당 날짜를 가정한 조회액을 확인해 주세요. 명퇴 자격과 수당 선정은 별개이며 금액을 입력해도 자동으로 확정하지 않습니다.',
+  '05의 시나리오와 연결된 급여·계좌 정보를 먼저 확인해 주세요. 분석 연령·생활비·물가·지급일·수령 조건과 세전/세후 기준을 맞춰야 합니다.',
+  '분석 목적·익명화·금액 표시와 포함 정보를 확인해 주세요. 요청문은 직접 검토·복사하며, 다른 메뉴의 입력을 바꾸면 다시 생성해야 합니다.',
+];
 
 export function Planner() {
   const [active, setActive] = useState('교사 기본정보');
@@ -47,16 +56,17 @@ export function Planner() {
     <aside className="sidebar">
       <a className="brand" href="/" onClick={event => { event.preventDefault(); setActive(sections[0]); setMessage(''); }}> <span className="brand-icon">▥</span><span>교사 은퇴 연금<br/>시뮬레이터<small>TEACHER RETIREMENT PLANNER</small></span></a>
       <div className="nav-label">나의 은퇴 설계</div>
-      <nav aria-label="주요 메뉴">{sections.map((name, index) => <button key={name} className={active === name ? 'nav-item selected' : 'nav-item'} onClick={() => { setActive(name); setMessage(''); }}><span className="nav-number">{String(index + 1).padStart(2, '0')}</span>{name}</button>)}</nav>
-      <div className="privacy"><span>◈ 개인정보 보호</span><p>주민등록번호를 수집하지 않습니다. 현재 입력은 서버에 저장되지 않습니다.</p></div>
+      <nav aria-label="주요 메뉴">{sections.map((name, index) => <button key={name} aria-current={active === name ? 'step' : undefined} className={active === name ? 'nav-item selected' : 'nav-item'} onClick={() => { setActive(name); setMessage(''); }}><span className="nav-number">{String(index + 1).padStart(2, '0')}</span>{name}</button>)}</nav>
+      <div className="privacy"><span>◈ 개인정보 보호</span><p>입력 정보는 저장되지 않으며, 새로고침하면 초기화됩니다.</p></div>
       <div className="sidebar-bottom">선생님의 오늘과 내일을 잇는 설계</div>
     </aside>
     <div className="workspace">
-      <header><span>나의 은퇴 설계 <span className="breadcrumb">/ {active}</span></span><span className="status"><i />기초 화면 · 저장 미연결</span></header>
+      <header><span>나의 은퇴 설계 <span className="breadcrumb">/ {active}</span></span><span className="status"><i />로그인 없는 간편 계산</span></header>
       <main>
         <div className="eyebrow">RETIREMENT PLANNING</div>
         <div className="page-heading"><div><h1>선생님의 다음을 준비하세요.</h1><p>공적연금과 은퇴 금융자산으로 퇴직 후 생활을 설계하세요.</p></div><span className="step-badge">STEP {String(sections.indexOf(active) + 1).padStart(2, '0')} <span>/ 07</span></span></div>
         <div className="mode-bar"><div><strong>간편 계산 모드</strong><span>기본 정보부터 차근차근 시작하세요.</span></div><span className="coming">정밀 계산 모드 · 준비 중</span></div>
+        <section className="step-guide" aria-label="간편 계산 진행 안내"><div className="step-guide-heading"><strong>현재 단계 {String(sections.indexOf(active) + 1).padStart(2, '0')} / 07 · {active}</strong><progress aria-label="현재 계산 단계" value={sections.indexOf(active) + 1} max={sections.length} /></div><p>{stepGuides[sections.indexOf(active)]}</p><small>단계는 자유롭게 이동할 수 있습니다. 진행 표시는 현재 화면의 위치이며 계산 완료나 공식 검증을 의미하지 않습니다. 누락 항목과 계산 불가 이유는 각 결과에서 확인해 주세요.</small></section>
         <div className="content-grid"><section className="card form-card">
           <div className="card-heading"><div><span className="section-tag">{active === sections[0] ? '01 · PROFILE' : active === sections[1] ? '02 · PENSION' : active === sections[2] ? '03 · THE-K' : active === sections[3] ? '04 · IRP' : active === sections[4] ? '05 · COMPARE' : active === sections[5] ? '06 · CASHFLOW' : active === sections[6] ? '07 · PROMPT' : '준비 중'}</span><h2>{active}</h2></div><span className="outline-icon">▤</span></div>
           {active === sections[0] ? <form noValidate onSubmit={(event) => {
@@ -92,7 +102,7 @@ export function Planner() {
             : <div className="empty"><span>◇</span><h3>다음 단계에서 연결됩니다.</h3><p>공식 자료 검토와 계산 검증 후 제공할 예정입니다.<br/>현재 표시할 계산 결과가 없습니다.</p><button className="secondary" onClick={() => setActive(sections[0])}>기본정보 입력으로 돌아가기</button></div>}
           {message && <p className="feedback" role="status">{message}</p>}
         </section>
-        <aside className="right-column"><section className="card summary"><span className="section-tag">MY PLAN</span><h2>은퇴 설계 미리보기</h2><p>기본정보를 바탕으로<br/>나만의 은퇴 지도를 만듭니다.</p><div className="summary-row"><span>선택 연금</span><strong>{pensions[profile.pension.scheme]}</strong></div><div className="summary-row"><span>예상 은퇴 금융자산</span><strong className="muted">합산 준비 중</strong></div><div className="summary-row"><span>은퇴 월 현금흐름</span><strong className="muted">합산 준비 중</strong></div><p>공적연금 월액과 적립금은 별도로 표시할 예정입니다. 퇴직수당·IRP 이전금은 중복 합산하지 않습니다.</p><div className="chart-placeholder" aria-label="계산 결과 준비 중"><div /><div /><div /><div /><div /><div /><span>연금·급여 입력 후 연결 예정</span></div></section><section className="note"><span>알아두세요</span><h3>정확한 설계를 위한 첫걸음</h3><p>간편 모드는 참고용 설계 도구입니다. 실제 연금과 수당은 공단 및 소속 기관의 확인이 필요합니다.</p><p>공적연금·퇴직수당 자동 산정은 검증 대기 중입니다. 공제회는 별도 가정 시뮬레이션을 제공합니다.</p></section></aside></div>
+        <aside className="right-column"><section className="card summary"><span className="section-tag">MY PLAN</span><h2>은퇴 설계 미리보기</h2><p>기본정보를 바탕으로<br/>나만의 은퇴 지도를 만듭니다.</p><div className="summary-row"><span>선택 연금</span><strong>{pensions[profile.pension.scheme]}</strong></div><div className="summary-row"><span>예상 은퇴 금융자산</span><strong className="muted">합산 준비 중</strong></div><div className="summary-row"><span>은퇴 월 현금흐름</span><strong className="muted">합산 준비 중</strong></div><p>공적연금 월액과 적립금은 별도로 확인하세요. 퇴직수당·IRP 이전금은 중복 합산하지 않습니다.</p><div className="result-links"><p>이 요약 카드의 합산은 준비 중입니다. 실제 입력에 연결된 결과 카드와 그래프는 아래 화면에서 확인하세요.</p><button className="secondary" onClick={() => { setActive(sections[4]); setMessage(''); }}>명퇴·정년 비교 결과 보기</button><button className="secondary" onClick={() => { setActive(sections[5]); setMessage(''); }}>은퇴 현금흐름 결과 보기</button></div></section><section className="note"><span>알아두세요</span><h3>정확한 설계를 위한 첫걸음</h3><p>간편 모드는 참고용 설계 도구입니다. 실제 연금과 수당은 공단 및 소속 기관의 확인이 필요합니다.</p><p>공적연금·퇴직수당 자동 산정은 검증 대기 중입니다. 공제회는 별도 가정 시뮬레이션을 제공합니다.</p></section></aside></div>
         <footer>교사 은퇴 연금 시뮬레이터 <span>·</span> 선생님의 안정적인 내일을 함께 준비합니다.</footer>
       </main>
     </div>
