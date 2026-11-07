@@ -28,6 +28,7 @@ test('7개 은퇴 메뉴와 합산 준비 상태를 표시하고 모든 메뉴 �
     await expect(page.locator('.step-badge')).toHaveText(`STEP ${String(index + 1).padStart(2, '0')} / 07`);
     await expect(page.getByText('정밀 계산 모드 · 준비 중', { exact: true })).toBeVisible();
     if (index === 4) await expect(page.getByRole('region', { name: '명퇴 비교', exact: true })).toBeVisible();
+    else if (index === 5) await expect(page.getByRole('region', { name: '명퇴 현금흐름 결과', exact: true })).toBeVisible();
     else await expect(page.getByRole('heading', { name: '다음 단계에서 연결됩니다.' })).toBeVisible();
   }
   await nav.getByRole('button', { name: names[0] }).click();

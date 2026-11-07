@@ -11,6 +11,8 @@ import { createIrpInput } from '@/lib/finance/irp-input';
 import { IrpPanel } from '@/components/irp-panel';
 import { createRetirementComparisonInput } from '@/lib/finance/retirement-comparison-input';
 import { RetirementComparisonPanel } from '@/components/retirement-comparison-panel';
+import { createCashflowInput } from '@/lib/finance/cashflow-input';
+import { CashflowPanel } from '@/components/cashflow-panel';
 const pensions: Record<PensionScheme, string> = { civil: '공무원연금', 'private-school': '사학연금', other: '기타 연금제도', unconfirmed: '추가 확인 필요' };
 const careers: { value: SpecialCareer; label: string }[] = [
   { value: 'military', label: '군 복무' }, { value: 'parental-leave', label: '육아휴직' },
@@ -26,6 +28,7 @@ export function Planner() {
   const [ktcuInput, setKtcuInput] = useState(createKtcuInput);
   const [irpInput, setIrpInput] = useState(createIrpInput);
   const [comparisonInput, setComparisonInput] = useState(createRetirementComparisonInput);
+  const [cashflowInput, setCashflowInput] = useState(createCashflowInput);
   const [errors, setErrors] = useState<ProfileDateErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState('');
@@ -50,7 +53,7 @@ export function Planner() {
         <div className="page-heading"><div><h1>선생님의 다음을 준비하세요.</h1><p>공적연금과 은퇴 금융자산으로 퇴직 후 생활을 설계하세요.</p></div><span className="step-badge">STEP {String(sections.indexOf(active) + 1).padStart(2, '0')} <span>/ 07</span></span></div>
         <div className="mode-bar"><div><strong>간편 계산 모드</strong><span>기본 정보부터 차근차근 시작하세요.</span></div><span className="coming">정밀 계산 모드 · 준비 중</span></div>
         <div className="content-grid"><section className="card form-card">
-          <div className="card-heading"><div><span className="section-tag">{active === sections[0] ? '01 · PROFILE' : active === sections[1] ? '02 · PENSION' : active === sections[2] ? '03 · THE-K' : active === sections[3] ? '04 · IRP' : active === sections[4] ? '05 · COMPARE' : '준비 중'}</span><h2>{active}</h2></div><span className="outline-icon">▤</span></div>
+          <div className="card-heading"><div><span className="section-tag">{active === sections[0] ? '01 · PROFILE' : active === sections[1] ? '02 · PENSION' : active === sections[2] ? '03 · THE-K' : active === sections[3] ? '04 · IRP' : active === sections[4] ? '05 · COMPARE' : active === sections[5] ? '06 · CASHFLOW' : '준비 중'}</span><h2>{active}</h2></div><span className="outline-icon">▤</span></div>
           {active === sections[0] ? <form noValidate onSubmit={(event) => {
             event.preventDefault();
             const nextErrors = validateProfileDates(profile);
@@ -79,6 +82,7 @@ export function Planner() {
             : active === sections[2] ? <KtcuPanel profile={profile} value={ktcuInput} onChange={setKtcuInput} onBack={() => setActive(sections[0])} />
             : active === sections[3] ? <IrpPanel profile={profile} value={irpInput} onChange={setIrpInput} />
             : active === sections[4] ? <RetirementComparisonPanel profile={profile} value={comparisonInput} onChange={setComparisonInput} pensions={pensionInputs} ktcu={ktcuInput} irp={irpInput} onNavigate={setActive} />
+            : active === sections[5] ? <CashflowPanel value={cashflowInput} onChange={setCashflowInput} comparison={comparisonInput} profile={profile} pensions={pensionInputs} ktcu={ktcuInput} irp={irpInput} onNavigate={setActive} />
             : <div className="empty"><span>◇</span><h3>다음 단계에서 연결됩니다.</h3><p>공식 자료 검토와 계산 검증 후 제공할 예정입니다.<br/>현재 표시할 계산 결과가 없습니다.</p><button className="secondary" onClick={() => setActive(sections[0])}>기본정보 입력으로 돌아가기</button></div>}
           {message && <p className="feedback" role="status">{message}</p>}
         </section>

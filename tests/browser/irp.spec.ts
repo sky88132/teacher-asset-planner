@@ -1,7 +1,13 @@
 import { test, expect } from '@playwright/test';
 test('IRP 적립·인출·합산·메뉴 유지 및 모바일 표시', async ({ page }, info) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
-  await page.goto('/'); await page.getByLabel('생년월일', { exact: true }).fill('1980-02-29');
+  await page.goto('/');
+  // Confirm client interaction before entering dates; initial HTML can precede hydration.
+  await page.getByRole('navigation', { name: '주요 메뉴' }).getByRole('button', { name: 'IRP·연금저축' }).click();
+  await expect(page.getByRole('heading', { name: 'IRP·연금저축', exact: true })).toBeVisible();
+  await page.getByRole('navigation', { name: '주요 메뉴' }).getByRole('button', { name: '교사 기본정보' }).click();
+  await expect(page.getByRole('heading', { name: '교사 기본정보', exact: true })).toBeVisible();
+  await page.getByLabel('생년월일', { exact: true }).fill('1980-02-29');
   await page.getByRole('button', { name: 'IRP·연금저축' }).click();
   const result = page.getByRole('region', { name: 'IRP·연금저축 합산 결과', exact: true });
   await expect(result).toContainText('계산 불가');

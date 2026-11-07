@@ -89,7 +89,7 @@ export function RetirementComparisonPanel({ value, onChange, profile, pensions, 
         <p className="benefit-disclaimer">{comparisonDisclaimer}</p>
       </section>;
     })}</div>
-    <section className="benefit-section"><h3>퇴직 시점 금융자산 구성</h3><Composition results={results} /><h3>동일 기준연령 금융자산 비교</h3><p className="profile-help">은퇴 현금흐름 단계에서 제공 예정입니다. 퇴직 후 생활비·연금 인출·추가 소득과 운용을 포함하기 전에는 어느 시나리오가 최종적으로 유리한지 판단하지 않습니다.</p><h3>공적연금 개시 전 기간</h3><GapChart results={results} /></section>
+    <section className="benefit-section"><h3>퇴직 시점 금융자산 구성</h3><Composition results={results} /><h3>동일 기준연령 금융자산 비교</h3><p className="profile-help">06 은퇴 현금흐름에서 같은 연령의 조건부 잔액을 확인할 수 있습니다. 퇴직 전 근로소득·저축·생활비가 없으므로 완전한 비교나 최종 유불리는 판단하지 않습니다.</p><button className="secondary" onClick={() => onNavigate('은퇴 현금흐름')}>06 은퇴 현금흐름 보기</button><h3>공적연금 개시 전 기간</h3><GapChart results={results} /></section>
     <section className="benefit-section"><h3>공적연금 공식 조회 안내</h3><p className="profile-help">각 시나리오의 퇴직일을 지정해 기관에서 월연금·개시일·퇴직수당을 조회하세요. 현재 퇴직 가정의 금액을 미래 퇴직일로 옮기지 마세요. 명예퇴직수당은 연금공단의 퇴직수당과 별도로 소속 교육청·법인에서 확인합니다.</p><p className="profile-help"><a href="https://www.geps.or.kr/" target="_blank" rel="noreferrer">공무원연금공단</a> · <a href="https://www.tp.or.kr/" target="_blank" rel="noreferrer">사학연금공단</a> · <a href={retirementRule.source} target="_blank" rel="noreferrer">정년 법령·시행일</a></p><div className="comparison-actions"><button className="secondary" onClick={() => onNavigate('공적연금·퇴직수당')}>02 공적연금 입력 수정</button><button className="secondary" onClick={() => onNavigate('교직원공제회')}>03 공제회 입력 수정</button><button className="secondary" onClick={() => onNavigate('IRP·연금저축')}>04 IRP·연금저축 입력 수정</button></div></section>
   </div>;
 }
