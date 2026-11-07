@@ -2,6 +2,11 @@ import { test, expect, type Page } from '@playwright/test';
 
 async function openPension(page: Page) {
   await page.goto('/');
+  // Confirm client event handlers are active before filling date inputs.
+  await page.getByRole('navigation', { name: '주요 메뉴' }).getByRole('button', { name: '공적연금·퇴직수당' }).click();
+  await expect(page.getByRole('heading', { name: '공적연금·퇴직수당', exact: true })).toBeVisible();
+  await page.getByRole('navigation', { name: '주요 메뉴' }).getByRole('button', { name: '교사 기본정보' }).click();
+  await expect(page.getByRole('heading', { name: '교사 기본정보', exact: true })).toBeVisible();
   await page.getByLabel('생년월일', { exact: true }).fill('1980-02-29');
   await page.getByLabel('최초 임용일', { exact: true }).fill('2005-03-01');
   await page.getByRole('button', { name: '공적연금·퇴직수당' }).click();
