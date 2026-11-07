@@ -1,3 +1,3 @@
-import { Planner } from '@/components/planner';
+import { SimplePlanner } from '@/components/simple-planner';
 
-export default function Home() { return <Planner />; }
+export default function Home() { return <SimplePlanner />; }
