@@ -20,7 +20,7 @@ test('학교·연금·날짜·특수 경력을 메뉴 이동 후에도 유지한
   await expect(page.locator('input[value="private"]')).toBeChecked();
   await expect(page.getByLabel('군 복무', { exact: true })).toBeChecked();
   await expect(page.getByLabel('육아휴직', { exact: true })).toBeChecked();
-  await page.getByRole('link', { name: /TEACHER ASSET PLANNER/ }).click();
+  await page.getByRole('link', { name: /TEACHER RETIREMENT PLANNER/ }).click();
   await expect(page.getByLabel('생년월일', { exact: true })).toHaveValue('1980-02-29');
   await page.getByLabel('가입 연금제도 확인').selectOption('other');
   await page.locator('input[value="public"]').check();

@@ -15,7 +15,7 @@ const careers: { value: SpecialCareer; label: string }[] = [
   { value: 'other-leave', label: '기타 휴직' }, { value: 'combined-service', label: '과거 재직기간 합산' },
 ];
 
-const sections = ['교사 기본정보', '공적연금·퇴직수당', '교직원공제회', 'IRP·연금저축', '개인연금', '기타 자산·부채', '명퇴·정년 비교', '은퇴 현금흐름', 'AI 분석 요청문'];
+const sections = ['교사 기본정보', '공적연금·퇴직수당', '교직원공제회', 'IRP·연금저축', '명퇴·정년 비교', '은퇴 현금흐름', 'AI 분석 요청문'];
 
 export function Planner() {
   const [active, setActive] = useState('교사 기본정보');
@@ -34,7 +34,7 @@ export function Planner() {
   }
   return <div className="shell">
     <aside className="sidebar">
-      <a className="brand" href="/" onClick={event => { event.preventDefault(); setActive(sections[0]); setMessage(''); }}> <span className="brand-icon">▥</span><span>교사 자산 플래너<small>TEACHER ASSET PLANNER</small></span></a>
+      <a className="brand" href="/" onClick={event => { event.preventDefault(); setActive(sections[0]); setMessage(''); }}> <span className="brand-icon">▥</span><span>교사 은퇴 연금<br/>시뮬레이터<small>TEACHER RETIREMENT PLANNER</small></span></a>
       <div className="nav-label">나의 은퇴 설계</div>
       <nav aria-label="주요 메뉴">{sections.map((name, index) => <button key={name} className={active === name ? 'nav-item selected' : 'nav-item'} onClick={() => { setActive(name); setMessage(''); }}><span className="nav-number">{String(index + 1).padStart(2, '0')}</span>{name}</button>)}</nav>
       <div className="privacy"><span>◈ 개인정보 보호</span><p>주민등록번호를 수집하지 않습니다. 현재 입력은 서버에 저장되지 않습니다.</p></div>
@@ -44,7 +44,7 @@ export function Planner() {
       <header><span>나의 은퇴 설계 <span className="breadcrumb">/ {active}</span></span><span className="status"><i />기초 화면 · 저장 미연결</span></header>
       <main>
         <div className="eyebrow">RETIREMENT PLANNING</div>
-        <div className="page-heading"><div><h1>선생님의 다음을 준비하세요.</h1><p>흩어진 자산을 한곳에, 은퇴 후의 생활을 더 선명하게.</p></div><span className="step-badge">STEP 01 <span>/ 09</span></span></div>
+        <div className="page-heading"><div><h1>선생님의 다음을 준비하세요.</h1><p>공적연금과 은퇴 금융자산으로 퇴직 후 생활을 설계하세요.</p></div><span className="step-badge">STEP {String(sections.indexOf(active) + 1).padStart(2, '0')} <span>/ 07</span></span></div>
         <div className="mode-bar"><div><strong>간편 계산 모드</strong><span>기본 정보부터 차근차근 시작하세요.</span></div><span className="coming">정밀 계산 모드 · 준비 중</span></div>
         <div className="content-grid"><section className="card form-card">
           <div className="card-heading"><div><span className="section-tag">{active === sections[0] ? '01 · PROFILE' : active === sections[1] ? '02 · PENSION' : active === sections[2] ? '03 · THE-K' : active === sections[3] ? '04 · IRP' : '준비 중'}</span><h2>{active}</h2></div><span className="outline-icon">▤</span></div>
@@ -78,8 +78,8 @@ export function Planner() {
             : <div className="empty"><span>◇</span><h3>다음 단계에서 연결됩니다.</h3><p>공식 자료 검토와 계산 검증 후 제공할 예정입니다.<br/>현재 표시할 계산 결과가 없습니다.</p><button className="secondary" onClick={() => setActive(sections[0])}>기본정보 입력으로 돌아가기</button></div>}
           {message && <p className="feedback" role="status">{message}</p>}
         </section>
-        <aside className="right-column"><section className="card summary"><span className="section-tag">MY PLAN</span><h2>은퇴 설계 미리보기</h2><p>기본정보를 바탕으로<br/>나만의 은퇴 지도를 만듭니다.</p><div className="summary-row"><span>선택 연금</span><strong>{pensions[profile.pension.scheme]}</strong></div><div className="summary-row"><span>예상 은퇴자산</span><strong className="muted">계산 전</strong></div><div className="summary-row"><span>월 은퇴 현금흐름</span><strong className="muted">계산 전</strong></div><div className="chart-placeholder" aria-label="계산 결과 준비 중"><div /><div /><div /><div /><div /><div /><span>자산 입력 후 확인할 수 있어요</span></div></section><section className="note"><span>알아두세요</span><h3>정확한 설계를 위한 첫걸음</h3><p>간편 모드는 참고용 설계 도구입니다. 실제 연금과 수당은 공단 및 소속 기관의 확인이 필요합니다.</p><p>공적연금·퇴직수당 자동 산정은 검증 대기 중입니다. 공제회는 별도 가정 시뮬레이션을 제공합니다.</p></section></aside></div>
-        <footer>교사 자산 플래너 <span>·</span> 선생님의 안정적인 내일을 함께 준비합니다.</footer>
+        <aside className="right-column"><section className="card summary"><span className="section-tag">MY PLAN</span><h2>은퇴 설계 미리보기</h2><p>기본정보를 바탕으로<br/>나만의 은퇴 지도를 만듭니다.</p><div className="summary-row"><span>선택 연금</span><strong>{pensions[profile.pension.scheme]}</strong></div><div className="summary-row"><span>예상 은퇴 금융자산</span><strong className="muted">합산 준비 중</strong></div><div className="summary-row"><span>은퇴 월 현금흐름</span><strong className="muted">합산 준비 중</strong></div><p>공적연금 월액과 적립금은 별도로 표시할 예정입니다. 퇴직수당·IRP 이전금은 중복 합산하지 않습니다.</p><div className="chart-placeholder" aria-label="계산 결과 준비 중"><div /><div /><div /><div /><div /><div /><span>연금·급여 입력 후 연결 예정</span></div></section><section className="note"><span>알아두세요</span><h3>정확한 설계를 위한 첫걸음</h3><p>간편 모드는 참고용 설계 도구입니다. 실제 연금과 수당은 공단 및 소속 기관의 확인이 필요합니다.</p><p>공적연금·퇴직수당 자동 산정은 검증 대기 중입니다. 공제회는 별도 가정 시뮬레이션을 제공합니다.</p></section></aside></div>
+        <footer>교사 은퇴 연금 시뮬레이터 <span>·</span> 선생님의 안정적인 내일을 함께 준비합니다.</footer>
       </main>
     </div>
   </div>;

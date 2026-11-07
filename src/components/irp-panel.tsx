@@ -28,7 +28,8 @@ export function IrpPanel({ value, onChange, profile }: { value: IrpInput; onChan
     value.incomeKind, income, irpMoney(value.capacity)) : null;
   const taxInputsReady = [value.irp, value.saving].every(a => !a.enabled || irpMoney(a.annual) !== null);
   return <div className="irp-panel ktcu-panel">
-    <p className="form-description">IRP와 연금저축의 개인 추가납입금으로 자산을 전망합니다. 모든 투자 결과는 가정 기반 조건부 추정값입니다.</p>
+    <p className="form-description">IRP와 연금저축의 개인 추가납입금으로 은퇴 금융자산을 전망합니다. 모든 투자 결과는 가정 기반 조건부 추정값입니다.</p>
+    <p className="profile-help">환급액 재투자 비교는 연금 납입의 효과를 살펴보는 보조 시뮬레이션입니다. 일반 투자계좌의 잔액·보유 종목을 입력하거나 관리하지 않으며, 별도의 은퇴 금융자산 합산에도 연결하지 않습니다.</p>
     <p className="profile-context">기본정보 생년월일: {profile.birthDate || '미입력'} · 최초 임용일: {profile.appointmentDate || '미입력'}. 계좌 가입일·수령연차를 확인하지 않으므로 연금 수령 자격을 판정하지 않습니다. 정밀 계산 모드는 준비 중입니다.</p>
     <div className="benefit-fields"><Field label="연금계좌 잔액 기준일" type="date" value={value.basis} onChange={v => set('basis', v)} /><Field label="연금계좌 퇴직예정일" type="date" value={value.retirement} onChange={v => set('retirement', v)} /></div>
     {(['irp', 'saving'] as AccountKey[]).map(key => {
