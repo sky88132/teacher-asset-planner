@@ -5,6 +5,8 @@ import { changeSchool, initialProfile, toggleSpecialCareer, type PensionScheme, 
 import { validateProfileDates, type ProfileDateErrors } from '@/lib/profile-validation';
 import { createPensionInputs } from '@/lib/finance/pension-input';
 import { PensionPanel } from '@/components/pension-panel';
+import { createKtcuInput } from '@/lib/finance/ktcu-input';
+import { KtcuPanel } from '@/components/ktcu-panel';
 const pensions: Record<PensionScheme, string> = { civil: '공무원연금', 'private-school': '사학연금', other: '기타 연금제도', unconfirmed: '추가 확인 필요' };
 const careers: { value: SpecialCareer; label: string }[] = [
   { value: 'military', label: '군 복무' }, { value: 'parental-leave', label: '육아휴직' },
@@ -17,6 +19,7 @@ export function Planner() {
   const [active, setActive] = useState('교사 기본정보');
   const [profile, setProfile] = useState<TeacherProfile>(initialProfile);
   const [pensionInputs, setPensionInputs] = useState(createPensionInputs);
+  const [ktcuInput, setKtcuInput] = useState(createKtcuInput);
   const [errors, setErrors] = useState<ProfileDateErrors>({});
   const [submitted, setSubmitted] = useState(false);
   const [message, setMessage] = useState('');
@@ -41,13 +44,13 @@ export function Planner() {
         <div className="page-heading"><div><h1>선생님의 다음을 준비하세요.</h1><p>흩어진 자산을 한곳에, 은퇴 후의 생활을 더 선명하게.</p></div><span className="step-badge">STEP 01 <span>/ 09</span></span></div>
         <div className="mode-bar"><div><strong>간편 계산 모드</strong><span>기본 정보부터 차근차근 시작하세요.</span></div><span className="coming">정밀 계산 모드 · 준비 중</span></div>
         <div className="content-grid"><section className="card form-card">
-          <div className="card-heading"><div><span className="section-tag">{active === sections[0] ? '01 · PROFILE' : active === sections[1] ? '02 · PENSION' : '준비 중'}</span><h2>{active}</h2></div><span className="outline-icon">▤</span></div>
+          <div className="card-heading"><div><span className="section-tag">{active === sections[0] ? '01 · PROFILE' : active === sections[1] ? '02 · PENSION' : active === sections[2] ? '03 · THE-K' : '준비 중'}</span><h2>{active}</h2></div><span className="outline-icon">▤</span></div>
           {active === sections[0] ? <form noValidate onSubmit={(event) => {
             event.preventDefault();
             const nextErrors = validateProfileDates(profile);
             setSubmitted(true);
             setErrors(nextErrors);
-            setMessage(Object.keys(nextErrors).length ? '' : '기본정보 입력을 확인했습니다. 현재 앱에서만 유지되며 서버에는 저장되지 않습니다. 금융 계산은 아직 제공하지 않습니다.');
+            setMessage(Object.keys(nextErrors).length ? '' : '기본정보 입력을 확인했습니다. 현재 앱에서만 유지되며 서버에는 저장되지 않습니다. 공적연금 자동 계산은 아직 제공하지 않습니다.');
             if (Object.keys(nextErrors).length) {
               event.currentTarget.querySelector<HTMLInputElement>(nextErrors.birthDate ? '[name="birthDate"]' : '[name="appointmentDate"]')?.focus();
             }
@@ -67,10 +70,11 @@ export function Planner() {
             <div className="form-footer"><span>메뉴 이동 시 유지됩니다. 새로고침하면 초기화됩니다.</span><button className="primary" type="submit">입력 확인 <span>→</span></button></div>
           </form> : active === sections[1] ? <PensionPanel profile={profile} inputs={pensionInputs} onChange={setPensionInputs}
             onSchemeChange={scheme => setProfile(p => ({ ...p, pension: { scheme, source: 'user-selected' } }))} />
+            : active === sections[2] ? <KtcuPanel profile={profile} value={ktcuInput} onChange={setKtcuInput} onBack={() => setActive(sections[0])} />
             : <div className="empty"><span>◇</span><h3>다음 단계에서 연결됩니다.</h3><p>공식 자료 검토와 계산 검증 후 제공할 예정입니다.<br/>현재 표시할 계산 결과가 없습니다.</p><button className="secondary" onClick={() => setActive(sections[0])}>기본정보 입력으로 돌아가기</button></div>}
           {message && <p className="feedback" role="status">{message}</p>}
         </section>
-        <aside className="right-column"><section className="card summary"><span className="section-tag">MY PLAN</span><h2>은퇴 설계 미리보기</h2><p>기본정보를 바탕으로<br/>나만의 은퇴 지도를 만듭니다.</p><div className="summary-row"><span>선택 연금</span><strong>{pensions[profile.pension.scheme]}</strong></div><div className="summary-row"><span>예상 은퇴자산</span><strong className="muted">계산 전</strong></div><div className="summary-row"><span>월 은퇴 현금흐름</span><strong className="muted">계산 전</strong></div><div className="chart-placeholder" aria-label="계산 결과 준비 중"><div /><div /><div /><div /><div /><div /><span>자산 입력 후 확인할 수 있어요</span></div></section><section className="note"><span>알아두세요</span><h3>정확한 설계를 위한 첫걸음</h3><p>간편 모드는 참고용 설계 도구입니다. 실제 연금과 수당은 공단 및 소속 기관의 확인이 필요합니다.</p><p>현재 단계에서는 금융 계산을 제공하지 않습니다.</p></section></aside></div>
+        <aside className="right-column"><section className="card summary"><span className="section-tag">MY PLAN</span><h2>은퇴 설계 미리보기</h2><p>기본정보를 바탕으로<br/>나만의 은퇴 지도를 만듭니다.</p><div className="summary-row"><span>선택 연금</span><strong>{pensions[profile.pension.scheme]}</strong></div><div className="summary-row"><span>예상 은퇴자산</span><strong className="muted">계산 전</strong></div><div className="summary-row"><span>월 은퇴 현금흐름</span><strong className="muted">계산 전</strong></div><div className="chart-placeholder" aria-label="계산 결과 준비 중"><div /><div /><div /><div /><div /><div /><span>자산 입력 후 확인할 수 있어요</span></div></section><section className="note"><span>알아두세요</span><h3>정확한 설계를 위한 첫걸음</h3><p>간편 모드는 참고용 설계 도구입니다. 실제 연금과 수당은 공단 및 소속 기관의 확인이 필요합니다.</p><p>공적연금·퇴직수당 자동 산정은 검증 대기 중입니다. 공제회는 별도 가정 시뮬레이션을 제공합니다.</p></section></aside></div>
         <footer>교사 자산 플래너 <span>·</span> 선생님의 안정적인 내일을 함께 준비합니다.</footer>
       </main>
     </div>
