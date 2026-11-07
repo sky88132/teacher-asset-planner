@@ -111,3 +111,56 @@ test('좁은 화면 레이아웃과 새로고침 초기화를 확인한다', asy
   await page.getByRole('button', { name: '공적연금·퇴직수당' }).click();
   await expect(page.getByLabel('예상 월연금액', { exact: true })).toHaveValue('');
 });
+
+test('필수 자동 입력을 모두 채워도 검증 전 금액을 표시하지 않고 공식 입력을 보존한다', async ({ page }) => {
+  await openPension(page);
+  await page.getByLabel('예상 퇴직수당액', { exact: true }).fill('123456');
+  await page.getByLabel('예상 퇴직수당 세전·세후').selectOption('gross');
+  await page.getByLabel('예상 퇴직수당 조회 기준일').fill('2026-01-01');
+  await page.getByLabel('예상 퇴직수당 산정 시 가정한 퇴직일').fill('2040-08-31');
+  await page.getByLabel('자동 계산 예상 퇴직일').fill('2040-08-31');
+  await page.getByLabel('퇴직수당 계산 기준일').fill('2026-11-07');
+  await page.getByLabel('수당 인정 재직기간 (년)', { exact: true }).fill('34');
+  await page.getByLabel('수당 인정 재직기간 (월)', { exact: true }).fill('0');
+  await page.getByLabel('최종 기준소득월액', { exact: true }).fill('5000001');
+  await page.getByLabel('2009년 이전 재직 여부').selectOption('no');
+  await page.getByLabel('휴직·경력 합산 등 특수 경력 여부').selectOption('no');
+  await page.getByLabel('수당 인정 재직기간 확인 출처').selectOption('official');
+  await page.getByLabel('감액·지급제한 사유 여부').selectOption('no');
+  await page.getByLabel('기존 퇴직수당 수령 이력 여부').selectOption('no');
+  await page.getByRole('button', { name: '준비 입력 확인' }).click();
+  await expect(page.getByRole('button', { name: '자동 계산 · 검증 대기' })).toBeDisabled();
+  const result = page.getByRole('region', { name: '퇴직수당 자동 계산 결과', exact: true });
+  await expect(result.locator('.benefit-amount')).toHaveText('계산 불가');
+  await expect(result).toContainText('408개월');
+  await expect(result).toContainText('33년(396개월)을 초과');
+  await expect(result).toContainText('5,000,001원 · 최종 기준소득월액 (산식 미적용)');
+  await expect(result).toContainText('공식 숫자 사례');
+  await expect(result).toContainText('원 미만');
+  await expect(page.getByRole('region', { name: '예상 퇴직수당 결과', exact: true }).locator('.benefit-amount')).toHaveText('123,456원');
+  await page.getByRole('button', { name: '교사 기본정보' }).click();
+  await page.getByRole('button', { name: '공적연금·퇴직수당' }).click();
+  await expect(page.getByLabel('자동 계산 예상 퇴직일')).toHaveValue('2040-08-31');
+  await expect(page.getByLabel('기존 퇴직수당 수령 이력 여부')).toHaveValue('no');
+  await page.getByLabel('공적연금 입력 제도').selectOption('private-school');
+  await expect(result).toContainText('사학연금법 시행령 제63조의3');
+  await expect(page.getByLabel('자동 계산 예상 퇴직일')).toHaveValue('');
+  await page.getByLabel('공적연금 입력 제도').selectOption('civil');
+  await expect(page.getByLabel('자동 계산 예상 퇴직일')).toHaveValue('2040-08-31');
+});
+
+test('자동 입력의 퇴직일 역전·달력기간·기본정보 특수경력을 확인한다', async ({ page }) => {
+  await openPension(page);
+  await page.getByLabel('자동 계산 예상 퇴직일').fill('2000-01-01');
+  await page.getByRole('button', { name: '준비 입력 확인' }).click();
+  await expect(page.locator('#auto-retirementDate-error')).toContainText('최초 임용일보다 뒤');
+  await page.getByLabel('수당 인정 재직기간 확인 출처').selectOption('calendar');
+  await page.getByLabel('휴직·경력 합산 등 특수 경력 여부').selectOption('no');
+  await page.getByRole('button', { name: '교사 기본정보' }).click();
+  await page.getByLabel('군 복무', { exact: true }).check();
+  await page.getByRole('button', { name: '공적연금·퇴직수당' }).click();
+  const result = page.getByRole('region', { name: '퇴직수당 자동 계산 결과', exact: true });
+  await expect(result).toContainText('단순 달력상 근속기간은 수당 인정기간이 아닙니다');
+  await expect(result).toContainText('특수 경력이 있거나 반영 여부가 미확인입니다');
+  await expect(result.locator('.benefit-amount')).toHaveText('계산 불가');
+});

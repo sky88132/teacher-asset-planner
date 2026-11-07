@@ -20,6 +20,11 @@ export interface AllowancePreparation {
   finalIncome: MoneyInput;
   before2010: '' | 'yes' | 'no' | 'unknown';
   specialCareer: 'profile' | 'yes' | 'no' | 'unknown';
+  retirementDate: string;
+  calculationDate: string;
+  periodSource: '' | 'official' | 'calendar' | 'unknown';
+  reduction: '' | 'yes' | 'no' | 'unknown';
+  previouslyReceived: '' | 'yes' | 'no' | 'unknown';
 }
 
 export interface SchemeInputs {
@@ -38,7 +43,8 @@ export function createPensionInputs(): PensionInputs {
   const emptyScheme = (): SchemeInputs => ({
     pension: emptyBenefit(), allowance: emptyBenefit('official'),
     preparation: { years: '', months: '', finalIncome: { amount: '', unit: 'won' },
-      before2010: '', specialCareer: 'profile' },
+      before2010: '', specialCareer: 'profile', retirementDate: '', calculationDate: '',
+      periodSource: '', reduction: '', previouslyReceived: '' },
   });
   return { civil: emptyScheme(), 'private-school': emptyScheme() };
 }

@@ -3,7 +3,10 @@
 import { useState, type ReactNode } from 'react';
 import type { TeacherProfile, PensionScheme } from '@/lib/profile';
 import { benefitDisclaimer, type BenefitInput, type MoneyInput, type PensionInputs, type SchemeInputs } from '@/lib/finance/pension-input';
-import { changeMoneyUnit, parseMoney, validateBenefit, validatePreparation } from '@/lib/finance/pension-input-validation';
+import { changeMoneyUnit, parseMoney, validateBenefit } from '@/lib/finance/pension-input-validation';
+import { calculateCivilAllowance } from '@/lib/finance/civil-retirement-allowance';
+import { calculatePrivateAllowance } from '@/lib/finance/private-retirement-allowance';
+import { allowanceDisclaimer } from '@/lib/finance/retirement-allowance';
 
 const schemeNames = { civil: '공무원연금', 'private-school': '사학연금' };
 
@@ -105,7 +108,7 @@ function BenefitEditor({ kind, value, onChange, profile, scheme }: {
           </dd>
         </dl>
       </>}
-      <p className="benefit-disclaimer">{benefitDisclaimer}</p>
+      <p className="benefit-disclaimer">{kind === 'allowance' ? allowanceDisclaimer : benefitDisclaimer}</p>
     </section>
   </section>;
 }
@@ -122,7 +125,9 @@ export function PensionPanel({ profile, inputs, onChange, onSchemeChange }: {
     if (supported) onChange({ ...inputs, [scheme]: { ...inputs[scheme], ...value } });
   };
   const prep = data?.preparation;
-  const prepErrors = prep ? validatePreparation(prep) : {};
+  const autoInput = prep ? { ...prep, appointmentDate: profile.appointmentDate, profileHasSpecialCareer: profile.hasSpecialCareer } : null;
+  const autoResult = autoInput && supported ? (scheme === 'civil' ? calculateCivilAllowance(autoInput) : calculatePrivateAllowance(autoInput)) : null;
+  const prepErrors = autoResult?.errors ?? {};
   return <div className="pension-panel">
     <p className="form-description">공적연금 조회 금액과 산정 조건을 함께 기록하세요.</p>
     <label className="pension-field">공적연금 입력 제도<select value={scheme} onChange={event => onSchemeChange(event.target.value as PensionScheme)}>
@@ -137,9 +142,22 @@ export function PensionPanel({ profile, inputs, onChange, onSchemeChange }: {
       <BenefitEditor key={`${scheme}-allowance`} kind="allowance" value={data.allowance} onChange={allowance => update({ allowance })} profile={profile} scheme={scheme} />
       <section className="benefit-section" aria-labelledby="preparation-heading">
         <h3 id="preparation-heading">03 · 퇴직수당 자동 계산 준비</h3>
-        <p className="profile-help">퇴직수당용 인정기간은 연금 재직기간과 다를 수 있습니다. 공단에서 확인한 정보를 입력해 주세요.</p>
+        <p className="profile-help">A. 자동 계산은 공식 사례·부칙·끝수 처리 검증 전까지 비활성화됩니다. B. 공식 조회액은 위 직접 입력 영역에서 기록할 수 있습니다. 두 경로의 입력을 따로 유지합니다.</p>
+        <p className="profile-help">퇴직수당용 인정기간은 단순 달력상 근속기간 및 연금 재직기간과 다릅니다. 공단이 확인한 수당용 기간과 수당 산정에 적용되는 최종 기준소득월액을 입력해 주세요.</p>
         <form noValidate onSubmit={event => { event.preventDefault(); setPreparationAttempted(true); }}>
           <div className="benefit-fields">
+            <Field id="auto-appointment" label="자동 계산 최초 임용일 (기본정보 연동)" error={preparationAttempted ? prepErrors.appointmentDate : undefined}>
+              <input id="auto-appointment" type="date" value={profile.appointmentDate} readOnly
+                aria-invalid={preparationAttempted && !!prepErrors.appointmentDate}
+                aria-describedby={preparationAttempted && prepErrors.appointmentDate ? 'auto-appointment-error' : undefined} />
+              <small>교사 기본정보 메뉴에서 입력·수정해 주세요. 인정기간으로 자동 변환하지 않습니다.</small>
+            </Field>
+            {(['retirementDate', 'calculationDate'] as const).map(field => <Field key={field} id={`auto-${field}`}
+              label={field === 'retirementDate' ? '자동 계산 예상 퇴직일' : '퇴직수당 계산 기준일'} error={preparationAttempted ? prepErrors[field] : undefined}>
+              <input id={`auto-${field}`} type="date" value={prep[field]} aria-invalid={preparationAttempted && !!prepErrors[field]}
+                aria-describedby={preparationAttempted && prepErrors[field] ? `auto-${field}-error` : undefined}
+                onChange={event => update({ preparation: { ...prep, [field]: event.target.value } })} />
+            </Field>)}
             {(['years', 'months'] as const).map(field => <Field key={field} id={`prep-${field}`} label={`수당 인정 재직기간 (${field === 'years' ? '년' : '월'})`} error={preparationAttempted ? prepErrors[field] : undefined}>
               <input id={`prep-${field}`} inputMode="numeric" value={prep[field]} aria-invalid={preparationAttempted && !!prepErrors[field]}
                 aria-describedby={preparationAttempted && prepErrors[field] ? `prep-${field}-error` : undefined}
@@ -159,12 +177,48 @@ export function PensionPanel({ profile, inputs, onChange, onSchemeChange }: {
                 <option value="profile">기본정보 연동 · {profile.hasSpecialCareer ? '선택됨' : '선택 없음'}</option><option value="yes">있음</option><option value="no">없음</option><option value="unknown">확인 필요</option>
               </select>
             </Field>
+            <Field id="auto-periodSource" label="수당 인정 재직기간 확인 출처" error={preparationAttempted ? prepErrors.periodSource : undefined}>
+              <select id="auto-periodSource" value={prep.periodSource} aria-invalid={preparationAttempted && !!prepErrors.periodSource}
+                aria-describedby={preparationAttempted && prepErrors.periodSource ? 'auto-periodSource-error' : undefined}
+                onChange={event => update({ preparation: { ...prep, periodSource: event.target.value as typeof prep.periodSource } })}>
+                <option value="">선택해 주세요</option><option value="official">공단에서 확인한 수당 인정기간</option>
+                <option value="calendar">단순 달력상 근속기간 · 자동 계산 불가</option><option value="unknown">확인 필요</option>
+              </select>
+            </Field>
+            {(['reduction', 'previouslyReceived'] as const).map(field => <Field key={field} id={`auto-${field}`}
+              label={field === 'reduction' ? '감액·지급제한 사유 여부' : '기존 퇴직수당 수령 이력 여부'} error={preparationAttempted ? prepErrors[field] : undefined}>
+              <select id={`auto-${field}`} value={prep[field]} aria-invalid={preparationAttempted && !!prepErrors[field]}
+                aria-describedby={preparationAttempted && prepErrors[field] ? `auto-${field}-error` : undefined}
+                onChange={event => update({ preparation: { ...prep, [field]: event.target.value } })}>
+                <option value="">선택해 주세요</option><option value="yes">있음</option><option value="no">없음</option><option value="unknown">확인 필요</option>
+              </select>
+            </Field>)}
           </div>
           <p className="profile-help">최초 임용일로 수당 인정기간이나 과거 경력 합산 여부를 자동 확정하지 않습니다.</p>
           <button className="secondary" type="submit">준비 입력 확인</button>
+          <button className="secondary" type="button" disabled aria-describedby="auto-disabled-reason">자동 계산 · 검증 대기</button>
           {preparationAttempted && <p role="status" className="profile-help">{Object.keys(prepErrors).length ? '준비 입력의 오류를 확인해 주세요.' : '준비 입력을 확인했습니다. 자동 계산은 아직 제공하지 않습니다.'}</p>}
         </form>
-        <div className="benefit-result"><h4>자동 계산 결과 · 계산 불가</h4><p className="profile-help">공식 산식의 적용 범위·예외·경과규정 검증이 남아 있습니다. 입력을 모두 채워도 자동 계산 금액을 표시하지 않습니다. 공식 예상 퇴직수당은 위 직접 입력 영역에서 기록할 수 있습니다. 명예퇴직수당은 포함하지 않습니다.</p></div>
+        {autoResult && <section className="benefit-result" aria-label="퇴직수당 자동 계산 결과">
+          <h4>자동 계산 결과 · 계산 불가</h4>
+          <strong className="benefit-amount">계산 불가</strong>
+          <p id="auto-disabled-reason" className="profile-help">입력을 모두 채워도 검증되지 않은 금액은 표시하지 않습니다. 공식 조회액 직접 입력은 계속 사용할 수 있습니다.</p>
+          <ul className="profile-help">{autoResult.reasons.map(reason => <li key={reason.code}>{reason.message}</li>)}</ul>
+          <dl className="benefit-details">
+            <dt>금액 구분</dt><dd>세전 · 일시금 (산출 금액 없음)</dd>
+            <dt>계산 신뢰도</dt><dd>{autoResult.confidence} · 앱 판정</dd>
+            <dt>입력 재직기간</dt><dd>{autoResult.inputMonths === null ? '미입력 또는 확인 필요' : `${autoResult.inputMonths}개월 · 사용자 입력 (${prep.periodSource === 'official' ? '공단 확인 선택 · 진위 미확인' : '공단 인정 여부 미확인'})`}</dd>
+            <dt>적용 재직기간</dt><dd>미적용 · 참고 상한 33년({autoResult.basis.referenceCapMonths}개월)</dd>
+            <dt>입력 소득정보</dt><dd>{autoResult.inputIncomeWon === null ? '미입력 또는 확인 필요' : `${autoResult.inputIncomeWon.toLocaleString('ko-KR')}원 · 최종 기준소득월액 (산식 미적용)`}</dd>
+            <dt>적용 지급비율</dt><dd>미적용 · 현행 참고 비율 6.5% / 22.75% / 29.25% / 32.5% / 39%</dd>
+            <dt>검토 법령</dt><dd><a href={autoResult.basis.lawUrl} target="_blank" rel="noreferrer">{autoResult.basis.law}</a><br />
+              <a href={autoResult.basis.regulationUrl} target="_blank" rel="noreferrer">{autoResult.basis.regulation}</a><br />시행일 {autoResult.basis.effectiveOn} · 검토일 {autoResult.basis.reviewedOn}<br />적용 확정 전이며 미래 퇴직일의 시행 법령을 보장하지 않습니다.</dd>
+            <dt>계산 기준일</dt><dd>{prepErrors.calculationDate ? '미입력 또는 확인 필요' : autoResult.calculationDate}</dd>
+            <dt>반올림·절사</dt><dd>{autoResult.rounding}</dd>
+            <dt>미반영 사항</dt><dd>{autoResult.excluded.join(' / ')}</dd>
+          </dl>
+          <p className="benefit-disclaimer">{allowanceDisclaimer}</p>
+        </section>}
       </section>
     </> : <p className="feedback">선택한 연금제도는 입력 지원 대상이 아닙니다. 실제 가입이 확인된 공무원연금 또는 사학연금을 선택해 주세요. 기존 제도별 입력은 유지됩니다.</p>}
     <p className="profile-help">메뉴 이동 시 유지됩니다. 새로고침하면 초기화됩니다. 서버·브라우저 저장소에는 저장하지 않습니다.</p>
