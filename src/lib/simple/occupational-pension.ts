@@ -92,7 +92,7 @@ function calculateOccupational(p: SimpleProfile, v: PensionEstimateInput, date: 
     else if (!v.complexCareer) {
       r.normalAge = occupationalPensionAge(date); r.earlyAge = r.normalAge - 5;
       const ageDate = birthAnniversary(p.birthDate, r.normalAge);
-      if (ageDate && r.months !== null && r.months >= 120 && !r.errors.some(e => e.startsWith('군복무'))) setPensionTiming(r, date, ageDate > date ? ageDate : date, 'occupational');
+      if (ageDate && r.months !== null && r.months >= 120) setPensionTiming(r, date, ageDate > date ? ageDate : date, 'occupational');
     }
   }
   r.earlyNote = '조기퇴직연금은 10년 이상 재직·퇴직 후 정상 개시보다 최대 5년 전 신청이 가능하며 미달 1년당 5%(최대 25%) 감액됩니다. 자동 선택하지 않았으며 월별 감액·개인 예외는 공단 확인이 필요합니다.';

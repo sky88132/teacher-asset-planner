@@ -36,6 +36,7 @@ export function calculateRetirementAnalysis(input: SimpleInputs, r: SimpleResult
     eligibleAtRetirement: !retirement || !r.accountReceipts[key].eligibleDate ? null : r.accountReceipts[key].eligibleDate! <= retirement,
   }));
   const windows: IncomeWindow[] = [];
+  const lumpPriceCompatible = !retirement || retirement.slice(0,4)==='2026' || input.ktcu.split || r.ktcu.amountWon===null || !lumpItems.some(x=>x.label!=='공제회 일시금'&&x.won!==null);
   if (retirement && isCalendarDate(retirement)) {
     const points = new Set([retirement]);
     for (const date of [start, first, last, last ? dayAfter(last) : null]) if (date && date > retirement) points.add(date);
@@ -46,12 +47,14 @@ export function calculateRetirementAnalysis(input: SimpleInputs, r: SimpleResult
       if (phase === 'unknown') missing.push('공적연금 개시일 미확인: 전후 구분 보류');
       else if (phase === 'after') {
         if (r.pension.amountWon === null) missing.push('공적연금 월액 미확인');
-        else sources.push({ label: '공적연금', won: r.pension.amountWon, tax: r.pensionSource === 'automatic' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'gross' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'net' ? 'net' : 'unknown' });
+        else sources.push({ label: '공적연금', won: r.pension.amountWon, tax: r.pensionSource !== 'quote' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'gross' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'net' ? 'net' : 'unknown' });
       }
       if (input.ktcu.split && !splitValid) missing.push('공제회 분할 월액·기간 미확인');
       if (first && last && from >= first && from <= last) sources.push({ label: from === last ? '공제회 마지막 정산' : '공제회 분할', won: from === last ? rows.at(-1)!.paymentWon : r.split!.monthlyWon, tax: 'gross' });
       const tax = sources[0]?.tax ?? 'unknown';
-      const compatible = tax !== 'unknown' && sources.every(s => s.tax === tax);
+      const priceCompatible = !(r.pensionSource==='automatic' && sources.length>1 && from.slice(0,4)!=='2026');
+      const compatible = tax !== 'unknown' && sources.every(s => s.tax === tax) && priceCompatible;
+      if(!priceCompatible)missing.push('2026 고정 기준 월연금과 공제회 미래 명목 월액은 기준이 달라 합산 보류');
       if (sources.length && !compatible) missing.push('세전·세후 또는 미확인 기준이 달라 월액 합산 보류');
       const subtotalWon = compatible ? sum(sources.map(s => s.won)) : null;
       const label = !first || !last ? '월액 확인 범위' : from < first ? '공제회 첫 지급 전' : from === last ? '공제회 최종 지급일·정산액' : from > last ? '공제회 분할 종료 후' : '공제회 정기 분할 지급 중';
@@ -62,7 +65,7 @@ export function calculateRetirementAnalysis(input: SimpleInputs, r: SimpleResult
   return { retirement, retirementAge: retirement && isCalendarDate(input.profile.birthDate) ? ageAt(input.profile.birthDate, retirement) : null,
     publicStart: start, normalPublicDate: r.pensionDetails.normalStartDate, validTiming,
     gapMonths: r.pensionGapMonths, gapDays: r.pensionGapDays, pensionWon: r.pension.amountWon,
-    expenseWon, expenseError: expense.error, windows, lumpItems, lumpTotalWon: sum(lumpItems.map(x => x.won)),
+    expenseWon, expenseError: expense.error, windows, lumpItems, lumpPriceCompatible, lumpTotalWon: lumpPriceCompatible?sum(lumpItems.map(x => x.won)):null,
     accounts, accumulationWon: r.accumulationTotal, benefitsWon: r.benefitsTotal,
     split: { selected: input.ktcu.split, valid: splitValid, years: input.ktcu.years, first, last,
       balanceSnapshotDate: validTiming ? (start! > retirement! ? start! : retirement!) : null,

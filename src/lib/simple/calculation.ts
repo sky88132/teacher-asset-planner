@@ -10,6 +10,9 @@ import { createPensionEstimateInput } from './pension-types.ts';
 import { estimateCivilPension, estimatePrivatePension } from './occupational-pension.ts';
 import { estimateNationalPension } from './national-pension.ts';
 import { estimateAllowanceReference } from './allowance-reference.ts';
+import { projectTeacherPay } from './teacher-pay.ts';
+import { estimateTeacherPension } from './teacher-pension.ts';
+import { estimateTeacherBenefits } from './teacher-benefits.ts';
 import { calculateAccountReceipt, createAccountReceiptInput } from './account-receipt.ts';
 import { isCalendarDate } from '../profile-validation.ts';
 import { simpleConfig } from './config.ts';
@@ -128,12 +131,16 @@ export function calculateSimple(input: SimpleInputs, today: string) {
   }
   const quotes = input.benefits[input.profile.scheme];
   const pensionInput = quotes.pensionEstimate ?? createPensionEstimateInput();
-  const pensionDetails = input.profile.scheme === 'civil' ? estimateCivilPension(input.profile, pensionInput, date, today)
+  const confirmedIncomePension = input.profile.scheme === 'civil' ? estimateCivilPension(input.profile, pensionInput, date, today)
     : input.profile.scheme === 'private-school' ? estimatePrivatePension(input.profile, pensionInput, date, today)
     : estimateNationalPension(input.profile, pensionInput, date);
   // An intentionally entered quote retains priority, including its stale/invalid state.
   // Deleting the quoted amount returns to automatic estimation; never silently replace a stale quote.
-  const pensionSource = quotes.pension.money.amount !== '' ? 'quote' as const : 'automatic' as const;
+  const teacherPay = projectTeacherPay(input.profile, date, today);
+  const teacherPension = estimateTeacherPension(input.profile, pensionInput, teacherPay, confirmedIncomePension, date, today);
+  const teacherSelected = teacherPension.selected?.amountWon !== null && teacherPension.selected !== null;
+  const pensionDetails = quotes.pension.money.amount === '' && teacherSelected ? teacherPension.selected! : confirmedIncomePension;
+  const pensionSource = quotes.pension.money.amount !== '' ? 'quote' as const : teacherSelected ? 'teacher-model' as const : 'automatic' as const;
   const pension: SimpleAmount = pensionSource === 'quote'
     ? quoteAmount(quotes.pension, 'pension', date, today, { scheme: input.profile.scheme, birthDate: input.profile.birthDate })
     : { ...noAmount(pensionDetails.errors, date), amountWon: pensionDetails.amountWon, confidence: pensionDetails.confidence };
@@ -156,6 +163,7 @@ export function calculateSimple(input: SimpleInputs, today: string) {
   return { today, retirement, step, ktcu, split, splitError, irp, saving, pension, allowance, honorary,
     benefitsTotal, accountsTotal, accumulationTotal, accumulation, allowanceDetails, honoraryDetails, plannedTotals,
     allowanceReference: estimateAllowanceReference(input.profile, quotes, date, honorary.amountWon),
+    teacherPay, teacherPension, teacherBenefits: estimateTeacherBenefits(input.profile, quotes, date, retirement.normal, step, teacherPay),
     pensionDetails, pensionSource, pensionStartDate, pensionGapMonths, pensionGapDays,
     accountReceipts: {
       irp: calculateAccountReceipt(input.irp.receipt ?? createAccountReceiptInput(), input.profile.birthDate, date, today, pensionStartDate),

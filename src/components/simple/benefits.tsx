@@ -1,3 +1,4 @@
+import { BenefitReferenceTotals } from './teacher-scenarios';
 import { AllowanceReferenceCard } from './allowance-reference';
 import type { BenefitInput } from '@/lib/finance/pension-input';
 import { changeMoneyUnit } from '@/lib/finance/pension-input-validation';
@@ -29,6 +30,7 @@ export function SimpleBenefitsPanel({ input, onChange, result }: { input: Simple
       <p className="profile-help">공무원연금에 가입한 일반 국공립 유·초·중·고 호봉제 정규 교원 가정입니다. 임용일부터 중단 없이 재직하고 승급 제한이 없다고 가정합니다. 대학·연봉제·시간제·특별 가산·근가호봉은 반영하지 않습니다. 법정 20년 재직·최소 1년 조기퇴직을 확인하며, 징계·수사 등 지급제한과 예산·인력수급에 따른 선정 심사는 기관이 판단합니다. 조건을 충족한 경우의 금액이며 지급 확정이 아닙니다.</p>
       <p className="profile-help"><OfficialLink href={benefitSources.honorary}>국가공무원 명예퇴직수당 등 지급 규정·별표 1</OfficialLink> · <OfficialLink href={simpleConfig.salaryUrl}>2026 교원 봉급표</OfficialLink></p>
       <p className="benefit-disclaimer">명예퇴직수당은 관련 법령과 지급 심사 결과에 따라 실제 지급 여부 및 금액이 달라질 수 있습니다.</p></details>}
+    <BenefitReferenceTotals input={input} result={result} />
     <AllowanceReferenceCard value={q} onChange={update} result={result}/>
     <section className="benefit-result" aria-label="퇴직급여 합계"><h3>{p.retirement === 'early' ? '명예퇴직수당 + 퇴직수당' : '퇴직수당 요약'}</h3><strong className="benefit-amount">{won(result.benefitsTotal, '완전한 합계 확인 불가')}</strong><p>퇴직수당: {won(result.allowance.amountWon)} · 세전</p>{p.retirement === 'early' && <p>명예퇴직수당: {won(result.honorary.amountWon)} · 세전</p>}<p className="profile-help">같은 퇴직일·2026년 가격 고정·세전 조건부 시나리오에서 계산 가능한 수당만 합산합니다. 지급 미확정이며 세후 실지급액이 아닙니다. 한 항목이 계산 불가이면 완전한 합계를 표시하지 않습니다.</p></section><p className="benefit-disclaimer">{simpleDisclaimer}</p></div>;
 }

@@ -11,8 +11,8 @@ async function pensionIncome(page:Page,legacy=false){
 }
 test.beforeEach(async({page})=>{await page.clock.install({time:new Date('2026-11-08T12:00:00+09:00')});await page.goto('/');});
 
-test('기본정보의 정상 개시·공백과 소득 누락을 보여주고 상세 설정은 접는다',async({page})=>{
-  await profile(page);await menu(page,4);const r=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(r).toContainText('추정에 필요한 정보 확인');await expect(r).toContainText('만 62세');await expect(r).toContainText('2042-05');await expect(r).toContainText('호봉');
+test('기본정보의 표준 교원 시나리오·정상 개시와 상세 기본 접힘',async({page})=>{
+  await profile(page);await menu(page,4);const r=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(r).toContainText('가정 기반 시뮬레이션');await expect(r).toContainText('만 62세');await expect(r).toContainText('2042-05');await expect(r).toContainText('호봉');
   await expect(page.getByText('공적연금 추정 상세 설정 (선택)',{exact:true}).locator('..')).not.toHaveAttribute('open');await expect(page.getByLabel('공단 확인 평균기준소득월액 (만원)',{exact:true})).not.toBeVisible();
 });
 

@@ -22,7 +22,7 @@ export function honoraryMultiplier(months: number): number | null {
   if (!Number.isInteger(months) || months < 12) return null;
   return months <= 60 ? months : months <= 120 ? 60 + (months - 60) / 2 : 90;
 }
-export function estimateHonorary(p: SimpleProfile, date: string | null, normal: string | null, step: number | null): BenefitEstimate {
+export function estimateHonorary(p: SimpleProfile, date: string | null, normal: string | null, step: number | null, salaryOverride?: { won: number; year: number }): BenefitEstimate {
   const r = empty(benefitSources.honorary, '2026년 봉급표 가격 고정 · 세전 · 미래 봉급 인상 미반영');
   if (p.retirement !== 'early') r.errors.push('정년퇴직은 명예퇴직수당 대상이 아닙니다.');
   if (p.scheme !== 'civil') {
@@ -42,8 +42,13 @@ export function estimateHonorary(p: SimpleProfile, date: string | null, normal: 
     if (service === null || service < 240) r.errors.push('임용일 기준 20년 재직을 확인할 수 없습니다. 병역·합산 등 법정 인정기간은 소속 기관 확인이 필요합니다.');
   }
   if (step !== null) r.salaryWon = teacherSalary2026[step - 1] ?? null;
+  if (salaryOverride) {
+    if (!Number.isSafeInteger(salaryOverride.won) || salaryOverride.won <= 0) r.errors.push('미래 봉급 가정의 금액 범위를 확인해 주세요.');
+    else r.salaryWon = salaryOverride.won;
+    r.basis = `${salaryOverride.year}년 미래 명목 봉급 가정 · 봉급표 연3% · 세전 · 지급 미확정`;
+  }
   const multiplier = r.months === null ? null : honoraryMultiplier(r.months);
-  r.formula = multiplier === null ? '정년 잔여 1년 이상 필요' : `2026 봉급액 × 68% × 1/2 × ${multiplier} (잔여 60개월 초과분은 1/2, 최대 90)`;
+  r.formula = multiplier === null ? '정년 잔여 1년 이상 필요' : `${salaryOverride ? salaryOverride.year + '년 가정' : '2026'} 봉급액 × 68% × 1/2 × ${multiplier} (잔여 60개월 초과분은 1/2, 최대 90)`;
   if (!r.errors.length && r.salaryWon !== null && multiplier !== null) r.amountWon = Math.floor(r.salaryWon * 68 * multiplier / 200);
   return r;
 }

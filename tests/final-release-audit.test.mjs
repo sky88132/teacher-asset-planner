@@ -27,7 +27,7 @@ function fixture(s){
 for(const s of scenarios)test(`최종 시나리오 ${s.id}: ${s.label} 결과·상태·기본 익명화·원 단위`,()=>{
   const f=fixture(s),r=calculateSimple(f,today),context=simplePromptContext(f,r);assert.equal(r.retirement.date,s.expectedDate);assert.equal(context.rows.find(x=>x.label==='IRP').amountWon,r.irp.amountWon);
   const settings={...createPromptWorkspace().settings,money:'exact'};const text=generateSimplePrompt(f,settings,today);assert.ok(text);assert.ok(!text.includes(s.birth));assert.ok(!text.includes(s.appointment));assert.deepEqual(privacyFindings(text,settings),[]);assert.match(text,/입력 상태·계산 신뢰도/);assert.match(text,/추가 검증 필요/);assert.match(text,/투자수익률·지급액을 보장하지/);
-  if(['auto','national','quote'].includes(s.pension)){assert.ok(r.pension.amountWon>0);assert.ok(text.includes(formatWonAsKoreanCurrency(r.pension.amountWon)));}else assert.equal(r.pension.amountWon,null);
+  if(['auto','national','quote'].includes(s.pension)){assert.ok(r.pension.amountWon>0);assert.ok(text.includes(formatWonAsKoreanCurrency(r.pension.amountWon)));}else if(s.id==='E'){assert.equal(r.pensionSource,'teacher-model');assert.ok(r.pension.amountWon>0);assert.match(r.pension.confidence,/가정 기반/);}else assert.equal(r.pension.amountWon,null);
   if(s.id==='B'){assert.match(text,/퇴직 호봉/);assert.ok(r.honorary.amountWon>0);}
   if(s.id==='E'){assert.equal(context.basicOnly,true);assert.match(text,/현재 경력 단계/);assert.equal(r.ktcu.amountWon,null);assert.equal(r.irp.amountWon,null);}
   if(s.id==='F'){assert.ok(r.irp.amountWon>0);assert.equal(r.saving.amountWon,null);assert.equal(r.accountsTotal,null);assert.match(text,/IRP 현재 적립금: \[사용자 입력값\] 1,000만원/);}

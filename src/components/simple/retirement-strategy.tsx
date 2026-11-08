@@ -11,10 +11,10 @@ export function RetirementStrategy({ input, children, result: r }: { input: Simp
   const maximum = Math.max(1, ...a.windows.flatMap(w => w.subtotalWon === null ? [] : [w.subtotalWon]));
   return <section className="retirement-strategy" aria-label="은퇴설계 종합 분석">
     <section className="benefit-result" aria-label="은퇴설계 핵심 요약"><h3>나의 은퇴 후 자산 활용</h3>
-      <dl className="retirement-summary"><div><dt>예상 퇴직</dt><dd>{a.retirement ?? '확인 필요'} · {a.retirementAge === null ? '연령 확인 필요' : `만 ${a.retirementAge}세`}</dd></div>
+      <dl className="retirement-summary"><div><dt>예상 퇴직</dt><dd>{a.retirement ?? '확인 필요'} · {a.retirementAge === null ? '연령 확인 필요' : `만 ${a.retirementAge}세`}<br /><small>퇴직 참고 {r.step===null?'호봉 확인 필요':r.step+'호봉'} · 조건부</small></dd></div>
         <div><dt>분석에 적용한 연금 개시</dt><dd>{a.publicStart ?? '확인 필요'}</dd></div>
         <div><dt>{input.profile.retirement === 'early' ? '명예퇴직 후 소득 공백' : '퇴직 후 개시 전 기간'}</dt><dd>{a.gapDays === null ? '확인 필요' : `${a.gapMonths}개월(완료 월) · ${a.gapDays}일`}</dd></div>
-        <div><dt>예상 월 공적연금</dt><dd>{won(a.pensionWon, '월액 미확인')} / 월<br /><small>{r.pension.confidence}</small></dd></div></dl>
+        <div><dt>예상 월 공적연금</dt><dd>{won(a.pensionWon, '월액 미확인')} / 월<br /><small>{r.pension.confidence}<br />{r.pensionSource==='teacher-model'?r.pensionDetails.priceYear+'년 개시 명목 가정':r.pensionSource==='automatic'?'2026년 고정 기준':'직접 입력 기준'}</small></dd></div></dl>
       <p className="profile-help">조건부 추정 · 세금 별도 확인 · 적립금은 즉시 인출 가능액과 다릅니다.</p>
     </section>
     {children}
@@ -38,7 +38,7 @@ export function RetirementStrategy({ input, children, result: r }: { input: Simp
       <details className="simple-details"><summary>월수입 비교 기준 자세히 보기</summary><p className="profile-help">구간별 월 지급액 예시이며 구간 전체 평균이나 매일 같은 금액을 받는다는 뜻이 아닙니다. 첫 지급 전·마지막 지급일의 정산·분할 종료 후를 나눴습니다. 일시금은 그래프에서 제외하고, 미확인 월액은 막대를 그리지 않습니다. 세전·세후 기준이 다른 월액도 합산하지 않습니다. 가정 수익률·물가·세금·실제 월별 지급 변동은 별도 확인해야 합니다.</p></details>
     </section>
     <details className="simple-details"><summary>자산 활용 조건 자세히 보기</summary>    <section className="benefit-result" aria-label="자산 활용 방식 구분"><h3>일시금·분할·연금계좌 활용 조건</h3>
-      <div className="retirement-asset-groups"><div><span className="section-tag">A · 일시 수령 검토 재원</span>{a.lumpItems.map(x => <p key={x.label}>{x.label} {won(x.won,'추정 불가')}</p>)}<strong>조건부 세전 합계 {won(a.lumpTotalWon,'누락 항목으로 합산 불가')}</strong><p className="profile-help">지급·선정·세금·입금일까지 확인해야 합니다. 사용 가능한 현금으로 확정한 금액이 아닙니다. 공제회 수익률 가정과 2026년 가격 고정 수당을 결합한 참고 합계로, 실제 세후 현금과 다릅니다.</p></div>
+      <div className="retirement-asset-groups"><div><span className="section-tag">A · 일시 수령 검토 재원</span>{a.lumpItems.map(x => <p key={x.label}>{x.label} {won(x.won,'추정 불가')}</p>)}<strong>조건부 세전 합계 {won(a.lumpTotalWon,a.lumpPriceCompatible?'누락 항목으로 합산 불가':'2026 기준과 미래 명목 혼합으로 합산 보류')}</strong><p className="profile-help">지급·선정·세금·입금일까지 확인해야 합니다. 사용 가능한 현금으로 확정한 금액이 아닙니다. 2026 고정 기준 수당과 공제회 미래 명목액은 자동 합산하지 않습니다. 각 항목은 실제 세후 현금과 다릅니다.</p></div>
         <div><span className="section-tag">B · 기간을 정해 분할</span><p>{a.split.selected ? `${a.split.years}년 선택 · 가상 정기 월 ${won(a.split.monthlyWon,'계산 불가')}` : '공제회 일시금 선택 · 분할 월수입 미반영'}</p>
           {a.split.selected && <><p>첫 지급 {a.split.first ?? '확인 필요'} / 마지막 {a.split.last ?? '확인 필요'}</p><p>공적연금 개시 전 {a.split.beforeCount ?? '미확인'}회 / 퇴직 이후 개시 후 {a.split.afterCount ?? '미확인'}회</p><p>잔액 비교 기준 {a.split.balanceSnapshotDate ?? '확인 필요'} (퇴직일·개시일 중 늦은 날)</p><p>기준일 직전까지 가상 누적 지급 {won(a.split.paidBeforeStartWon,'확인 필요')}</p><p>해당 지급 후 남은 가상 잔액 {won(a.split.balanceAtPublicStartWon,'확인 필요')}</p></>}
           <p className="profile-help">5~30년의 지원 선택 기간을 유지합니다. 전체 세전 적립금의 가상 인출이며 실제 상품 지급액이 아닙니다. 기존 지급표의 차감 후 잔액을 사용하고 일시금과 중복 합산하지 않습니다.</p></div>
