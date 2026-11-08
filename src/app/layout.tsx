@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import './planner-theme.css';
 
 export const metadata: Metadata = {
   title: '교사 은퇴 연금 시뮬레이터',

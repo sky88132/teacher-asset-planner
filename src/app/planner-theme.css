@@ -1,0 +1,145 @@
+﻿/* Presentation only. Finance engines and data models remain unchanged. */
+.planner-ui{--ink:#192c49;--green:#275fbc;--muted:#58677b;--line:#e2e7ee;background:#f6f7f9;color:var(--ink);font-family:Arial,'Malgun Gothic',sans-serif;line-height:1.65;letter-spacing:-.025em}
+.planner-ui *{box-sizing:border-box}
+.planner-ui .sidebar{position:fixed;inset:0 auto 0 0;width:240px;padding:36px 20px 24px;z-index:20;overflow-y:auto;background:#fff;border-right:1px solid var(--line)}
+.planner-ui .workspace{margin-left:240px;width:calc(100% - 240px)}
+.planner-ui .brand{font-size:17px;line-height:1.5;color:#192c49;gap:12px;letter-spacing:-.04em}
+.planner-ui .brand-icon{background:#244d86;width:42px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:13px;font-size:26px;font-weight:700;color:white;font-family:Georgia,serif}
+.planner-ui .brand-icon span{color:#9ac7ee}
+.planner-ui .brand small{font-size:7px;letter-spacing:.13em;color:#65758b;line-height:1.6;margin-top:6px}
+.planner-ui .nav-label{font-size:11px;font-weight:700;letter-spacing:.06em;color:#66758a;margin:45px 12px 14px}
+.planner-ui nav{display:grid;gap:8px;margin:0}
+.planner-ui .nav-item{border:1px solid transparent;border-radius:12px;min-height:52px;font-size:13px;font-weight:500;color:#52627a;padding:13px 12px;gap:12px;line-height:1.45;text-align:left}
+.planner-ui .nav-item:hover{background:#f3f6fb;color:#234f95}
+.planner-ui .nav-item.selected{color:#204f98;background:#edf3ff;border-color:#dce8ff;font-weight:700}
+.planner-ui .nav-number{font-size:11px;font-variant-numeric:tabular-nums;opacity:.8}
+.planner-ui .privacy{margin-top:auto;padding:24px 10px 0;border-top:1px solid var(--line);font-size:12px;color:#52627a}
+.planner-ui .privacy span{font-size:12px;color:#294264;font-weight:700}
+.planner-ui .privacy p{font-size:11px;line-height:1.8;color:#52627a}
+.planner-ui .sidebar-bottom{font-size:10px;color:#5c6c80;padding:20px 10px 0}
+.planner-ui header{height:72px;padding:0 40px;background:#fff;border-bottom:1px solid var(--line);color:#425978;font-size:12px}
+.planner-ui .breadcrumb{color:#65758a}
+.planner-ui .status{font-size:11px;color:#52627a}
+.planner-ui .status i{background:#358269}
+.planner-ui main{max-width:1440px;margin:0 auto;padding:40px 40px 24px}
+.planner-ui .eyebrow{color:#4a668b;font-size:10px;font-weight:700;letter-spacing:.18em;margin-bottom:10px}
+.planner-ui h1{font-size:32px;letter-spacing:-.055em;line-height:1.3;font-weight:750;color:#192c49}
+.planner-ui .page-heading{margin-bottom:24px;align-items:center}
+.planner-ui .page-heading p{font-size:14px;line-height:1.8;color:#58677b;margin-top:12px}
+.planner-ui .step-badge{font-size:12px;color:#315a92;background:#eaf0fa;border-radius:20px;padding:8px 14px;border:0}
+.planner-ui .step-badge span{color:#65758a}
+.planner-ui .mode-bar{background:#edf3fb;border:1px solid #dbe6f5;border-radius:14px;padding:17px 20px;margin-bottom:24px;gap:14px}
+.planner-ui .mode-bar strong{font-size:12px;color:#244e87}
+.planner-ui .mode-bar div>span{font-size:12px;color:#526682;margin-left:14px}
+.planner-ui .coming{font-size:10px;color:#52627a;background:#fff;border:1px solid #dce4ef;border-radius:7px;padding:7px 10px;white-space:nowrap}
+.planner-ui .content-grid{grid-template-columns:minmax(0,1fr) 264px;gap:24px}
+.planner-ui .card{background:#fff;border:1px solid #e2e7ee;border-radius:20px;box-shadow:0 4px 18px #172d4b04}
+.planner-ui .form-card{padding:30px;min-width:0}
+.planner-ui .card-heading{padding-bottom:22px;border-bottom:1px solid #edf0f5;margin-bottom:24px;align-items:center}
+.planner-ui .section-tag{font-size:10px;font-weight:700;letter-spacing:.14em;color:#5e7390}
+.planner-ui h2{font-size:21px;font-weight:700;letter-spacing:-.04em;color:#192c49;margin-top:7px}
+.planner-ui .panel-step{height:40px;width:40px;display:grid;place-items:center;border-radius:12px;background:#f0f4fa;color:#537199;font-size:14px;font-weight:700}
+.planner-ui .simple-panel{margin-top:0}
+.planner-ui .simple-panel h3{font-size:15px;font-weight:700;line-height:1.6}
+.planner-ui .form-description{font-size:14px;color:#52627a;line-height:1.8;margin-bottom:24px}
+.planner-ui fieldset{min-width:0;border:0;margin:0 0 26px;padding:0}
+.planner-ui legend{font-size:13px;font-weight:700;margin-bottom:13px;color:#334a68}
+.planner-ui .school-options,.planner-ui .simple-schemes{gap:10px}
+.planner-ui .school{background:#fff;border:1px solid #d9e1ed;border-radius:13px;padding:20px 30px 20px 14px;min-height:65px;box-shadow:none;cursor:pointer}
+.planner-ui .school strong{font-size:13px;font-weight:600;color:#415671}
+.planner-ui .school.chosen{background:#f0f5ff;border:1.5px solid #3974cb;box-shadow:0 0 0 2px #3974cb08}
+.planner-ui .school.chosen strong{color:#224f97}
+.planner-ui input[type=radio],.planner-ui input[type=checkbox]{accent-color:#2d65b8;min-width:18px;height:18px;flex-shrink:0}
+.planner-ui .school input{right:10px;top:20px}
+.planner-ui .benefit-fields{gap:20px 16px;margin:22px 0}
+.planner-ui .benefit-field{margin-bottom:20px;min-width:0}
+.planner-ui .benefit-field label{font-size:12px;font-weight:600;color:#344b69;line-height:1.7}
+.planner-ui .benefit-field input,.planner-ui .benefit-field select,.planner-ui .benefit-field textarea{background:#fcfdff;border:1px solid #d7dfeb;border-radius:10px;min-height:48px;width:100%;padding:12px 13px;font-size:15px;color:#1b314f;font-weight:500;font-variant-numeric:tabular-nums;outline:none;line-height:1.5;box-shadow:none}
+.planner-ui .benefit-field input::placeholder{color:#68788e;font-weight:400;font-size:13px}
+.planner-ui .benefit-field input:focus,.planner-ui .benefit-field select:focus,.planner-ui .benefit-field textarea:focus{border-color:#3874c8;box-shadow:0 0 0 3px #3874c81a;background:#fff}
+.planner-ui input:disabled,.planner-ui select:disabled{background:#edf0f4;color:#67768a;cursor:not-allowed}
+.planner-ui :focus-visible{outline:3px solid #5993df;outline-offset:3px}
+.planner-ui .checkbox{display:flex;align-items:flex-start;gap:11px;font-size:13px;line-height:1.8;padding:16px;background:#f3f6fb;border:1px solid #e2e9f3;border-radius:12px;margin:20px 0;color:#334b6a;cursor:pointer}
+.planner-ui .checkbox input{margin:3px 0 0}
+.planner-ui .profile-help{font-size:12px;color:#58677b;line-height:1.85;overflow-wrap:anywhere}
+.planner-ui .profile-context{padding:18px 20px;border:1px solid #dce7f5;background:#f0f5fc;border-radius:13px;font-size:13px;color:#344f72;line-height:1.85;margin:20px 0}
+.planner-ui .profile-context p{color:#526682;font-size:12px}
+.planner-ui .simple-details{border:1px solid #e2e7ef;border-radius:12px;padding:0 16px;margin:20px 0;background:#fcfdff;font-size:13px}
+.planner-ui .simple-details summary{padding:15px 0;color:#3b577c;font-weight:600;min-height:48px;cursor:pointer}
+.planner-ui .simple-details[open]{padding-bottom:15px}
+.planner-ui .simple-details p{font-size:12px}
+.planner-ui .simple-benefit-card{padding:22px;border-radius:15px;border-color:#dce4ef;background:#fff;margin:20px 0}
+.planner-ui .simple-benefit-card>summary{color:#264c81;font-size:16px;min-height:30px}
+.planner-ui .benefit-result{background:#f4f7fc;border:1px solid #e0e8f4;border-radius:15px;padding:24px;margin:22px 0;min-width:0}
+.planner-ui .benefit-result h3{color:#385576;margin:0}
+.planner-ui .benefit-amount{display:block;font-size:clamp(22px,2.5vw,32px);font-weight:750;color:#204d8c;letter-spacing:-.04em;line-height:1.4;margin:13px 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.planner-ui .benefit-result p{font-size:12px;line-height:1.85;color:#52627a}
+.planner-ui .result-ready{background:#f1f7f5;border-color:#d9e9e2}
+.planner-ui .result-ready .benefit-amount{color:#22634e}
+.planner-ui .result-empty{background:#fafbfc;border:1px dashed #ccd6e3}
+.planner-ui .result-empty .benefit-amount{font-size:21px;color:#566a84;font-weight:600}
+.planner-ui .empty-guidance{margin:8px 0 12px}
+.planner-ui .field-error{color:#a33c39;background:#fff5f3;border-left:3px solid #cf6860;border-radius:6px;padding:10px 12px;font-size:12px;line-height:1.8;overflow-wrap:anywhere}
+.planner-ui .benefit-disclaimer{font-size:12px;line-height:1.9;padding:18px;color:#59697e;background:#f7f8fa;border:1px solid #e5e9f0;border-radius:12px}
+.planner-ui .primary,.planner-ui .secondary{min-height:46px;border-radius:10px;padding:12px 18px;font-size:13px;font-weight:600;line-height:1.5;cursor:pointer;white-space:normal}
+.planner-ui .primary{background:#2b60ad;color:#fff;border:1px solid #2b60ad;box-shadow:0 3px 8px #244e8712}
+.planner-ui .primary:hover:not(:disabled){background:#214f94}
+.planner-ui .secondary{background:white;color:#39587f;border:1px solid #cad7e8;margin-top:14px}
+.planner-ui button:disabled{background:#edf0f5!important;color:#64748b!important;border-color:#dce2eb!important;box-shadow:none;cursor:not-allowed;opacity:1}
+.planner-ui .simple-navigation{padding-top:24px;margin-top:30px;gap:12px;justify-content:flex-end}
+.planner-ui .simple-navigation .secondary{margin-top:0}
+.planner-ui .simple-input-card{padding:22px;background:#fff;border:1px solid #dde5ef;border-radius:15px}
+.planner-ui .simple-input-card h3{padding-bottom:15px;border-bottom:1px solid #edf0f5;color:#254d85;margin-bottom:20px}
+.planner-ui .simple-account-grid{gap:18px}
+.planner-ui .ktcu-cards{gap:16px}
+.planner-ui .ktcu-cards .benefit-result{margin:0}
+.planner-ui .right-column{position:sticky;top:24px;display:block}
+.planner-ui .summary{padding:24px}
+.planner-ui .summary h2{font-size:18px;margin-bottom:24px}
+.planner-ui .summary-row{font-size:12px;padding:14px 0;border-color:#edf0f5;color:#576980;gap:10px}
+.planner-ui .summary-row strong{font-size:12px;color:#29476e}
+.planner-ui .summary p{font-size:12px;line-height:1.9;color:#58677b}
+.planner-ui .summary button{width:100%}
+.planner-ui .note{background:#eef2f7;border:1px solid #e0e6ef;border-radius:16px;padding:22px;margin-top:18px}
+.planner-ui .note>span{font-size:11px;color:#526a8a}
+.planner-ui .note h3{font-size:14px;line-height:1.7;color:#344f72}
+.planner-ui .note p{font-size:12px;line-height:1.9;color:#58677b}
+.planner-ui .simple-composition{padding:24px;border:1px solid #e0e7f0;border-radius:16px;background:#fff;margin:26px 0}
+.planner-ui .simple-composition figcaption{font-size:14px;font-weight:700;color:#2e496c}
+.planner-ui .simple-bar-row{grid-template-columns:100px minmax(0,1fr);gap:10px;margin:22px 0;font-size:12px;color:#425a78}
+.planner-ui .simple-bar-row strong{font-size:13px;font-variant-numeric:tabular-nums;color:#294f80}
+.planner-ui .simple-bar-track{height:12px;border-radius:8px;background:#edf1f7}
+.planner-ui .simple-bar-track>div{background:#467bc0;border-radius:8px}
+.planner-ui .simple-bar-row:nth-of-type(2) .simple-bar-track>div{background:#6b92c6}
+.planner-ui .simple-bar-row:nth-of-type(3) .simple-bar-track>div{background:#38846a}
+.planner-ui .ktcu-table{font-size:12px;color:#405776}
+.planner-ui .ktcu-table caption{font-size:13px;color:#3d587c;padding:16px;text-align:left}
+.planner-ui .ktcu-table th{background:#f2f5fa;color:#3b5374;padding:13px}
+.planner-ui .ktcu-table td{padding:14px 12px;border-color:#e5eaf1;font-variant-numeric:tabular-nums}
+.planner-ui .prompt-types{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.planner-ui .prompt-types .school{padding:18px 32px 18px 14px;min-height:66px}
+.planner-ui .simple-prompt-preview{font-size:13px;line-height:1.9;background:#f2f5fa;border-radius:10px;padding:20px;color:#344b69;max-height:420px}
+.planner-ui textarea[aria-label='AI 분석 요청문']{font-size:13px;line-height:1.9;min-height:400px;background:#fafbfd}
+.planner-ui .comparison-actions{gap:12px;flex-wrap:wrap}
+.planner-ui .comparison-actions .secondary{margin-top:0}
+.planner-ui .simple-panel .comparison-actions a{font-size:12px;padding:9px 13px;border:1px solid #d7e1ef;border-radius:9px;text-decoration:none;background:#fff}
+.planner-ui .feedback{font-size:13px;color:#22634e;background:#edf7f1;padding:15px;border-radius:10px}
+.planner-ui footer{font-size:11px;color:#63738a;margin-top:32px}
+@media(min-width:1450px){.planner-ui main{padding-top:48px}.planner-ui .content-grid{grid-template-columns:minmax(0,1fr) 280px}}
+@media(max-width:1190px){.planner-ui .sidebar{width:218px;padding:30px 15px}.planner-ui .workspace{margin-left:218px;width:calc(100% - 218px)}.planner-ui main{padding:30px 24px}.planner-ui header{padding:0 24px}.planner-ui .content-grid{grid-template-columns:minmax(0,1fr)}.planner-ui .right-column{position:static;display:grid;grid-template-columns:1fr 1fr;gap:20px}.planner-ui .note{margin-top:0}.planner-ui .simple-account-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.planner-ui .mode-bar div>span{display:block;margin:5px 0 0}}
+@media(max-width:760px){.planner-ui .sidebar{position:static;width:100%;padding:18px 20px 14px;overflow:visible;border-right:0;border-bottom:1px solid #e1e7f0}.planner-ui .workspace{margin-left:0;width:100%}.planner-ui.shell{display:block}.planner-ui .brand{font-size:16px}.planner-ui .brand br{display:none}.planner-ui .brand small{font-size:7px;margin-top:3px}.planner-ui .brand-icon{width:36px;height:38px;font-size:24px}.planner-ui .nav-label,.planner-ui .sidebar-bottom{display:none}.planner-ui nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:18px;overflow:visible}.planner-ui .nav-item{width:100%;min-width:0;min-height:46px;padding:10px 6px;justify-content:center;text-align:center;font-size:11px;line-height:1.5}.planner-ui .nav-number{display:none}.planner-ui .privacy{display:none}.planner-ui header{height:46px;padding:0 20px;font-size:10px}.planner-ui .status{font-size:10px}.planner-ui .breadcrumb{display:none}.planner-ui main{padding:28px 18px 22px}.planner-ui h1{font-size:27px}.planner-ui .page-heading p{font-size:13px}.planner-ui .page-heading{margin-bottom:20px}.planner-ui .step-badge{display:none}.planner-ui .eyebrow{font-size:9px}.planner-ui .mode-bar{padding:14px;margin-bottom:18px;align-items:flex-start}.planner-ui .mode-bar strong{font-size:12px}.planner-ui .mode-bar div>span{font-size:11px}.planner-ui .coming{font-size:9px;padding:6px}.planner-ui .form-card{padding:24px 18px;border-radius:17px}.planner-ui h2{font-size:20px}.planner-ui .section-tag{font-size:9px}.planner-ui .card-heading{margin-bottom:22px}.planner-ui .content-grid{gap:18px}.planner-ui .right-column{display:grid;grid-template-columns:1fr}.planner-ui .simple-schemes{grid-template-columns:1fr}.planner-ui .school{padding:18px 32px 18px 16px;min-height:58px}.planner-ui .school input{right:14px;top:18px}.planner-ui .school strong{font-size:14px}.planner-ui .benefit-fields{grid-template-columns:1fr;gap:0;margin:20px 0}.planner-ui .benefit-field input,.planner-ui .benefit-field select,.planner-ui .benefit-field textarea{font-size:16px;min-height:50px}.planner-ui .simple-account-grid{grid-template-columns:1fr}.planner-ui .simple-input-card{padding:20px 16px}.planner-ui .benefit-result{padding:20px 16px}.planner-ui .benefit-amount{font-size:27px}.planner-ui .result-empty .benefit-amount{font-size:20px}.planner-ui .simple-navigation{justify-content:stretch}.planner-ui .simple-navigation button{flex:1 1 120px}.planner-ui .primary,.planner-ui .secondary{min-height:48px}.planner-ui .simple-composition{padding:20px 15px}.planner-ui .simple-bar-row{grid-template-columns:85px minmax(0,1fr)}.planner-ui .prompt-types{grid-template-columns:1fr}.planner-ui .comparison-actions button{flex:1 1 130px}.planner-ui .note{margin-top:0}.planner-ui .ktcu-table td,.planner-ui .ktcu-table th{padding:12px 8px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.planner-ui *{scroll-behavior:auto;transition:none;animation:none}}
+.planner-ui .profile-stage{border-top:1px solid #e7ecf3;padding-top:22px;margin-top:26px}
+.planner-ui .stage-number{display:inline-grid;place-items:center;width:24px;height:24px;background:#edf3fd;color:#315d9b;border-radius:8px;font-size:11px;margin-right:6px}
+.planner-ui .content-grid:has(.panel-4){grid-template-columns:minmax(0,1fr)}
+.planner-ui .content-grid:has(.panel-4) .right-column{position:static;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.planner-ui .content-grid:has(.panel-4) .note{margin-top:0}
+.planner-ui .panel-4 .simple-panel{display:flex;flex-direction:column}
+.planner-ui .panel-4 section[aria-label='주요 적립금 합계']{order:-3;background:#244b80;border-color:#244b80;margin-top:0}
+.planner-ui .panel-4 section[aria-label='주요 적립금 합계'] h3,.planner-ui .panel-4 section[aria-label='주요 적립금 합계'] p{color:#e1eafb}
+.planner-ui .panel-4 section[aria-label='주요 적립금 합계'] .benefit-amount{color:#fff;font-size:clamp(26px,3vw,38px)}
+.planner-ui .panel-4 section[aria-label='기본정보 요약']{order:-2}
+.planner-ui .panel-4 .ktcu-cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:760px){.planner-ui .content-grid:has(.panel-4) .right-column{grid-template-columns:1fr}.planner-ui .panel-4 .ktcu-cards{grid-template-columns:1fr}}
+.planner-ui .summary-row>span{color:#58677b;font-size:12px}
+.planner-ui .nav-number{color:#526a8a}
