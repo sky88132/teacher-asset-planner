@@ -1,5 +1,6 @@
 import { createPensionInputs, type BenefitInput } from '../finance/pension-input.ts';
 import type { PensionEstimateInput } from './pension-types.ts';
+import type { AccountReceiptInput } from './account-receipt.ts';
 export type SimpleScheme = 'civil' | 'private-school' | 'national';
 export const schemeNames: Record<SimpleScheme, string> = { civil: '공무원연금', 'private-school': '사학연금', national: '국민연금' };
 export type SimpleProfile = {
@@ -7,7 +8,7 @@ export type SimpleProfile = {
   military: 'approved' | 'not' | 'unknown'; retirement: 'normal' | 'early'; earlyDate: string;
   manualNormal: boolean; normalDate: string;
 };
-export type SimpleAccount = { balance: string; monthly: string; cycle?: 'monthly' | 'yearly'; annual?: string };
+export type SimpleAccount = { balance: string; monthly: string; cycle?: 'monthly' | 'yearly'; annual?: string; receipt?: AccountReceiptInput };
 export type SimpleBenefits = { pension: BenefitInput; allowance: BenefitInput; honorary: BenefitInput;
   eligibility: 'unknown' | 'confirmed' | 'no'; selection: 'unknown' | 'selected' | 'rejected';
   income?: string; recognizedMonths?: string; recognizedDate?: string; recognizedAppointment?: string;

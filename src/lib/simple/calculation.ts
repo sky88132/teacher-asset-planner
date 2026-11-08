@@ -9,6 +9,7 @@ import { pensionTaxCredit } from '../finance/irp-tax.ts';
 import { createPensionEstimateInput } from './pension-types.ts';
 import { estimateCivilPension, estimatePrivatePension } from './occupational-pension.ts';
 import { estimateNationalPension } from './national-pension.ts';
+import { calculateAccountReceipt, createAccountReceiptInput } from './account-receipt.ts';
 import { isCalendarDate } from '../profile-validation.ts';
 import { simpleConfig } from './config.ts';
 import type { SimpleAccount, SimpleInputs, SimpleScheme } from './model.ts';
@@ -155,6 +156,10 @@ export function calculateSimple(input: SimpleInputs, today: string) {
   return { today, retirement, step, ktcu, split, splitError, irp, saving, pension, allowance, honorary,
     benefitsTotal, accountsTotal, accumulationTotal, accumulation, allowanceDetails, honoraryDetails, plannedTotals,
     pensionDetails, pensionSource, pensionStartDate, pensionGapMonths, pensionGapDays,
+    accountReceipts: {
+      irp: calculateAccountReceipt(input.irp.receipt ?? createAccountReceiptInput(), input.profile.birthDate, date, today, pensionStartDate),
+      saving: calculateAccountReceipt(input.saving.receipt ?? createAccountReceiptInput(), input.profile.birthDate, date, today, pensionStartDate),
+    },
     taxCredits, reinvestments: reinvestError ? [] : reinvestments, reinvestError,
     reinvestEffect: !input.reinvest || reinvestError || irp.amountWon === null ? null : irp.amountWon - (calculateAccount(input.irp, date, today, simpleConfig.irpRate).amountWon ?? irp.amountWon),
     residualMonths: date && retirement.normal ? completedSimulationMonths(date, retirement.normal) : null,

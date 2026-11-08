@@ -166,3 +166,4 @@
 .planner-ui .date-picker-days button.date-selected{background:#2b60ad;color:#fff;font-weight:700}
 .planner-ui .date-picker>p{font-size:11px;margin-top:10px}
 @media(max-width:760px){.planner-ui .date-picker{padding:12px 8px}.planner-ui .date-picker-selects select{font-size:16px}.planner-ui .date-calendar-trigger{padding:0 10px}}
+@media(max-width:640px){.planner-ui .account-receipt-settings .date-input-row{display:grid;grid-template-columns:minmax(0,1fr)}.planner-ui .account-receipt-settings .date-input-row input{width:100%}.planner-ui .account-receipt-settings .simple-details{padding-inline:10px}}
