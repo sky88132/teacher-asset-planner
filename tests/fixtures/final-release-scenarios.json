@@ -1,0 +1,12 @@
+[
+  {"id":"A","label":"40대 공무원·정년","birth":"1980-05-10","appointment":"2005-03-01","scheme":"civil","retirement":"normal","expectedDate":"2042-08-31","funding":"all"},
+  {"id":"B","label":"50대 공무원·55세 명퇴","birth":"1972-01-01","appointment":"2000-03-01","scheme":"civil","retirement":"early","date":"2027-01-01","expectedDate":"2027-01-01","funding":"none"},
+  {"id":"C","label":"사학연금·기초소득 추가","birth":"1980-05-10","appointment":"2010-03-01","scheme":"private-school","retirement":"normal","expectedDate":"2042-08-31","funding":"none","pension":"auto"},
+  {"id":"D","label":"국민연금·별도 가입이력","birth":"1980-05-10","appointment":"2005-03-01","scheme":"national","retirement":"early","date":"2035-02-28","expectedDate":"2035-02-28","funding":"none","pension":"national"},
+  {"id":"E","label":"01 기본정보만","birth":"1980-05-10","appointment":"2016-03-01","scheme":"civil","retirement":"normal","expectedDate":"2042-08-31","funding":"none"},
+  {"id":"F","label":"IRP만 입력","birth":"1980-05-10","appointment":"2005-03-01","scheme":"civil","retirement":"normal","expectedDate":"2042-08-31","funding":"irp"},
+  {"id":"G","label":"공제회10년 분할","birth":"1980-05-10","appointment":"2005-03-01","scheme":"civil","retirement":"normal","expectedDate":"2042-08-31","funding":"split"},
+  {"id":"H","label":"연금저축 연말납","birth":"1980-05-10","appointment":"2005-03-01","scheme":"civil","retirement":"normal","expectedDate":"2042-08-31","funding":"saving-yearly"},
+  {"id":"I","label":"구법·공적연금 추정 불가","birth":"1970-05-10","appointment":"1990-03-01","scheme":"civil","retirement":"early","date":"2030-02-28","expectedDate":"2030-02-28","funding":"none"},
+  {"id":"J","label":"생활비·공식 조회 입력","birth":"1980-05-10","appointment":"2005-03-01","scheme":"civil","retirement":"early","date":"2030-11-08","expectedDate":"2030-11-08","funding":"none","pension":"quote","living":"3000000"}
+]

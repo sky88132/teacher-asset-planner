@@ -1,6 +1,6 @@
 /** Planning assumptions, not guaranteed returns or a statement of product eligibility. */
 export const simpleConfig = {
-  version: 'simple-2026-11-v5', checkedOn: '2026-11-08', ktcuRate: 5, irpRate: 7, savingRate: 8,
+  version: 'simple-2026-11-v6', checkedOn: '2026-11-08', ktcuRate: 5, irpRate: 7, savingRate: 8,
   salaryYear: 2026, maxStep: 40, maxMonths: 720, annualPersonalLimit: 18000000,
   contributionLawUrl: 'https://www.law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1033240359',
   ktcuUrl: 'https://www.ktcu.or.kr/PPW-FIA-100100',
