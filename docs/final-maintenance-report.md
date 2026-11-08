@@ -105,7 +105,7 @@ teacher-benefits.ts에서 전년도 보수→퇴직연도 환산시 봉급·봉�
 - tests/public-pension.test.mjs
 - tests/teacher-income-model.test.mjs
 
-next-env.d.ts는 시작 당시의 .next/dev/types 참조 상태를 보존하고 제외한다. 기존3개 teacher-*.log, .next, test-results, Playwright 캡처와 임시 설정은 커밋하지 않는다. 로그는 삭제하지 않는다.
+next-env.d.ts는 시작 당시의 미커밋 자동 생성 참조(.next/types)를 보존하고 커밋에서 제외한다. 기존3개 teacher-*.log, .next, test-results, Playwright 캡처와 임시 설정은 커밋하지 않는다. 로그는 삭제하지 않는다.
 
 ## 6. 실제 실행한 검사
 
@@ -162,7 +162,7 @@ next-env.d.ts는 시작 당시의 .next/dev/types 참조 상태를 보존하고 
 
 시작 원격 main=f9fb992의 GitHub Vercel 체크 success를 실제 조회했다. 프로젝트 체크 URL은 https://vercel.com/hans-90df/teacher-asset-planner/6TrNdxyJGnqhvoyM3z4nWidVroYU 이다. GitHub deployments API에는 해당 SHA의 환경 레코드가 없었고 Vercel CLI/대시보드 인증은 없어 Production Branch·Preview 보호 등 내부 설정을 직접 조회하지 못했다. main Push가 외부 공개 자동 배포로 이어질 수 있음을 전제로 검사했다.
 
-기능 커밋2214f11 Push 직후 GitHub combined status는 pending이고 개별 status 목록은 비어 있었다. 이 시점에는 자동 배포 시작·Production 성공을 확인할 수 없으므로 성공이라고 보고하지 않는다. 직접 Vercel 배포/프로젝트 생성/설정 변경은 수행하지 않았다. 확인 시점 이후 변할 수 있는 상태이며 최신 결과는 해당 커밋의 Vercel 체크 및 기존 프로젝트 Deployments에서 확인해야 한다.
+기능 커밋2214f11 Push 직후에는 pending/개별 status 없음이었으며, 후속 실제 조회에서 context=Vercel, state=success를 확인했다. 체크 URL: https://vercel.com/hans-90df/teacher-asset-planner/3kkcnKGmeZN9CzeEyEWWRDNdHgbF . 이는 GitHub에 Vercel이 보고한 해당 기능 커밋의 배포 체크 성공이다. 직접 Vercel 배포/프로젝트 생성/설정 변경은 수행하지 않았다. 내부 Production/Preview 환경·보호 설정까지 확인한 것은 아니며 이 보고서를 담는 후속 문서 커밋의 배포 상태와도 구분한다. 최종 원격 문서 커밋은 별도 해시로 확인한다.
 
 ## 12. 남은 문제·우선순위
 
