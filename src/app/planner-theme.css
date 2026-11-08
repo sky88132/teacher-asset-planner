@@ -143,3 +143,7 @@
 @media(max-width:760px){.planner-ui .content-grid:has(.panel-4) .right-column{grid-template-columns:1fr}.planner-ui .panel-4 .ktcu-cards{grid-template-columns:1fr}}
 .planner-ui .summary-row>span{color:#58677b;font-size:12px}
 .planner-ui .nav-number{color:#526a8a}
+.planner-ui .money-input-wrap{position:relative;margin-top:9px}
+.planner-ui .money-input-wrap input{padding-right:62px}
+.planner-ui .money-input-wrap>span{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:#52627a;pointer-events:none}
+.planner-ui .money-field>.profile-help{font-size:11px;margin-top:8px}

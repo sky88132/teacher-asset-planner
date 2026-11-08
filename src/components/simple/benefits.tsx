@@ -4,13 +4,12 @@ import type { SimpleInputs, SimpleBenefits } from '@/lib/simple/model';
 import { schemeNames } from '@/lib/simple/model';
 import type { SimpleResults } from '@/lib/simple/calculation';
 import { simpleDisclaimer } from '@/lib/simple/config';
-import { Field, Result, won, OfficialLink } from './shared';
+import { Field, MoneyField, Result, won, OfficialLink } from './shared';
 export function SimpleQuoteEditor({ value, onChange, title, kind, date }: { value: BenefitInput; onChange: (v: BenefitInput) => void; title: string;
   kind: 'pension' | 'allowance' | 'honorary'; date: string | null }) {
   const set = <K extends keyof BenefitInput>(key: K, v: BenefitInput[K]) => onChange({ ...value, [key]: v });
   return <details className="simple-details"><summary>{title} 직접 입력 (선택)</summary><p className="profile-help">공식 조회값도 사용자가 직접 입력한 값입니다. 기관에 자동 조회하거나 진위를 검증하지 않습니다.</p>
-    <div className="benefit-fields"><Field label={`${title} 금액`} value={value.money.amount} onChange={amount => set('money', { ...value.money, amount })} />
-      <Field label={`${title} 단위`} value={value.money.unit} onChange={v => set('money', changeMoneyUnit(value.money, v as 'won' | 'manwon'))}><option value="won">원</option><option value="manwon">만 원</option></Field>
+    <div className="benefit-fields"><MoneyField label={`${title} 금액 (만원)`} valueWon={changeMoneyUnit(value.money, 'won').amount} onChangeWon={amount => set('money', { amount, unit: 'won' })} />
       <Field label={`${title} 조회 기준일`} type="date" value={value.queryDate} onChange={v => set('queryDate', v)} />
       <Field label={`${title} 세전·세후`} value={value.taxBasis} onChange={v => set('taxBasis', v as BenefitInput['taxBasis'])}><option value="">선택</option><option value="gross">세전</option><option value="net">세후</option></Field>
       <Field label={`${title} 출처`} value={value.source} onChange={v => set('source', v as BenefitInput['source'])}><option value="">선택</option><option value="official">공식 조회값 · 사용자 직접 입력</option><option value="user-estimate">사용자 추정값 · 공식 검증 아님</option></Field>

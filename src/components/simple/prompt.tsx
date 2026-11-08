@@ -20,7 +20,7 @@ export function SimplePromptPanel({ input, today, value, onChange }: { input: Si
       inclusionReviewed: false, ...(privacyChanged ? { draft: '', original: '', generatedKey: null } : {}) }); setMessage('');
   };
   const select = () => { text.current?.focus(); text.current?.select(); };
-  return <div className="simple-panel"><p className="form-description">01 기본정보만 유효하면 생성할 수 있습니다. 다른 금융 입력은 선택 사항이며 미입력 금액은 만들지 않습니다.</p>
+  return <div className="simple-panel"><p className="form-description">01 기본정보만 유효하면 생성할 수 있습니다. 다른 금융 입력은 선택 사항이며 미입력 금액은 만들지 않습니다. 화면 입력은 만원 단위이며, 요청문에는 환산된 원 단위 금액과 단위를 명시합니다.</p>
     <fieldset><legend>분석 유형</legend><div className="prompt-types">{Object.entries(simpleAnalyses).map(([id, label]) => <label key={id} className={`school ${s.analysis === id ? 'chosen' : ''}`}><input type="radio" name="simple-analysis" checked={s.analysis === id} onChange={() => set('analysis', id as PromptSettings['analysis'])} /><strong>{label}</strong></label>)}</div></fieldset>
     <label className="checkbox"><input type="checkbox" checked={s.anonymize} onChange={e => set('anonymize', e.target.checked)} />익명화 모드</label><p className="profile-help">기본값은 연령대·임용연도만 포함하며 정확한 생년월일·임용일·학교명은 제외합니다. 익명화를 꺼도 날짜는 포함하지 않습니다. 자유 질문과 편집본은 직접 검토하세요.</p>
     <div className="benefit-fields"><Field label="금융금액 표시 방식" value={s.money} onChange={v => set('money', v as PromptSettings['money'])}><option value="round">10만 원 단위 반올림</option><option value="range">100만 원 구간</option><option value="exact">정확한 금액</option></Field><Field label="요청문 분량" value={s.detail} onChange={v => set('detail', v as PromptSettings['detail'])}><option value="simple">간단</option><option value="detailed">상세</option></Field></div>
