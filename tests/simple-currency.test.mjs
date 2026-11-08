@@ -34,7 +34,7 @@ test('450만원 월연금은 AI 요청문에 4,500,000원으로 전달하며 적
 });
 test('경계 수정 1: 1개월 월200만원을 연환산하지 않고 실제 1회 납입으로 계산',()=>{
   const f=fixture();f.profile.normalDate='2026-12-08';Object.assign(f.irp,{balance:'0',monthly:manwonToWon('200').valueWon});Object.assign(f.saving,{balance:'0',monthly:'0'});
-  const r=calculateSimple(f,today);assert.equal(r.irp.amountWon,2000000);assert.equal(r.irp.deposits,2000000);
+  const r=calculateSimple(f,today);assert.equal(r.irp.amountWon,Math.round(2000000*1.07**(8/365)));assert.equal(r.irp.deposits,2000000);
 });
 test('경계 수정 2: 공식 국민연금 개시일이 퇴직일보다 빨라도 표시',()=>{
   const f=fixture();Object.assign(f.profile,{scheme:'national',birthDate:'1960-05-10',appointmentDate:'1990-03-01',normalDate:'2027-02-28'});

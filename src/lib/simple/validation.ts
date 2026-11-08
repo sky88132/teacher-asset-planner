@@ -3,6 +3,7 @@ import { addSimulationMonths, completedSimulationMonths } from '../finance/ktcu-
 import { parseMoney } from '../finance/pension-input-validation.ts';
 import type { SimpleProfile } from './model.ts';
 import { simpleConfig } from './config.ts';
+import { contributionSchedule, annualContributions } from './account-schedule.ts';
 
 export const moneyWon = (raw: string) => parseMoney({ amount: raw, unit: 'won' });
 export function normalRetirementCandidate(birth: string): string | null {
@@ -46,18 +47,16 @@ export function projectedStep(p: SimpleProfile, date: string | null, today: stri
   return step;
 }
 
-/** Known planned deposits only; missing accounts are not confirmed zero.
- * Payment dates match the accumulation engine's completed monthly anniversaries.
+/** Known monthly planned deposits only; missing accounts are not confirmed zero.
+ * Payment dates match the accumulation engine's calendar month ends.
  * This is not a certification of the user's actual remaining annual allowance. */
 export function contributionLimitYears(monthlyWon: (number | null)[], today: string, date: string | null): number[] {
   if (!date || !isCalendarDate(today) || !isCalendarDate(date) || date < today) return [];
   const months = completedSimulationMonths(today, date);
   if (months > simpleConfig.maxMonths) return [];
-  const knownMonthly = monthlyWon.reduce<bigint>((sum, n) => sum + (n !== null && Number.isSafeInteger(n) && n >= 0 ? BigInt(n) : 0n), 0n);
   const totals = new Map<number, bigint>();
-  for (let i = 1; i <= months; i++) {
-    const year = Number(addSimulationMonths(today, i).slice(0, 4));
-    totals.set(year, (totals.get(year) ?? 0n) + knownMonthly);
+  for (const amount of monthlyWon) if (amount !== null && Number.isSafeInteger(amount) && amount >= 0) {
+    try { for (const [year, total] of Object.entries(annualContributions(contributionSchedule({ balance: '0', monthly: String(amount) }, today, date)))) totals.set(Number(year), (totals.get(Number(year)) ?? 0n) + BigInt(total)); } catch { return []; }
   }
   return [...totals].filter(([, total]) => total > BigInt(simpleConfig.annualPersonalLimit)).map(([year]) => year);
 }

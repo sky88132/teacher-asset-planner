@@ -22,7 +22,7 @@ test('0개월은 월 납입이 매우 커도 납입 0회·기초잔액 유지',(
 test('연말 경계는 총기간 합계가 아닌 각 달력 연도 기준',()=>{
   assert.deepEqual(contributionLimitYears([4500000,0],'2026-10-31','2027-04-30'),[]); // 2026:2회, 2027:4회
   assert.deepEqual(contributionLimitYears([4500001,0],'2026-10-31','2027-04-30'),[2027]);
-  assert.deepEqual(contributionLimitYears([18000000,0],'2026-11-08','2027-01-08'),[]); // 12월·1월 각각 1회
+  assert.deepEqual(contributionLimitYears([18000000,0],'2026-11-08','2027-01-08'),[2026]); // 11·12월 말 2회
 });
 test('합산 한도·미입력 계좌·유효하지 않은 기간을 유지',()=>{
   const f=fixture(6);f.irp.monthly='2000000';f.saving.monthly='1000000';assert.notEqual(calculateSimple(f,today).accountsTotal,null);
@@ -30,7 +30,7 @@ test('합산 한도·미입력 계좌·유효하지 않은 기간을 유지',()=
   f.saving.monthly='';f.saving.balance='';const r=calculateSimple(f,today);assert.notEqual(r.irp.amountWon,null);assert.equal(r.saving.amountWon,null);assert.equal(r.accountsTotal,null);
   for(const date of [null,'bad','2026-12-31','2099-01-01'])assert.deepEqual(contributionLimitYears([2000000,0],today,date),[]);
 });
-test('만원 입력으로 월 200만원·1개월이면 원 단위 200만원 납입만 반영',()=>{const f=fixture(1);f.irp.balance='0';f.irp.monthly=manwonToWon('200').valueWon;assert.equal(calculateSimple(f,today).irp.amountWon,2000000);});
+test('만원 입력으로 월 200만원·1개월이면 1월말 납입 후 하루 수익 반영',()=>{const f=fixture(1);f.irp.balance='0';f.irp.monthly=manwonToWon('200').valueWon;const r=calculateSimple(f,today).irp;assert.equal(r.deposits,2000000);assert.equal(r.amountWon,Math.round(2000000*1.07**(1/365)));});
 for(const scheme of ['civil','private-school','national'])for(const relation of ['before','same','after'])test(`${scheme} 연금 개시일 ${relation}: 제도별 검증`,()=>{
   const f=fixture(12);f.profile.scheme=scheme;
   const date=f.profile.normalDate,startDate=relation==='before'?'2027-12-31':relation==='same'?date:'2028-01-02';

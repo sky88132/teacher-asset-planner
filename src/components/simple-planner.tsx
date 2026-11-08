@@ -10,7 +10,7 @@ import { SimpleBenefitsPanel } from './simple/benefits';
 import { SimpleOverview } from './simple/overview';
 import { SimplePromptPanel } from './simple/prompt';
 import { simpleDisclaimer } from '@/lib/simple/config';
-const descriptions = ['기본정보를 입력하고 나에게 맞는 은퇴 기준을 확인하세요.', '지금의 저축이 퇴직 시점에 얼마나 자랄지 살펴보세요.', '두 연금계좌의 납입 계획과 예상 적립금을 함께 확인하세요.', '공식 조회금액과 지급 조건을 빠짐없이 확인하세요.', '나의 은퇴 준비를 한눈에 확인하고 다음 계획을 세워보세요.', '내 계산 결과를 바탕으로 나만의 분석 요청문을 만드세요.'];
+const descriptions = ['기본정보를 입력하고 나에게 맞는 은퇴 기준을 확인하세요.', '지금의 저축이 퇴직 시점에 얼마나 자랄지 살펴보세요.', '두 연금계좌의 납입 계획과 예상 적립금을 함께 확인하세요.', '기본정보로 수당을 추정하고 계산 근거와 지급 조건을 확인하세요.', '나의 은퇴 준비를 한눈에 확인하고 다음 계획을 세워보세요.', '내 계산 결과를 바탕으로 나만의 분석 요청문을 만드세요.'];
 const menus = ['교사 기본정보','교직원공제회','IRP·연금저축','퇴직급여 계산','은퇴설계 종합','AI 분석 요청문'];
 export function SimplePlanner() {
   const [active, setActive] = useState(0), [input, setInput] = useState(createSimpleInputs);
@@ -26,7 +26,7 @@ export function SimplePlanner() {
     <div className="workspace"><header><span>나의 은퇴 설계 <span className="breadcrumb">/ {menus[active]}</span></span><span className="status"><i />로그인 없는 간편 계산</span></header><main>
       <div className="eyebrow">RETIREMENT PLANNING</div><div className="page-heading"><div><h1>{menus[active]}</h1><p>{descriptions[active]}</p></div><span className="step-badge">STEP {String(active + 1).padStart(2, '0')} <span>/ 06</span></span></div>
       <div className="mode-bar"><div><strong>간편 계산 모드</strong><span>퇴직일은 기본정보에서 한 번만 입력합니다.</span></div><span className="coming">정밀 계산 모드 · 준비 중</span></div>
-      <div className="content-grid"><section className={`card form-card panel-${active}`}><div className="card-heading"><div><span className="section-tag">{String(active + 1).padStart(2, '0')} · SIMPLE PLAN</span><h2>{['나의 은퇴 기준 설정', '장기저축 계획', '연금계좌별 납입 계획', '퇴직급여 조회 및 확인', '나의 은퇴 대시보드', '분석 요청문 만들기'][active]}</h2></div><span className="panel-step">{String(active + 1).padStart(2, '0')}</span></div>
+      <div className="content-grid"><section className={`card form-card panel-${active}`}><div className="card-heading"><div><span className="section-tag">{String(active + 1).padStart(2, '0')} · SIMPLE PLAN</span><h2>{['나의 은퇴 기준 설정', '장기저축 계획', '연금계좌별 납입 계획', '퇴직급여 예상액 계산', '나의 은퇴 대시보드', '분석 요청문 만들기'][active]}</h2></div><span className="panel-step">{String(active + 1).padStart(2, '0')}</span></div>
         {active === 0 ? <SimpleProfilePanel value={input.profile} onChange={profile => setInput({ ...input, profile })} result={result} />
           : active === 1 ? <SimpleKtcuPanel value={input.ktcu} onChange={ktcu => setInput({ ...input, ktcu })} result={result} />
           : active === 2 ? <SimpleAccountsPanel value={input} onChange={setInput} result={result} />

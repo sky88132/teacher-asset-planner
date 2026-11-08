@@ -3,7 +3,8 @@ import { changeMoneyUnit } from '@/lib/finance/pension-input-validation';
 import type { SimpleInputs, SimpleBenefits } from '@/lib/simple/model';
 import { schemeNames } from '@/lib/simple/model';
 import type { SimpleResults } from '@/lib/simple/calculation';
-import { simpleDisclaimer } from '@/lib/simple/config';
+import { benefitSources } from '@/lib/simple/benefit-estimates';
+import { simpleConfig, simpleDisclaimer } from '@/lib/simple/config';
 import { Field, MoneyField, Result, won, OfficialLink } from './shared';
 export function SimpleQuoteEditor({ value, onChange, title, kind, date }: { value: BenefitInput; onChange: (v: BenefitInput) => void; title: string;
   kind: 'pension' | 'allowance' | 'honorary'; date: string | null }) {
@@ -18,21 +19,22 @@ export function SimpleQuoteEditor({ value, onChange, title, kind, date }: { valu
     {value.retirementDate && value.retirementDate !== date && <p className="field-error">이전 조회 가정일 {value.retirementDate} · 현재 퇴직일로 재조회 후 확인하세요.</p>}</details>;
 }
 export function SimpleBenefitsPanel({ input, onChange, result }: { input: SimpleInputs; onChange: (v: SimpleInputs) => void; result: SimpleResults }) {
-  const p = input.profile, q = input.benefits[p.scheme];
+  const p = input.profile, q = input.benefits[p.scheme], h = result.honoraryDetails, a = result.allowanceDetails;
   const update = (patch: Partial<SimpleBenefits>) => onChange({ ...input, benefits: { ...input.benefits, [p.scheme]: { ...q, ...patch } } });
-  const tax = (v: BenefitInput) => v.taxBasis === 'gross' ? '세전' : v.taxBasis === 'net' ? '입력액 세후 · 자동 세금 계산 아님' : '세금 기준 미입력';
   return <div className="simple-panel"><p className="profile-context">{schemeNames[p.scheme]} · {p.retirement === 'early' ? '명예퇴직' : '정년퇴직'} · 예상 퇴직일 {result.retirement.date ?? '01에서 확인해 주세요.'}</p>
     {p.retirement === 'early' && <details className="simple-benefit-card"><summary>명예퇴직수당 예상액</summary>
-      <dl className="benefit-details"><dt>명퇴 예정일</dt><dd>{result.retirement.date ?? '확인 필요'}</dd><dt>정년 예정일</dt><dd>{result.retirement.normal ?? '확인 필요'}</dd><dt>정년 잔여기간</dt><dd>{result.residualMonths === null ? '계산 불가' : `달력상 완료 월 ${result.residualMonths}개월 · 법정 지급용 잔여월수 아님`}</dd><dt>퇴직 시 호봉</dt><dd>{result.step === null ? '계산 불가' : `${result.step}호봉 · 조건부 참고정보`}</dd><dt>산정 봉급액</dt><dd>확인 필요 · 해당 퇴직연도 봉급표·신분·현행 별표 검증 전</dd></dl>
-      <p className="profile-help">호봉만으로 명퇴수당을 계산하지 않습니다. 적용 신분·지급 자격·현행 별표·정년 잔여월수·산정 봉급액이 필요하며 실제 선정도 별개입니다. 국민연금 가입만으로 교원 명퇴수당 자격을 확정하지 않습니다.</p>
-      <div className="benefit-fields"><Field label="명예퇴직수당 지급 자격" value={q.eligibility} onChange={v => update({ eligibility: v as SimpleBenefits['eligibility'] })}><option value="unknown">확인 필요</option><option value="confirmed">소속 기관 확인 완료</option><option value="no">해당 없음</option></Field><Field label="명예퇴직수당 실제 선정" value={q.selection} onChange={v => update({ selection: v as SimpleBenefits['selection'] })}><option value="unknown">미확정</option><option value="selected">선정 확인 완료</option><option value="rejected">미선정</option></Field></div>
-      {p.scheme !== 'national' && <SimpleQuoteEditor title="명예퇴직수당" kind="honorary" value={q.honorary} onChange={honorary => update({ honorary })} date={result.retirement.date} />}
-      <Result title="명예퇴직수당 결과" result={result.honorary}><p className="profile-help">{tax(q.honorary)} · 소속 기관의 최종 확인 필요</p></Result></details>}
-    <details className="simple-benefit-card"><summary>퇴직수당 예상액</summary><dl className="benefit-details"><dt>퇴직 방식</dt><dd>{p.retirement === 'early' ? '명예퇴직' : '정년퇴직'}</dd><dt>예상 퇴직일</dt><dd>{result.retirement.date ?? '계산 불가'}</dd><dt>예상 재직기간</dt><dd>{result.serviceMonths === null ? '계산 불가' : `달력상 완료 월 ${result.serviceMonths}개월`}</dd><dt>수당 인정기간</dt><dd>공단 인정기간 조회 필요 · 달력상 근속과 다름</dd><dt>적용 소득정보</dt><dd>최종 기준소득월액 등 공식 확인 필요 · 호봉 봉급액과 다름</dd><dt>미반영 조건</dt><dd>구법 재직분·휴직·감액·기수령·군복무/합산의 수당 반영·끝수 처리</dd></dl>
-      {p.scheme === 'national' ? <p className="profile-context">국민연금 가입자는 공무원·사학 퇴직수당 자동 지급 대상이 아닙니다. 별도 법정 퇴직급여의 적용 여부, 계속근로기간·평균임금 또는 DB/DC 내역을 확인해야 합니다. 이 화면에서는 해당 금액을 계산하지 않습니다.</p> : <><p className="profile-help">공무원·사학 각각의 기존 검증 차단 상태를 유지합니다. 현재 입력만으로 공식 금액을 자동 산정할 수 없어 조회값을 선택적으로 입력합니다.</p><SimpleQuoteEditor title="퇴직수당" kind="allowance" value={q.allowance} onChange={allowance => update({ allowance })} date={result.retirement.date} /></>}
-      <Result title="퇴직수당 결과" result={result.allowance}><p className="profile-help">{tax(q.allowance)} · 일시금</p></Result>
-      <p className="profile-help"><OfficialLink href={p.scheme === 'private-school' ? 'https://www.tp.or.kr/' : p.scheme === 'national' ? 'https://www.moel.go.kr/' : 'https://www.geps.or.kr/'}>적용 기관 공식 안내</OfficialLink> · <OfficialLink href={p.scheme === 'private-school' ? 'https://www.law.go.kr/법령/사립학교교직원연금법/제42조' : p.scheme === 'national' ? 'https://www.law.go.kr/법령/근로자퇴직급여보장법' : 'https://www.law.go.kr/법령/공무원연금법/제62조'}>관련 법령</OfficialLink></p></details>
-    <section className="benefit-result" aria-label="퇴직급여 합계"><h3>{p.retirement === 'early' ? '명예퇴직수당 + 퇴직수당' : '퇴직수당 요약'}</h3><strong className="benefit-amount">{won(result.benefitsTotal, '완전한 합계 확인 불가')}</strong>
-      <p>퇴직수당: {won(result.allowance.amountWon)} · {tax(q.allowance)}</p>{p.retirement === 'early' && <p>명예퇴직수당: {won(result.honorary.amountWon)} · {tax(q.honorary)}</p>}
-      <p className="profile-help">누락·미선정·서로 다른 세금 기준은 완전한 합계로 만들지 않습니다. 공식 입력은 사용자 조회값이며 자동 산식 검증 결과가 아닙니다.</p></section><p className="benefit-disclaimer">{simpleDisclaimer}</p></div>;
+      <Result title="명예퇴직수당 결과" result={result.honorary} />
+      <dl className="benefit-details"><dt>명퇴 예정일</dt><dd>{result.retirement.date ?? '확인 필요'}</dd><dt>정년 예정일</dt><dd>{result.retirement.normal ?? '확인 필요'}</dd><dt>정년 잔여기간</dt><dd>{h.months === null ? '계산 불가' : h.months + '개월 · 퇴직 다음 달 1일부터 정년 월말까지'}</dd><dt>퇴직 시 호봉</dt><dd>{result.step === null ? '계산 불가' : result.step + '호봉 · 정기승급 가정'}</dd><dt>적용 봉급액</dt><dd>{won(h.salaryWon)} / 월</dd><dt>적용 산식</dt><dd>{h.formula}</dd><dt>기준 봉급표</dt><dd>{h.basis}</dd><dt>자료 확인일</dt><dd>{simpleConfig.checkedOn}</dd></dl>
+      <p className="profile-help">공무원연금에 가입한 일반 국공립 유·초·중·고 호봉제 정규 교원 가정입니다. 임용일부터 중단 없이 재직하고 승급 제한이 없다고 가정합니다. 대학·연봉제·시간제·특별 가산·근가호봉은 반영하지 않습니다. 법정 20년 재직·최소 1년 조기퇴직을 확인하며, 징계·수사 등 지급제한과 예산·인력수급에 따른 선정 심사는 기관이 판단합니다. 조건을 충족한 경우의 금액이며 지급 확정이 아닙니다.</p>
+      <p className="profile-help"><OfficialLink href={benefitSources.honorary}>국가공무원 명예퇴직수당 등 지급 규정·별표 1</OfficialLink> · <OfficialLink href={simpleConfig.salaryUrl}>2026 교원 봉급표</OfficialLink></p>
+      <p className="benefit-disclaimer">명예퇴직수당은 관련 법령과 지급 심사 결과에 따라 실제 지급 여부 및 금액이 달라질 수 있습니다.</p></details>}
+    <details className="simple-benefit-card"><summary>퇴직수당 예상액</summary>
+      {p.scheme !== 'national' && <><MoneyField label="2026년 기준 퇴직수당용 기준소득월액 (만원, 선택)" valueWon={q.income ?? ''} onChangeWon={income => update({ income })} />
+      <p className="profile-help">공단에서 확인한 2026년 기준소득월액을 입력하면 퇴직일까지 같은 가격 수준으로 유지하는 시나리오를 계산합니다. 호봉만으로 이 소득을 추정하지 않습니다. 미래 실제 최종기준소득월액과 다를 수 있습니다.</p>
+      <details className="simple-details"><summary>퇴직수당 인정기간 조정 (선택)</summary><Field label="퇴직일 기준 퇴직수당 인정 개월 (선택)" value={q.recognizedMonths ?? ''} onChange={recognizedMonths => update({ recognizedMonths, recognizedDate: result.retirement.date ?? '', recognizedAppointment: p.appointmentDate })} /><p className="profile-help">미입력 시 임용월부터 퇴직 전날이 속한 월까지 중단 없는 재직을 가정합니다. 휴직·정직 등의 감축 또는 기수령기간이 있으면 공단에서 확인한 퇴직일 기준 수당 인정기간을 입력하세요. 연금 인정기간과 다릅니다. 임용 전 군복무·합산기간은 자동으로 더하지 않습니다. 과거 휴직 적용례는 별도 확인이 필요합니다.</p></details></>}
+      <Result title="퇴직수당 결과" result={result.allowance} />
+      <dl className="benefit-details"><dt>적용 인정기간</dt><dd>{a.months === null ? '확인 필요' : a.months + '개월 · 최대 396개월 (33년)'}</dd><dt>소득 기준</dt><dd>{won(a.salaryWon)} / 월 · {a.basis}</dd><dt>적용 산식</dt><dd>{a.formula}</dd><dt>자료 확인일</dt><dd>{simpleConfig.checkedOn}</dd></dl>
+      {p.scheme !== 'national' && <p className="profile-help">2010년 이후 신규 임용자의 기본 산식만 지원합니다. 2009년 이전 재직분의 최종보수월액 환산·경과규정은 검증이 남아 현재 소득으로 대체하지 않습니다. 1년/5년/10년/15년/20년 경계에 따라 6.5%/22.75%/29.25%/32.5%/39%를 전체 인정연수에 적용합니다. 형벌·징계 감액, 미납금·기수령 공제와 세금은 미반영입니다. 원 미만 버림은 앱의 표시 규칙이며 공단 끝수 처리 검증을 뜻하지 않습니다.</p>}
+      <p className="profile-help"><OfficialLink href={a.source}>해당 제도 퇴직수당 지급률·상한 규정</OfficialLink> · <OfficialLink href={p.scheme === 'private-school' ? 'https://www.law.go.kr/법령/사립학교교직원연금법/제31조' : p.scheme === 'national' ? 'https://www.moel.go.kr/' : 'https://www.law.go.kr/법령/공무원연금법/제25조'}>인정기간·제외 규정</OfficialLink></p></details>
+    <section className="benefit-result" aria-label="퇴직급여 합계"><h3>{p.retirement === 'early' ? '명예퇴직수당 + 퇴직수당' : '퇴직수당 요약'}</h3><strong className="benefit-amount">{won(result.benefitsTotal, '완전한 합계 확인 불가')}</strong><p>퇴직수당: {won(result.allowance.amountWon)} · 세전</p>{p.retirement === 'early' && <p>명예퇴직수당: {won(result.honorary.amountWon)} · 세전</p>}<p className="profile-help">같은 퇴직일·2026년 가격 고정·세전 조건부 시나리오에서 계산 가능한 수당만 합산합니다. 지급 미확정이며 세후 실지급액이 아닙니다. 한 항목이 계산 불가이면 완전한 합계를 표시하지 않습니다.</p></section><p className="benefit-disclaimer">{simpleDisclaimer}</p></div>;
 }

@@ -4,12 +4,12 @@ import { manwonToWon, wonToManwon, groupManwon, formatWonAsKoreanCurrency } from
 import type { ReactNode } from 'react';
 import type { SimpleAmount } from '@/lib/simple/calculation';
 export const won = formatWonAsKoreanCurrency;
-export function Field({ label, value, onChange, type = 'text', children, disabled = false }: {
-  label: string; value: string; onChange: (v: string) => void; type?: string; children?: ReactNode; disabled?: boolean;
+export function Field({ label, value, onChange, type = 'text', children, disabled = false, inputMode }: {
+  label: string; value: string; onChange: (v: string) => void; type?: string; children?: ReactNode; disabled?: boolean; inputMode?: 'numeric' | 'decimal';
 }) {
   if (type === 'date' && !children) return <DateField label={label} value={value} onChange={onChange} disabled={disabled} />;
   return <div className="benefit-field"><label>{label}{children ? <select aria-label={label} value={value} onChange={e => onChange(e.target.value)} disabled={disabled}>{children}</select>
-    : <input aria-label={label} type={type} inputMode={type === 'text' ? 'numeric' : undefined} value={value} enterKeyHint="next" onChange={e => onChange(e.target.value)} disabled={disabled} />}</label></div>;
+    : <input aria-label={label} type={type} inputMode={inputMode ?? (type === 'text' ? 'numeric' : undefined)} value={value} enterKeyHint="next" onChange={e => onChange(e.target.value)} disabled={disabled} />}</label></div>;
 }
 export function Result({ title, result, children }: { title: string; result: SimpleAmount; children?: ReactNode }) {
   return <section className={`benefit-result ${result.amountWon === null ? 'result-empty' : 'result-ready'}`} aria-label={title}><h3>{title}</h3><strong className="benefit-amount">{won(result.amountWon)}</strong>{result.amountWon === null && <p className="empty-guidance">입력 정보와 아래 확인 사항을 채우면 결과를 볼 수 있어요.</p>}

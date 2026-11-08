@@ -77,10 +77,14 @@ test('재투자 체크는 유지하되 미확인 환급을 0원 또는 추가 �
   const f=fixture(),before=calculateSimple(f,today);f.reinvest=true;const after=calculateSimple(f,today);assert.equal(after.accountsTotal,before.accountsTotal);assert.equal(after.accumulationTotal,before.accumulationTotal);
   const text=generateSimplePrompt(f,createPromptWorkspace().settings,today);assert.match(text,/선택했으나/);assert.match(text,/0원 확정 아님/);
 });
-test('급여 합계는 두 수당·선정·세금 기준이 확인된 경우에만 제공한다',()=>{
-  const f=fixture();f.profile.retirement='early';f.profile.earlyDate='2028-11-08';quote(f,'allowance',100);quote(f,'honorary',200);let r=calculateSimple(f,today);assert.equal(r.benefitsTotal,null);
-  f.benefits.civil.eligibility='confirmed';f.benefits.civil.selection='selected';r=calculateSimple(f,today);assert.equal(r.benefitsTotal,300);
-  f.benefits.civil.honorary.taxBasis='net';assert.equal(calculateSimple(f,today).benefitsTotal,null);f.benefits.civil.honorary.taxBasis='gross';f.benefits.civil.allowance.money.amount='';assert.equal(calculateSimple(f,today).benefitsTotal,null);
+test('급여 합계는 두 자동 추정이 같은 가격·세전 기준에서 가능한 경우만 제공한다',()=>{
+  const f=fixture();Object.assign(f.profile,{retirement:'early',appointmentDate:'2010-03-01',earlyDate:'2031-08-31',normalDate:'2042-08-31'});
+  let r=calculateSimple(f,today);assert.equal(r.benefitsTotal,null);assert.ok(r.honorary.amountWon>0);
+  f.benefits.civil.income='6000000';r=calculateSimple(f,today);assert.equal(r.benefitsTotal,r.allowance.amountWon+r.honorary.amountWon);
+  assert.match(r.honorary.confidence,/지급 미확정/);
+  // Removed quote/selection fields do not control automatic results.
+  quote(f,'honorary',200,'net');f.benefits.civil.selection='rejected';assert.equal(calculateSimple(f,today).benefitsTotal,r.benefitsTotal);
+  f.benefits.civil.income='';assert.equal(calculateSimple(f,today).benefitsTotal,null);
 });
 test('월연금을 적립금·수당 합계에 더하지 않는다',()=>{
   const f=fixture(),before=calculateSimple(f,today);quote(f,'pension',4500000);const after=calculateSimple(f,today);assert.equal(after.pension.amountWon,4500000);assert.equal(after.accumulationTotal,before.accumulationTotal);assert.equal(after.benefitsTotal,before.benefitsTotal);
