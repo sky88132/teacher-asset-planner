@@ -15,6 +15,7 @@ export type SimpleBenefits = { pension: BenefitInput; allowance: BenefitInput; h
   pensionEstimate?: PensionEstimateInput };
 export type SimpleInputs = {
   profile: SimpleProfile;
+  monthlyLivingCost?: string;
   ktcu: SimpleAccount & { split: boolean; years: string };
   irp: SimpleAccount; saving: SimpleAccount; reinvest: boolean; taxIncome?: string; taxCapacity?: string;
   benefits: Record<SimpleScheme, SimpleBenefits>;

@@ -7,12 +7,14 @@ import { simpleConfig, simpleDisclaimer } from '@/lib/simple/config';
 import { Result, won, OfficialLink } from './shared';
 import { SimplePublicPension } from './public-pension';
 import { AccountReceiptSummary } from './account-receipt';
+import { RetirementStrategy } from './retirement-strategy';
 export function SimpleOverview({ input, onChange, result: r }: { input: SimpleInputs; onChange: (v: SimpleInputs) => void; result: SimpleResults }) {
   const p = input.profile, q = input.benefits[p.scheme];
   const values = [{ name: '교직원공제회', amount: r.ktcu.amountWon }, { name: 'IRP', amount: r.irp.amountWon }, { name: '연금저축', amount: r.saving.amountWon }];
   const max = Math.max(1, ...values.flatMap(v => v.amount === null ? [] : [v.amount]));
   return <div className="simple-panel"><section className="profile-context" aria-label="기본정보 요약"><strong>{schemeNames[p.scheme]} · {p.retirement === 'early' ? '명예퇴직' : '정년퇴직'}</strong><p>현재 {isCalendarDate(p.birthDate) && p.birthDate <= r.today ? `만 ${ageAt(p.birthDate, r.today)}세` : '연령 확인 필요'} · 임용일 {p.appointmentDate || '미입력'}</p><p>현재 {p.step || '미입력'}호봉 → 퇴직 참고 {r.step === null ? '계산 불가' : `${r.step}호봉 (조건부)`}</p></section>
     <section className="benefit-result" aria-label="예상 퇴직일 요약"><h3>예상 퇴직일</h3><strong className="benefit-amount">{r.retirement.date ?? '추가 확인 필요'}</strong>{r.retirement.errors.map(e => <p className="profile-help" key={e}>{e}</p>)}</section>
+    <RetirementStrategy input={input} onChange={onChange} result={r} />
     <SimplePublicPension input={input} onChange={onChange} result={r} />
     <section className="benefit-result" aria-label="연금계좌 소득 공백 활용"><h3>공적연금 전 소득 공백과 연금계좌</h3>
       <p>공적연금 정상 조건 충족일 {r.pensionDetails.normalStartDate ?? '확인 필요'} / 적용 개시일 {r.pensionStartDate ?? '확인 필요'}</p>

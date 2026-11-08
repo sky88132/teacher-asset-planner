@@ -8,6 +8,8 @@ import { validateSimpleProfile, moneyWon } from './validation.ts';
 import { calculateSimple, type SimpleAmount } from './calculation.ts';
 import { simpleConfig } from './config.ts';
 import { receiptTaxNotes } from './account-receipt.ts';
+import { calculateRetirementAnalysis } from './retirement-analysis.ts';
+import { generateRetirementAdvice } from './retirement-advice.ts';
 export const simpleAnalyses = {
   comprehensive: '나의 은퇴설계 종합 분석', comparison: '명예퇴직·정년퇴직 관련 조언', gap: '공적연금 및 퇴직급여 분석',
   ktcu: '교직원공제회 수령 전략', irp: 'IRP·연금저축 투자 전략', custom: '직접 질문 작성',
@@ -37,7 +39,7 @@ export function generateSimplePrompt(input: SimpleInputs, settings: PromptSettin
     `4. 공적연금과 퇴직급여\n${amount('월 공적연금 (자산 합산 제외)', r.pension)} / ${r.pensionSource === 'automatic' ? '세전 · 2026년 가격 고정' : q.pension.taxBasis === 'net' ? '입력액 세후' : q.pension.taxBasis === 'gross' ? '세전' : '세금 기준 미입력'}\n지급개시 ${date(r.pensionStartDate)}\n정상 개시연령 ${r.pensionDetails.normalAge === null ? '경과규정 추가 확인 필요' : '만 ' + r.pensionDetails.normalAge + '세'} / 정상 수급조건 충족 ${date(r.pensionDetails.normalStartDate)}\n퇴직 후 연금 전 소득 공백 ${r.pensionGapMonths === null ? '개시일 확인 필요' : r.pensionGapMonths + '개월(완료 월) · ' + r.pensionGapDays + '일'}\n공적연금 출처 ${r.pensionSource === 'automatic' ? '웹앱 자동 추정 · 외부 금액 검증 미완료' : '사용자 직접 입력 조회액 · 기관 진위 미검증'}\n자동 추정 방법 ${r.pensionDetails.method} / 계산 기준 ${r.pensionDetails.priceYear}년 / 자료 확인 ${r.pensionDetails.checkedOn.slice(0,4)}년 ${r.pensionDetails.checkedOn.slice(5,7)}월 (정확한 날짜 제외)\n공식 산식 구조 ${r.pensionDetails.formula}\n재직·가입 구간 ${r.pensionDetails.periods.map(x => x.label + ' ' + x.months + '개월').join(' / ')}\n가정·한계 ${r.pensionDetails.notes.join(' ')}\n조기 가능성과 선택 구분 ${r.pensionDetails.earlyNote}\n추가 확인 사항 ${r.pension.errors.join(' ') || '소득 자료·개인별 경과규정·공단 실제 예상액 대조 필요'}\n${amount('퇴직수당 (일시금)', r.allowance) + ' / ' + r.allowanceDetails.basis + ' / 산식 ' + r.allowanceDetails.formula}\n${p.retirement === 'early' ? amount('명예퇴직수당 (일시금)', r.honorary) + ' / ' + r.honoraryDetails.basis + ' / 산식 ' + r.honoraryDetails.formula : '명예퇴직수당: 정년 선택으로 대상에서 제외'}\n수당 합계 ${money(r.benefitsTotal)} (누락 또는 세금 기준 불일치 시 합산 불가)\n공식 조회값은 사용자가 직접 입력한 값이며 앱이 기관 조회·진위를 검증하지 않음. 자동 추정과 조회액을 구분할 것. 국민연금은 퇴직 전 개시가 가능하나 소득활동 감액·지급정지·개인별 경과규정은 별도 공단 확인이 필요함. 퇴직 전 수령액을 자산에 더하지 말 것.`,
     `5. 교직원공제회\n${amount('퇴직 시 적립금', r.ktcu)}\n수령: ${input.ktcu.split ? `가정 기반 분할 수령 ${input.ktcu.years}년, 매월 25일 / 월 ${money(r.split?.monthlyWon ?? null)} / 총 ${money(r.split?.totalWon ?? null)} (공식 상품 금액 아님)` : '일시금'}\n연 5%를 미래에도 유지하는 가정. 세금·가입 최소 금액·승인·실제 전환일·끝수 처리 미검증. 일시금과 분할 지급 합계를 더하지 말 것.`,
     `6. IRP·연금저축\n${amount('퇴직 IRP 적립금', r.irp)} / 가정 연 7%\n${amount('퇴직 연금저축 적립금', r.saving)} / 가정 연 8%\n계좌 합산 ${money(r.accountsTotal)}\n납입 주기: IRP ${input.irp.cycle === 'yearly' ? '12월 말 연납' : '매월 말 월납'}, 연금저축 ${input.saving.cycle === 'yearly' ? '12월 말 연납' : '매월 말 월납'}\n환급 재투자 ${input.reinvest ? r.reinvestError || ('조건부 가정으로 IRP에 반영 / 추가 효과 ' + money(r.reinvestEffect) + ' / 국세 공제 가능액을 다음 해 5월 말 재투자·일정한 소득/세액 여력 가정·실제 환급 보장 아님') : '미선택·효과 미반영'}\n납입한도 검사는 입력된 향후 납입 계획의 연도별 합계만 확인하며 올해 기납입·다른 계좌·특례·실제 잔여한도를 확정하지 않음. 세금·수수료·환율 미반영이며 원금손실 가능.`,
-    `7. 종합과 계산 한계\n퇴직 시 주요 적립금 합계 ${money(r.accumulationTotal)} (공제회+IRP+연금저축만, 월연금·분할 총수령액 제외)\n금액 기준: 공제회는 ${date(r.lastCalculatedDate)}까지 완료 월 계산. 연금계좌는 실제 월말/연말 납입과 퇴직일까지 ACT/ACT 복리 적용. 설정 ${simpleConfig.version}.\n생활비·근로소득·은퇴 후 인출·완전한 현금흐름은 이 간편 버전에 없음. 동일 시점과 동일 세전/세후 기준 없이 명퇴/정년의 최종 유불리를 확정하지 말 것.`,
+    `7. 종합과 계산 한계\n퇴직 시 주요 적립금 합계 ${money(r.accumulationTotal)} (공제회+IRP+연금저축만, 월연금·분할 총수령액 제외)\n금액 기준: 공제회는 ${date(r.lastCalculatedDate)}까지 완료 월 계산. 연금계좌는 실제 월말/연말 납입과 퇴직일까지 ACT/ACT 복리 적용. 설정 ${simpleConfig.version}.\n선택 생활비·계산 가능한 월액 비교와 규칙 기반 조언을 반영함. 근로소득·연금계좌 월 인출·완전한 현금흐름은 미반영. 동일 시점과 동일 세전/세후 기준 없이 명퇴/정년의 최종 유불리를 확정하지 말 것.`,
   ];
   lines.splice(6, 0, '6-1. 연금계좌 수령 조건 (2026년 세법 기준, 조건부)\n' + (['irp','saving'] as const).map(key => {
     const a = r.accountReceipts[key], v = input[key].receipt;
@@ -55,6 +57,19 @@ export function generateSimplePrompt(input: SimpleInputs, settings: PromptSettin
       '추가 확인 ' + [...a.errors, ...a.limitErrors, ...a.taxErrors].join(' '),
     ].join('\n');
   }).join('\n\n') + '\n' + receiptTaxNotes.join(' ') + '\n퇴직수당·명퇴수당은 IRP에 자동 합산하지 않았고 이체 자격을 판정하지 않음. 적립금은 인출 없이 퇴직일까지 납입하는 기존 시나리오이며 신청 이후 납입 제한·실제 인출은 반영하지 않음. 예상 적립금 전액을 소득 공백 충당액으로 사용하지 말 것. 정확한 세후액·생활비 충당액은 별도 계산 필요.');
+  const strategy = calculateRetirementAnalysis(input, r);
+  const safeAdviceText = (text: string) => text.replace(/\b\d{4}-\d{2}-\d{2}\b/g, value => date(value));
+  const advice = generateRetirementAdvice(input, r, strategy, money);
+  lines.splice(7, 0, [
+    '6-2. 은퇴설계 종합 분석 (규칙 기반·조건부)',
+    '희망 월 생활비 ' + money(strategy.expenseWon) + ' / 미입력은 0원 아님',
+    '공적연금 전 공백 ' + (strategy.gapMonths === null ? '미확인' : strategy.gapMonths + '개월(완료 월)·' + strategy.gapDays + '일'),
+    '일시 수령 검토 재원 ' + strategy.lumpItems.map(x => x.label + ' ' + money(x.won)).join(' / ') + ' (지급·세금 미확정)',
+    '공제회 분할 가상 일정: ' + (strategy.split.selected ? strategy.split.years + '년 / 정기 월 ' + money(strategy.split.monthlyWon) + ' / 첫 지급 ' + date(strategy.split.first) + ' / 마지막 ' + date(strategy.split.last) + ' / 개시 전 ' + (strategy.split.beforeCount ?? '미확인') + '회·개시 후 ' + (strategy.split.afterCount ?? '미확인') + '회 / 잔액 비교 기준 ' + date(strategy.split.balanceSnapshotDate) + ' / 기준일 직전 가상 누적 지급 ' + money(strategy.split.paidBeforeStartWon) + ' / 지급 후 남은 가상 잔액 ' + money(strategy.split.balanceAtPublicStartWon) : '일시금 선택·분할 월액 미반영'),
+    ...strategy.windows.map(w => (w.phase === 'before' ? '공적연금 개시 전' : w.phase === 'after' ? '공적연금 개시 후' : '구간 미확인') + ' / ' + w.label + ' / ' + date(w.from) + ' ~ ' + (w.until ? date(w.until) : '이후') + ' / 월액 소계 ' + money(w.subtotalWon) + ' / ' + (w.tax === 'gross' ? '세전' : w.tax === 'net' ? '입력 세후' : '세금 기준 미확인') + ' / 생활비 대비 선택자료 차이 ' + (w.differenceWon === null ? '보류' : (w.differenceWon < 0 ? '부족 방향 ' : '잔여 방향 ') + money(Math.abs(w.differenceWon))) + ' (실제 부족액·잉여액 아님) / ' + w.missing.join('·')),
+    '위 월액은 구간별 지급 수준이며 구간 전체 평균·실제 세후 수입 아님. 일시금·월연금을 혼합하거나 공제회 일시금·분할을 중복 합산하지 말 것. IRP·연금저축 인출은 미설계이며 한도용 연간 입력액을 월수입으로 만들지 말 것. 인출을 설계하면 지급액만큼 잔액 차감 필요. 총자산÷개월을 법적 인출 가능액으로 사용하지 말 것.',
+    ...advice.map(a => safeAdviceText(a.title + '\n현재 상황: ' + a.situation + '\n문제·선택지: ' + a.issue + '\n검토할 대응: ' + a.action + '\n추가 확인: ' + a.confirm)),
+  ].join('\n'));
   if (settings.detail === 'detailed') lines.push(`8. 세부 입력과 가정\n공제회 현재 입력 ${money(moneyWon(input.ktcu.balance).won)} / 월 납입 ${money(moneyWon(input.ktcu.monthly).won)}\nIRP 초기 ${money(r.irp.initial)} / 향후 납입 ${money(r.irp.deposits)} / 가정 투자손익 ${money(r.irp.gain)}\n연금저축 초기 ${money(r.saving.initial)} / 향후 납입 ${money(r.saving.deposits)} / 가정 투자손익 ${money(r.saving.gain)}\n연금계좌는 각 현금흐름별 실제 일수/해당 연도 일수로 복리 계산 후 미래가치를 원 단위 반올림. 수당은 명시한 조건부 추정이며 공단 실제 지급액 대조 미완료.`);
   lines.push(`9. 요청 질문\n${purposeQuestions[settings.analysis as keyof typeof simpleAnalyses] ?? purposeQuestions.comprehensive}\n${question.text || '추가 질문 미입력'}`,
     '10. 답변 원칙과 형식\n입력값·계산된 조건부 추정·AI의 별도 가정을 구분하세요. 미확인 금액을 만들거나 계산 신뢰도를 높이지 마세요. 금액이 없으면 0원으로 단정하지 마세요. 계산식·가정을 밝히고 공적연금과 적립금·계좌 이체·공제회 분할을 중복 합산하지 마세요. 보수적·기준·낙관적 시나리오는 별도 가정으로 제시하고 세금·시장·장수·유동성 위험을 설명하세요. 공식 규정 확인 필요 사항을 표시하세요. 답변은 핵심 진단, 목적별 분석, 위험 요인, 추가 확인할 정보의 우선순위 순서로 작성하세요.');
