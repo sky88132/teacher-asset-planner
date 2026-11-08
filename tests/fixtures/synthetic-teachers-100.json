@@ -1,0 +1,4311 @@
+{
+  "basisDate": "2026-11-09",
+  "synthetic": true,
+  "notes": [
+    "실제 사용자/기관 금액 없음",
+    "1990년대 정규 임용과1980년대 이후 출생의 부적합 조합은 별도 경계 테스트",
+    "1~8호봉은 입력 범위 검증용이며 실제 초임 호봉 인증이 아님"
+  ],
+  "cases": [
+    {
+      "id": "SYN-001",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1980-01-01",
+        "appointmentDate": "2003-03-01",
+        "scheme": "civil",
+        "step": "40",
+        "promotionMonth": "1",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2027-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 5
+      },
+      "irp": {
+        "state": "missing",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "missing",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": true,
+      "recognizedAllowanceReduction": 6,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-002",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1981-02-02",
+        "appointmentDate": "2007-03-01",
+        "scheme": "private-school",
+        "step": "31",
+        "promotionMonth": "8",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2027-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "3000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 5
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "5000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-003",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1982-03-03",
+        "appointmentDate": "2006-03-01",
+        "scheme": "national",
+        "step": "34",
+        "promotionMonth": "3",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2029-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-004",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1983-04-04",
+        "appointmentDate": "2010-03-01",
+        "scheme": "civil",
+        "step": "32",
+        "promotionMonth": "10",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2031-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "9000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "15000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-005",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1984-05-05",
+        "appointmentDate": "2009-03-01",
+        "scheme": "private-school",
+        "step": "27",
+        "promotionMonth": "5",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2033-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "12000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 15
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "20000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-006",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1985-06-06",
+        "appointmentDate": "2008-03-01",
+        "scheme": "national",
+        "step": "30",
+        "promotionMonth": "12",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2035-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "15000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 15
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "25000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-007",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1986-07-07",
+        "appointmentDate": "2012-03-01",
+        "scheme": "civil",
+        "step": "28",
+        "promotionMonth": "7",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2037-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "18000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-008",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1987-08-08",
+        "appointmentDate": "2011-03-01",
+        "scheme": "private-school",
+        "step": "31",
+        "promotionMonth": "2",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2039-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "21000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "35000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "quote",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-009",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1988-09-09",
+        "appointmentDate": "2015-03-01",
+        "scheme": "national",
+        "step": "21",
+        "promotionMonth": "9",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2042-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "24000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 25
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "40000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-010",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1989-10-10",
+        "appointmentDate": "2014-03-01",
+        "scheme": "civil",
+        "step": "24",
+        "promotionMonth": "4",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2044-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "27000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 25
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "45000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-011",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1990-11-11",
+        "appointmentDate": "2013-03-01",
+        "scheme": "private-school",
+        "step": "27",
+        "promotionMonth": "11",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2046-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "30000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-012",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1991-12-12",
+        "appointmentDate": "2017-03-01",
+        "scheme": "national",
+        "step": "25",
+        "promotionMonth": "6",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2048-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "33000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "5000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 6,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-013",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1992-01-13",
+        "appointmentDate": "2016-03-01",
+        "scheme": "civil",
+        "step": "20",
+        "promotionMonth": "1",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2049-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "36000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 5
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-014",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1993-02-14",
+        "appointmentDate": "2020-03-01",
+        "scheme": "private-school",
+        "step": "18",
+        "promotionMonth": "8",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2051-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "39000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 5
+      },
+      "irp": {
+        "state": "missing",
+        "balanceWon": "15000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-015",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1994-03-15",
+        "appointmentDate": "2019-03-01",
+        "scheme": "national",
+        "step": "21",
+        "promotionMonth": "3",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2053-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "42000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "20000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-016",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1995-04-16",
+        "appointmentDate": "2018-03-01",
+        "scheme": "civil",
+        "step": "24",
+        "promotionMonth": "10",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2055-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "0",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "25000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-017",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1996-05-17",
+        "appointmentDate": "2022-03-01",
+        "scheme": "private-school",
+        "step": "14",
+        "promotionMonth": "5",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2041-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "3000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 15
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-018",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1997-06-18",
+        "appointmentDate": "2021-03-01",
+        "scheme": "national",
+        "step": "17",
+        "promotionMonth": "12",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2043-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 15
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "35000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "missing",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "quote",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-019",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1998-07-19",
+        "appointmentDate": "2025-03-01",
+        "scheme": "civil",
+        "step": "15",
+        "promotionMonth": "7",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2045-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "9000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "40000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-020",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1999-08-20",
+        "appointmentDate": "2024-03-01",
+        "scheme": "private-school",
+        "step": "18",
+        "promotionMonth": "2",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2047-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "45000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": true,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-021",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2000-09-21",
+        "appointmentDate": "2023-03-01",
+        "scheme": "national",
+        "step": "13",
+        "promotionMonth": "9",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2050-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "15000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 25
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-022",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2001-10-22",
+        "appointmentDate": "2026-03-01",
+        "scheme": "civil",
+        "step": "11",
+        "promotionMonth": "4",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2052-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "18000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 25
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "5000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-023",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2002-11-23",
+        "appointmentDate": "2026-03-01",
+        "scheme": "private-school",
+        "step": "14",
+        "promotionMonth": "11",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2054-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "21000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 6,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-024",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2003-12-01",
+        "appointmentDate": "2026-03-01",
+        "scheme": "national",
+        "step": "15",
+        "promotionMonth": "6",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2056-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "24000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "15000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-025",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1980-01-02",
+        "appointmentDate": "2005-03-01",
+        "scheme": "civil",
+        "step": "31",
+        "promotionMonth": "1",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2033-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "27000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 5
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "20000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-026",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1981-02-03",
+        "appointmentDate": "2004-03-01",
+        "scheme": "private-school",
+        "step": "34",
+        "promotionMonth": "8",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2035-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 5
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "25000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-027",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1982-03-04",
+        "appointmentDate": "2008-03-01",
+        "scheme": "national",
+        "step": "32",
+        "promotionMonth": "3",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2037-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "33000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 10
+      },
+      "irp": {
+        "state": "missing",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-028",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1983-04-05",
+        "appointmentDate": "2007-03-01",
+        "scheme": "civil",
+        "step": "35",
+        "promotionMonth": "10",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2039-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "36000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "35000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "quote",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-029",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1984-05-06",
+        "appointmentDate": "2011-03-01",
+        "scheme": "private-school",
+        "step": "25",
+        "promotionMonth": "5",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2041-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "39000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 15
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "40000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-030",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1985-06-07",
+        "appointmentDate": "2010-03-01",
+        "scheme": "national",
+        "step": "28",
+        "promotionMonth": "12",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2043-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "42000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 15
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "45000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-031",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1986-07-08",
+        "appointmentDate": "2009-03-01",
+        "scheme": "civil",
+        "step": "31",
+        "promotionMonth": "7",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2045-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-032",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1987-08-09",
+        "appointmentDate": "2013-03-01",
+        "scheme": "private-school",
+        "step": "29",
+        "promotionMonth": "2",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2047-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "3000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "5000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-033",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1988-09-10",
+        "appointmentDate": "2012-03-01",
+        "scheme": "national",
+        "step": "24",
+        "promotionMonth": "9",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2034-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "6000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 25
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-034",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1989-10-11",
+        "appointmentDate": "2016-03-01",
+        "scheme": "civil",
+        "step": "22",
+        "promotionMonth": "4",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2036-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "9000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 25
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "15000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 6,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-035",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1990-11-12",
+        "appointmentDate": "2015-03-01",
+        "scheme": "private-school",
+        "step": "25",
+        "promotionMonth": "11",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2038-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "20000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "missing",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-036",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1991-12-13",
+        "appointmentDate": "2014-03-01",
+        "scheme": "national",
+        "step": "28",
+        "promotionMonth": "6",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2040-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "15000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "25000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-037",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1992-01-14",
+        "appointmentDate": "2018-03-01",
+        "scheme": "civil",
+        "step": "18",
+        "promotionMonth": "1",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2041-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "18000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 5
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-038",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1993-02-15",
+        "appointmentDate": "2017-03-01",
+        "scheme": "private-school",
+        "step": "21",
+        "promotionMonth": "8",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2043-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "21000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 5
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "35000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "quote",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-039",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1994-03-16",
+        "appointmentDate": "2021-03-01",
+        "scheme": "national",
+        "step": "19",
+        "promotionMonth": "3",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2045-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "24000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "40000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": true,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-040",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1995-04-17",
+        "appointmentDate": "2020-03-01",
+        "scheme": "civil",
+        "step": "22",
+        "promotionMonth": "10",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2047-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "27000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 10
+      },
+      "irp": {
+        "state": "missing",
+        "balanceWon": "45000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-041",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1996-05-18",
+        "appointmentDate": "2019-03-01",
+        "scheme": "private-school",
+        "step": "17",
+        "promotionMonth": "5",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2049-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "30000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 15
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-042",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1997-06-19",
+        "appointmentDate": "2023-03-01",
+        "scheme": "national",
+        "step": "15",
+        "promotionMonth": "12",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2051-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "33000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 15
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "5000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-043",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1998-07-20",
+        "appointmentDate": "2022-03-01",
+        "scheme": "civil",
+        "step": "18",
+        "promotionMonth": "7",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2053-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "36000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-044",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1999-08-21",
+        "appointmentDate": "2026-03-01",
+        "scheme": "private-school",
+        "step": "16",
+        "promotionMonth": "2",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2055-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "39000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "15000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-045",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2000-09-22",
+        "appointmentDate": "2025-03-01",
+        "scheme": "national",
+        "step": "11",
+        "promotionMonth": "9",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2058-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "42000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 25
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "20000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 6,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-046",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2001-10-23",
+        "appointmentDate": "2024-03-01",
+        "scheme": "civil",
+        "step": "14",
+        "promotionMonth": "4",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2060-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "0",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 25
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "25000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-047",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2002-11-01",
+        "appointmentDate": "2026-03-01",
+        "scheme": "private-school",
+        "step": "13",
+        "promotionMonth": "11",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2062-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "3000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-048",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2003-12-02",
+        "appointmentDate": "2026-03-01",
+        "scheme": "national",
+        "step": "15",
+        "promotionMonth": "6",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2064-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "35000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "quote",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-049",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1980-01-03",
+        "appointmentDate": "2007-03-01",
+        "scheme": "civil",
+        "step": "29",
+        "promotionMonth": "1",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2027-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "9000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 5
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "40000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-050",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1981-02-04",
+        "appointmentDate": "2006-03-01",
+        "scheme": "private-school",
+        "step": "32",
+        "promotionMonth": "8",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2027-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 5
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "45000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-051",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1982-03-05",
+        "appointmentDate": "2005-03-01",
+        "scheme": "national",
+        "step": "35",
+        "promotionMonth": "3",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2029-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "15000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-052",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1983-04-06",
+        "appointmentDate": "2009-03-01",
+        "scheme": "civil",
+        "step": "33",
+        "promotionMonth": "10",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2031-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "18000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "5000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "missing",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-053",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1984-05-07",
+        "appointmentDate": "2008-03-01",
+        "scheme": "private-school",
+        "step": "28",
+        "promotionMonth": "5",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2033-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "21000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 15
+      },
+      "irp": {
+        "state": "missing",
+        "balanceWon": "10000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-054",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1985-06-08",
+        "appointmentDate": "2012-03-01",
+        "scheme": "national",
+        "step": "26",
+        "promotionMonth": "12",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2035-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "24000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 15
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "15000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-055",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1986-07-09",
+        "appointmentDate": "2011-03-01",
+        "scheme": "civil",
+        "step": "29",
+        "promotionMonth": "7",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2037-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "27000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "20000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-056",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1987-08-10",
+        "appointmentDate": "2010-03-01",
+        "scheme": "private-school",
+        "step": "32",
+        "promotionMonth": "2",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2039-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "25000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 6,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-057",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1988-09-11",
+        "appointmentDate": "2014-03-01",
+        "scheme": "national",
+        "step": "22",
+        "promotionMonth": "9",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2042-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "33000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 25
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-058",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1989-10-12",
+        "appointmentDate": "2013-03-01",
+        "scheme": "civil",
+        "step": "25",
+        "promotionMonth": "4",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2044-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "36000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 25
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "35000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "quote",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": true,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-059",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1990-11-13",
+        "appointmentDate": "2017-03-01",
+        "scheme": "private-school",
+        "step": "23",
+        "promotionMonth": "11",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2046-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "39000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "40000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-060",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1991-12-14",
+        "appointmentDate": "2016-03-01",
+        "scheme": "national",
+        "step": "26",
+        "promotionMonth": "6",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2048-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "42000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "45000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-061",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1992-01-15",
+        "appointmentDate": "2015-03-01",
+        "scheme": "civil",
+        "step": "21",
+        "promotionMonth": "1",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2049-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 5
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-062",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1993-02-16",
+        "appointmentDate": "2019-03-01",
+        "scheme": "private-school",
+        "step": "19",
+        "promotionMonth": "8",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2051-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "3000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 5
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "5000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-063",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1994-03-17",
+        "appointmentDate": "2018-03-01",
+        "scheme": "national",
+        "step": "22",
+        "promotionMonth": "3",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2053-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-064",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1995-04-18",
+        "appointmentDate": "2022-03-01",
+        "scheme": "civil",
+        "step": "20",
+        "promotionMonth": "10",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2055-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "9000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "15000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-065",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1996-05-19",
+        "appointmentDate": "2021-03-01",
+        "scheme": "private-school",
+        "step": "15",
+        "promotionMonth": "5",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2041-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "12000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 15
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "20000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-066",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1997-06-20",
+        "appointmentDate": "2020-03-01",
+        "scheme": "national",
+        "step": "18",
+        "promotionMonth": "12",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2043-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "15000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 15
+      },
+      "irp": {
+        "state": "missing",
+        "balanceWon": "25000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-067",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1998-07-21",
+        "appointmentDate": "2024-03-01",
+        "scheme": "civil",
+        "step": "16",
+        "promotionMonth": "7",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2045-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "18000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 6,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-068",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1999-08-22",
+        "appointmentDate": "2023-03-01",
+        "scheme": "private-school",
+        "step": "19",
+        "promotionMonth": "2",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2047-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "21000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "35000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "quote",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-069",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2000-09-23",
+        "appointmentDate": "2026-03-01",
+        "scheme": "national",
+        "step": "9",
+        "promotionMonth": "9",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2050-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "24000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 25
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "40000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "missing",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-070",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2001-10-01",
+        "appointmentDate": "2026-03-01",
+        "scheme": "civil",
+        "step": "12",
+        "promotionMonth": "4",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2052-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "27000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 25
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "45000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-071",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2002-11-02",
+        "appointmentDate": "2025-03-01",
+        "scheme": "private-school",
+        "step": "15",
+        "promotionMonth": "11",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2054-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "30000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-072",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2003-12-03",
+        "appointmentDate": "2026-03-01",
+        "scheme": "national",
+        "step": "15",
+        "promotionMonth": "6",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2056-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "33000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "5000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-073",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1980-01-04",
+        "appointmentDate": "2004-03-01",
+        "scheme": "civil",
+        "step": "32",
+        "promotionMonth": "1",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2033-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "36000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 5
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-074",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1981-02-05",
+        "appointmentDate": "2008-03-01",
+        "scheme": "private-school",
+        "step": "30",
+        "promotionMonth": "8",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2035-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "39000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 5
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "15000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-075",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1982-03-06",
+        "appointmentDate": "2007-03-01",
+        "scheme": "national",
+        "step": "33",
+        "promotionMonth": "3",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2037-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "42000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "20000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-076",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1983-04-07",
+        "appointmentDate": "2006-03-01",
+        "scheme": "civil",
+        "step": "36",
+        "promotionMonth": "10",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2039-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "0",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "25000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-077",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1984-05-08",
+        "appointmentDate": "2010-03-01",
+        "scheme": "private-school",
+        "step": "26",
+        "promotionMonth": "5",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2041-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "3000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 15
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": true,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-078",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1985-06-09",
+        "appointmentDate": "2009-03-01",
+        "scheme": "national",
+        "step": "29",
+        "promotionMonth": "12",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2043-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 15
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "35000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "quote",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 6,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-079",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1986-07-10",
+        "appointmentDate": "2013-03-01",
+        "scheme": "civil",
+        "step": "27",
+        "promotionMonth": "7",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2045-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "9000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 20
+      },
+      "irp": {
+        "state": "missing",
+        "balanceWon": "40000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-080",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1987-08-11",
+        "appointmentDate": "2012-03-01",
+        "scheme": "private-school",
+        "step": "30",
+        "promotionMonth": "2",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2047-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "45000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-081",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1988-09-12",
+        "appointmentDate": "2011-03-01",
+        "scheme": "national",
+        "step": "25",
+        "promotionMonth": "9",
+        "military": "unknown",
+        "retirement": "normal",
+        "earlyDate": "2034-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "15000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 25
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-082",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1989-10-13",
+        "appointmentDate": "2015-03-01",
+        "scheme": "civil",
+        "step": "23",
+        "promotionMonth": "4",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2036-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "18000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 25
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "5000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-083",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1990-11-14",
+        "appointmentDate": "2014-03-01",
+        "scheme": "private-school",
+        "step": "26",
+        "promotionMonth": "11",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2038-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "21000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-084",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1991-12-15",
+        "appointmentDate": "2018-03-01",
+        "scheme": "national",
+        "step": "24",
+        "promotionMonth": "6",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2040-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "24000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "15000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-085",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1992-01-16",
+        "appointmentDate": "2017-03-01",
+        "scheme": "civil",
+        "step": "19",
+        "promotionMonth": "1",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2041-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "27000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 5
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "20000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-086",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1993-02-17",
+        "appointmentDate": "2016-03-01",
+        "scheme": "private-school",
+        "step": "22",
+        "promotionMonth": "8",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2043-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 5
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "25000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "missing",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-087",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1994-03-18",
+        "appointmentDate": "2020-03-01",
+        "scheme": "national",
+        "step": "20",
+        "promotionMonth": "3",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2045-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "33000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-088",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1995-04-19",
+        "appointmentDate": "2019-03-01",
+        "scheme": "civil",
+        "step": "23",
+        "promotionMonth": "10",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2047-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "36000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "35000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "quote",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-089",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1996-05-20",
+        "appointmentDate": "2023-03-01",
+        "scheme": "private-school",
+        "step": "13",
+        "promotionMonth": "5",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2049-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "39000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 15
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "40000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 6,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-090",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1997-06-21",
+        "appointmentDate": "2022-03-01",
+        "scheme": "national",
+        "step": "16",
+        "promotionMonth": "12",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2051-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "42000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 15
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "45000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-091",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1998-07-22",
+        "appointmentDate": "2021-03-01",
+        "scheme": "civil",
+        "step": "19",
+        "promotionMonth": "7",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2053-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 20
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-092",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1999-08-23",
+        "appointmentDate": "2025-03-01",
+        "scheme": "private-school",
+        "step": "17",
+        "promotionMonth": "2",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2055-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "3000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 20
+      },
+      "irp": {
+        "state": "missing",
+        "balanceWon": "5000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-093",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2000-09-01",
+        "appointmentDate": "2024-03-01",
+        "scheme": "national",
+        "step": "1",
+        "promotionMonth": "9",
+        "military": "not",
+        "retirement": "normal",
+        "earlyDate": "2058-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "6000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 25
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "8000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-094",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2001-10-02",
+        "appointmentDate": "2026-03-01",
+        "scheme": "civil",
+        "step": "2",
+        "promotionMonth": "4",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2060-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "9000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 25
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "15000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "10000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-095",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2002-11-03",
+        "appointmentDate": "2026-03-01",
+        "scheme": "private-school",
+        "step": "3",
+        "promotionMonth": "11",
+        "military": "approved",
+        "retirement": "normal",
+        "earlyDate": "2062-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "400000",
+        "split": true,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "20000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "12000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "3000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-096",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "2003-12-04",
+        "appointmentDate": "2026-03-01",
+        "scheme": "national",
+        "step": "4",
+        "promotionMonth": "6",
+        "military": "approved",
+        "retirement": "early",
+        "earlyDate": "2064-08-31"
+      },
+      "ktcu": {
+        "state": "missing",
+        "balanceWon": "15000000",
+        "monthlyWon": "500000",
+        "split": false,
+        "years": 30
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "25000000",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "14000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "3500000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "8000000",
+      "complexCareer": true,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-097",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1980-01-05",
+        "appointmentDate": "2006-03-01",
+        "scheme": "civil",
+        "step": "5",
+        "promotionMonth": "1",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2027-08-31"
+      },
+      "ktcu": {
+        "state": "not-member",
+        "balanceWon": "18000000",
+        "monthlyWon": "0",
+        "split": true,
+        "years": 5
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "30000000",
+        "monthlyWon": "100000",
+        "annualWon": "1200000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "0",
+        "monthlyWon": "0",
+        "annualWon": "0",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "confirmed-input",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": false
+    },
+    {
+      "id": "SYN-098",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1981-02-06",
+        "appointmentDate": "2005-03-01",
+        "scheme": "private-school",
+        "step": "6",
+        "promotionMonth": "8",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2027-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "21000000",
+        "monthlyWon": "100000",
+        "split": false,
+        "years": 5
+      },
+      "irp": {
+        "state": "not-member",
+        "balanceWon": "35000000",
+        "monthlyWon": "200000",
+        "annualWon": "2400000",
+        "cycle": "monthly"
+      },
+      "saving": {
+        "state": "not-member",
+        "balanceWon": "2000000",
+        "monthlyWon": "100000",
+        "annualWon": "1800000",
+        "cycle": "monthly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "1500000",
+      "pensionPath": "quote",
+      "allowanceIncomeWon": "",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-099",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1982-03-07",
+        "appointmentDate": "2009-03-01",
+        "scheme": "national",
+        "step": "7",
+        "promotionMonth": "3",
+        "military": "unknown",
+        "retirement": "early",
+        "earlyDate": "2029-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "24000000",
+        "monthlyWon": "200000",
+        "split": true,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "40000000",
+        "monthlyWon": "300000",
+        "annualWon": "3600000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "4000000",
+        "monthlyWon": "200000",
+        "annualWon": "3600000",
+        "cycle": "monthly"
+      },
+      "reinvest": false,
+      "monthlyLivingCostWon": "2000000",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "5000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 0,
+      "receiptKnown": true
+    },
+    {
+      "id": "SYN-100",
+      "synthetic": true,
+      "note": "검증 전용 가상 교사 · 실제 사람/기관 조회값 아님",
+      "profile": {
+        "birthDate": "1983-04-08",
+        "appointmentDate": "2008-03-01",
+        "scheme": "civil",
+        "step": "8",
+        "promotionMonth": "10",
+        "military": "not",
+        "retirement": "early",
+        "earlyDate": "2031-08-31"
+      },
+      "ktcu": {
+        "state": "member",
+        "balanceWon": "27000000",
+        "monthlyWon": "300000",
+        "split": false,
+        "years": 10
+      },
+      "irp": {
+        "state": "member",
+        "balanceWon": "45000000",
+        "monthlyWon": "400000",
+        "annualWon": "4800000",
+        "cycle": "yearly"
+      },
+      "saving": {
+        "state": "member",
+        "balanceWon": "6000000",
+        "monthlyWon": "300000",
+        "annualWon": "5400000",
+        "cycle": "yearly"
+      },
+      "reinvest": true,
+      "monthlyLivingCostWon": "",
+      "pensionPath": "model-or-unavailable",
+      "allowanceIncomeWon": "6000000",
+      "complexCareer": false,
+      "recognizedAllowanceReduction": 6,
+      "receiptKnown": false
+    }
+  ]
+}
