@@ -127,7 +127,7 @@ test('국민연금 유효하지 않은 납부월·생전 가입·미래 납부 �
 });
 test('종합·AI는 자동 금액·정상 개시·공백·가정·한계와 익명화를 함께 반영',()=>{
   const f=fixture(),r=estimate(f),settings={...createPromptWorkspace().settings,money:'exact'};
-  const prompt=generateSimplePrompt(f,settings,today);assert.ok(prompt);assert.match(prompt,/788,240원/);assert.match(prompt,/외부 금액 검증 미완료/);assert.match(prompt,/정상 개시연령 만 62세/);assert.match(prompt,/소득 공백/);assert.doesNotMatch(prompt,/1980-05-10|2016-01-01|2042-06-01/);assert.equal(r.accumulationTotal,null);assert.deepEqual(privacyFindings(prompt,settings),[]);
+  const prompt=generateSimplePrompt(f,settings,today);assert.ok(prompt);assert.match(prompt,/79만원/);assert.match(prompt,/외부 금액 검증 미완료/);assert.match(prompt,/정상 개시연령 만 62세/);assert.match(prompt,/소득 공백/);assert.doesNotMatch(prompt,/1980-05-10|2016-01-01|2042-06-01/);assert.equal(r.accumulationTotal,null);assert.deepEqual(privacyFindings(prompt,settings),[]);
   const q=f.benefits.civil.pension;Object.assign(q,{money:{amount:'1234567',unit:'won'},queryDate:today,retirementDate:f.profile.earlyDate,startDate:'2042-06-01',source:'official',taxBasis:'net'});
   const manual=estimate(f);assert.equal(manual.pensionSource,'quote');assert.equal(manual.pension.amountWon,1234567);q.retirementDate='2030-01-01';assert.equal(estimate(f).pension.amountWon,null);q.money.amount='';assert.equal(estimate(f).pension.amountWon,788240);
 });

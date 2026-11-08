@@ -17,24 +17,24 @@ test('기본정보의 정상 개시·공백과 소득 누락을 보여주고 상
 });
 
 test('2016년 이후 자동 연금·상한/신뢰도·퇴직일 변경·종합과 AI 연결',async({page},info)=>{
-  await profile(page);await menu(page,4);await pensionIncome(page);const r=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(r.locator('.benefit-amount').first()).toHaveText('78.824만원 / 월');await expect(r).toContainText('외부 금액 검증 미완료');
+  await profile(page);await menu(page,4);await pensionIncome(page);const r=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(r.locator('.benefit-amount').first()).toHaveText('79만원 / 월');await expect(r).toContainText('외부 금액 검증 미완료');
   await page.getByText('공적연금 계산 근거·구간·한계',{exact:true}).click();await expect(r).toContainText('132개월');await expect(r).toContainText('조기수령을 선택한 결과가 아닙니다');
   for(const width of info.project.name==='mobile'?[320,390]:[1440]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
   await page.screenshot({path:info.outputPath('automatic-public-pension.png'),fullPage:true});
-  await menu(page,5);await page.getByLabel('금융금액 표시 방식',{exact:true}).selectOption('exact');await page.getByLabel('포함 정보·익명화·누락 사항을 확인했습니다.',{exact:true}).check();await page.getByRole('button',{name:'AI 요청문 생성',exact:true}).click();const prompt=page.getByLabel('AI 분석 요청문',{exact:true});await expect(prompt).toHaveValue(/788,240원/);await expect(prompt).toHaveValue(/정상 개시연령 만 62세/);await expect(prompt).toHaveValue(/소득 공백/);
-  await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2027-01-02');await menu(page,4);await expect(r).toContainText('다시 확인');await expect(r).toContainText('만 63세');await page.getByText('공적연금 추정 상세 설정 (선택)',{exact:true}).click();await page.getByLabel('소득·계수·가입기간을 현재 퇴직일 기준으로 확인했습니다.',{exact:true}).check();await expect(r.locator('.benefit-amount').first()).toHaveText('79.4013만원 / 월');
+  await menu(page,5);await page.getByLabel('금융금액 표시 방식',{exact:true}).selectOption('exact');await page.getByLabel('포함 정보·익명화·누락 사항을 확인했습니다.',{exact:true}).check();await page.getByRole('button',{name:'AI 요청문 생성',exact:true}).click();const prompt=page.getByLabel('AI 분석 요청문',{exact:true});await expect(prompt).toHaveValue(/79만원/);await expect(prompt).toHaveValue(/정상 개시연령 만 62세/);await expect(prompt).toHaveValue(/소득 공백/);
+  await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2027-01-02');await menu(page,4);await expect(r).toContainText('다시 확인');await expect(r).toContainText('만 63세');await page.getByText('공적연금 추정 상세 설정 (선택)',{exact:true}).click();await page.getByLabel('소득·계수·가입기간을 현재 퇴직일 기준으로 확인했습니다.',{exact:true}).check();await expect(r.locator('.benefit-amount').first()).toHaveText('79만원 / 월');
 });
 
 test('2009년 이전 구기간과 사학 소득자료를 별도 보관한다',async({page})=>{
-  await profile(page,'2005-01-01');await menu(page,4);await pensionIncome(page,true);const r=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(r.locator('.benefit-amount').first()).toHaveText('161.924만원 / 월');
-  await menu(page,0);await page.getByRole('radio',{name:'사학연금',exact:true}).check();await menu(page,4);await expect(r).toContainText('추정에 필요한 정보 확인');await pensionIncome(page,true);await expect(r.locator('.benefit-amount').first()).toHaveText('161.924만원 / 월');await page.getByText('공적연금 계산 근거·구간·한계',{exact:true}).click();await expect(page.getByRole('link',{name:'사학연금법·고유 부칙',exact:true})).toBeVisible();
-  await menu(page,0);await page.getByRole('radio',{name:'공무원연금',exact:true}).check();await menu(page,4);await expect(r.locator('.benefit-amount').first()).toHaveText('161.924만원 / 월');
+  await profile(page,'2005-01-01');await menu(page,4);await pensionIncome(page,true);const r=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(r.locator('.benefit-amount').first()).toHaveText('162만원 / 월');
+  await menu(page,0);await page.getByRole('radio',{name:'사학연금',exact:true}).check();await menu(page,4);await expect(r).toContainText('추정에 필요한 정보 확인');await pensionIncome(page,true);await expect(r.locator('.benefit-amount').first()).toHaveText('162만원 / 월');await page.getByText('공적연금 계산 근거·구간·한계',{exact:true}).click();await expect(page.getByRole('link',{name:'사학연금법·고유 부칙',exact:true})).toBeVisible();
+  await menu(page,0);await page.getByRole('radio',{name:'공무원연금',exact:true}).check();await menu(page,4);await expect(r.locator('.benefit-amount').first()).toHaveText('162만원 / 월');
 });
 
 test('현재 소득 고정 가정·군복무 실제 산입연도·특수경력 차단',async({page})=>{
   await profile(page);await page.getByLabel('임용 전 군복무기간을 연금 재직기간에 산입했습니까?',{exact:true}).selectOption('approved');await menu(page,4);await pensionIncome(page);const r=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(r).toContainText('실제 산입연도');
-  await page.getByLabel('공단 확인 직역연금 군복무 인정 개월',{exact:true}).fill('24');await page.getByLabel('군복무 실제 산입연도',{exact:true}).fill('2020');await expect(r.locator('.benefit-amount').first()).toHaveText('93.144만원 / 월');
-  await page.getByLabel('공적연금 소득 적용 방식',{exact:true}).selectOption('current');await page.getByLabel('공적연금 현재 기준소득월액 (만원)',{exact:true}).fill('400');await expect(r.locator('.benefit-amount').first()).toHaveText('추정에 필요한 정보 확인');await page.getByLabel('현재 소득을 전체 가입기간의 재평가 평균소득으로 가정하겠습니다.',{exact:true}).check();await expect(r.locator('.benefit-amount').first()).toHaveText('93.144만원 / 월');
+  await page.getByLabel('공단 확인 직역연금 군복무 인정 개월',{exact:true}).fill('24');await page.getByLabel('군복무 실제 산입연도',{exact:true}).fill('2020');await expect(r.locator('.benefit-amount').first()).toHaveText('93만원 / 월');
+  await page.getByLabel('공적연금 소득 적용 방식',{exact:true}).selectOption('current');await page.getByLabel('공적연금 현재 기준소득월액 (만원)',{exact:true}).fill('400');await expect(r.locator('.benefit-amount').first()).toHaveText('추정에 필요한 정보 확인');await page.getByLabel('현재 소득을 전체 가입기간의 재평가 평균소득으로 가정하겠습니다.',{exact:true}).check();await expect(r.locator('.benefit-amount').first()).toHaveText('93만원 / 월');
   await page.getByLabel('중단·휴직·시간제·납부예외·체납·재임용·직역 합산·기수령 등 별도 이력이 있습니다.',{exact:true}).check();await expect(r.locator('.benefit-amount').first()).toHaveText('추정에 필요한 정보 확인');await expect(r).toContainText('연도별 공단 인정기간');
 });
 

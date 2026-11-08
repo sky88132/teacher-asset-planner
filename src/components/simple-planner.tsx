@@ -32,7 +32,7 @@ export function SimplePlanner() {
           : active === 2 ? <SimpleAccountsPanel value={input} onChange={setInput} result={result} />
           : active === 3 ? <SimpleBenefitsPanel input={input} onChange={setInput} result={result} />
           : active === 4 ? <SimpleOverview input={input} onChange={setInput} result={result} />
-          : <SimplePromptPanel input={input} today={today} value={workspace} onChange={setWorkspace} />}
+          : <SimplePromptPanel result={result} onInputChange={setInput} input={input} today={today} value={workspace} onChange={setWorkspace} />}
         <div className="simple-navigation">{active > 0 && <button className="secondary" onClick={() => navigate(active - 1)}>이전 단계</button>}{active < 5 && <button className="primary" onClick={() => navigate(active + 1)}>다음 단계 →</button>}{active === 0 && <button className="secondary" onClick={() => navigate(5)}>AI 요청문으로 바로 이동</button>}</div>
       </section><aside className="right-column"><section className="card summary"><span className="section-tag">MY PLAN</span><h2>나의 퇴직 기준</h2><div className="summary-row"><span>가입 제도</span><strong>{schemeNames[input.profile.scheme]}</strong></div><div className="summary-row"><span>퇴직 방식</span><strong>{input.profile.retirement === 'early' ? '명예퇴직' : '정년퇴직'}</strong></div><div className="summary-row"><span>예상 퇴직일</span><strong>{result.retirement.date ?? '확인 필요'}</strong></div><p>입력한 금융정보는 선택한 퇴직일에 맞춰 자동 갱신됩니다. 공식 조회액의 가정 퇴직일이 다르면 재확인이 필요합니다.</p><button className="secondary" onClick={() => navigate(4)}>종합 결과 보기</button></section><section className="note"><span>참고용 시뮬레이션</span><h3>공식 조회값과 가정을 구분합니다</h3><p>{simpleDisclaimer}</p></section></aside></div>
       <footer>교사 은퇴 연금 시뮬레이터 · 입력 기준일 {today}</footer>

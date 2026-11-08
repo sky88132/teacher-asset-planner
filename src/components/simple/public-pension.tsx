@@ -16,15 +16,15 @@ export function SimplePublicPension({ input, onChange, result: r }: { input: Sim
     <strong className="benefit-amount">{won(r.pension.amountWon, '추정에 필요한 정보 확인')}{r.pension.amountWon !== null ? ' / 월' : ''}</strong>
     <p className="profile-help">{schemeNames[p.scheme]} · {r.pension.confidence} · {r.pensionSource === 'quote' ? q.pension.taxBasis === 'net' ? '입력액 세후' : q.pension.taxBasis === 'gross' ? '세전' : '세금 기준 확인 필요' : '세전 · 2026년 가격 고정'}</p>
     <p className="profile-help">{r.pensionSource === 'quote' ? '직접 입력한 조회액을 우선 표시합니다. 기관에 자동 조회하거나 진위를 검증한 값은 아닙니다.' : '웹앱의 조건부 추정이며 공단이 확정한 실제 지급액이 아닙니다. ' + details.externalValidation + '.'}</p>
-    <dl className="benefit-details"><dt>정상 개시연령</dt><dd>{details.normalAge === null ? '개인별 경과규정 확인 필요' : `만 ${details.normalAge}세 · 일반 조건`}</dd>
+    <details className="simple-details"><summary>연금 개시·기간 자세히 보기</summary><dl className="benefit-details"><dt>정상 개시연령</dt><dd>{details.normalAge === null ? '개인별 경과규정 확인 필요' : `만 ${details.normalAge}세 · 일반 조건`}</dd>
       <dt>정상 수급조건 충족 예상일</dt><dd>{details.normalStartDate ?? '인정 가입기간·개인별 예외 확인 필요'}</dd>
       <dt>정상 최초 지급대상월</dt><dd>{details.firstPaymentMonth ?? '조건 확인 필요'} · 실제 입금일 아님</dd>
       {r.pensionSource === 'quote' && <><dt>입력 지급개시일</dt><dd>{r.pensionStartDate ?? '조회 가정·날짜 재확인 필요'}</dd></>}
       <dt>퇴직 후 연금 개시 전 기간</dt><dd>{r.pensionGapMonths === null ? '개시일 확인 후 계산' : `완료 월 ${r.pensionGapMonths}개월 · ${r.pensionGapDays}일 (${r.pensionSource === 'quote' ? '입력 개시일' : '최초 지급대상월 1일'} 기준)`}</dd>
       <dt>재직·가입기간 시나리오</dt><dd>{details.months === null ? '확인 필요' : details.months + '개월'}{details.capMonths !== null ? ` · 인정 상한 ${details.capMonths}개월` : ''}</dd>
-      <dt>계산 기준</dt><dd>{details.priceYear}년 가격 · 자료 확인 {details.checkedOn}</dd></dl>
-    <p className="profile-help">65세를 일괄 적용하지 않습니다. 정상 수급조건과 지급대상월을 구분하며 청구·심사·소득활동에 따른 감액·지급정지는 별도 확인해야 합니다. 월연금은 적립금·일시금 합계에 더하지 않습니다.</p>
-    {r.pension.errors.length > 0 && <ul className="profile-help" aria-label="공적연금 추가 확인 사항">{r.pension.errors.map(error => <li key={error}>{error}</li>)}</ul>}
+      <dt>계산 기준</dt><dd>{details.priceYear}년 가격 · 자료 확인 {details.checkedOn}</dd></dl></details>
+    <p className="profile-help">개인별 정상 개시 조건을 적용합니다. 감액·지급정지·세금·실제 입금일은 별도 확인하며 월연금을 목돈에 더하지 않습니다.</p>
+    {r.pension.errors.length > 0 && <details className="simple-details"><summary>공적연금 추가 확인 사항 ({r.pension.errors.length})</summary><ul className="profile-help" aria-label="공적연금 추가 확인 사항">{r.pension.errors.map(error => <li key={error}>{error}</li>)}</ul></details>}
     <details className="simple-details"><summary>공적연금 추정 상세 설정 (선택)</summary>
       <p className="profile-help">호봉과 예상 최종봉급만으로 평균소득을 만들지 않습니다. 아래 기초 소득자료가 있으면 예상 월연금을 자동 계산합니다. 공단 자료의 재평가·상한 반영 여부를 확인하세요. 04의 퇴직수당용 소득을 연금 평균소득으로 자동 재사용하지 않습니다.</p>
       <Field label="공적연금 소득 적용 방식" value={v.incomeMode} onChange={incomeMode => update({ incomeMode: incomeMode as PensionEstimateInput['incomeMode'] })}><option value="average">공단 확인 평균소득 사용</option><option value="current">현재 소득 고정 시나리오</option></Field>
@@ -54,7 +54,7 @@ export function SimplePublicPension({ input, onChange, result: r }: { input: Sim
       {details.periods.length > 0 && <dl className="benefit-details">{details.periods.map(period => <Fragment key={period.label}><dt>{period.label}</dt><dd>{period.months}개월{period.amountWon !== null ? ` · 월 구성액 ${won(period.amountWon)}` : ''}</dd></Fragment>)}</dl>}
       <ul className="profile-help">{details.notes.map(note => <li key={note}>{note}</li>)}</ul><p className="profile-help">{details.earlyNote}</p><p className="profile-help">{details.earlyAge === null ? '' : `일반 조기 신청 검토 연령: 만 ${details.earlyAge}세부터. `}조기수령을 선택한 결과가 아닙니다. {details.externalValidation}. 직역연금 원 미만 버림·국민연금 10원 미만 버림을 적용하며, 기관의 전체 급여 끝수·개인별 지급액 대조가 끝난 것은 아닙니다.</p>
       {details.sources.map(source => <p className="profile-help" key={source.url}><OfficialLink href={source.url}>{source.title}</OfficialLink></p>)}</details>
-    <p className="profile-help">기관에서 확인한 월연금액이 있으면 아래 선택 입력을 사용할 수 있습니다. 입력액을 우선 사용하며 금액을 지우면 자동 추정으로 돌아갑니다. 조회 가정일 {q.pension.retirementDate || '미입력'} / 조회 기준일 {q.pension.queryDate || '미입력'}.</p>
+    <p className="profile-help">공식 조회액이 있으면 아래에 입력하세요. 입력액을 우선 사용하며 지우면 자동 추정으로 돌아갑니다.</p>
     <SimpleQuoteEditor title="예상 월연금" kind="pension" value={q.pension} onChange={pension => onChange({ ...input, benefits: { ...input.benefits, [p.scheme]: { ...q, pension } } })} date={r.retirement.date} />
   </section>;
 }

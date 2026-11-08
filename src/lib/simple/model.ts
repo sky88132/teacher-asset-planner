@@ -12,6 +12,7 @@ export type SimpleAccount = { balance: string; monthly: string; cycle?: 'monthly
 export type SimpleBenefits = { pension: BenefitInput; allowance: BenefitInput; honorary: BenefitInput;
   eligibility: 'unknown' | 'confirmed' | 'no'; selection: 'unknown' | 'selected' | 'rejected';
   income?: string; recognizedMonths?: string; recognizedDate?: string; recognizedAppointment?: string;
+  legacyAllowanceIncome?: string; legacyAllowanceDate?: string; legacyAllowanceAppointment?: string;
   pensionEstimate?: PensionEstimateInput };
 export type SimpleInputs = {
   profile: SimpleProfile;

@@ -10,13 +10,13 @@ test.beforeEach(async({page})=>{await page.clock.install({time:new Date('2026-11
 test('가입일 미입력·기본 접힘·공적연금과 계좌별 미확인 공백 안내',async({page})=>{
   await profile(page);await menu(page,2);await balances(page);await expect(page.getByLabel('IRP 최초 계좌 가입일',{exact:true})).not.toBeVisible();
   await expect(page.getByRole('region',{name:'IRP 수령 요건 요약',exact:true})).toContainText('가입기간 충족 여부는 추가 확인');await expect(page.getByRole('region',{name:'연금저축 수령 요건 요약',exact:true})).toContainText('실제 신청일');
-  await menu(page,4);const bridge=page.getByRole('region',{name:'연금계좌 소득 공백 활용',exact:true});await expect(bridge).toContainText('공적연금');await expect(bridge).toContainText('추가 확인 후');await expect(bridge).toContainText('공백 충당 가능 금액은 별도 계산');
+  await menu(page,4);await page.getByText('자산 활용 조건 자세히 보기',{exact:true}).click();const bridge=page.getByRole('region',{name:'자산 활용 방식 구분',exact:true});await expect(bridge).toContainText('공적연금');await expect(bridge).toContainText('추가 확인 후');await expect(bridge).toContainText('공백 충당 가능 금액은 별도 계산');
 });
 test('계좌별 5년 요건·55세 경계·퇴직일과 정년 변경·가입일 보존',async({page})=>{
   await profile(page);await menu(page,2);await details(page);await page.getByLabel('IRP 최초 계좌 가입일',{exact:true}).fill('2025-05-10');await details(page,'연금저축');await page.getByLabel('연금저축 최초 계좌 가입일',{exact:true}).fill('2020-05-10');
   await expect(page.getByRole('region',{name:'IRP 수령 요건 요약',exact:true})).toContainText('2030-05-10');await expect(page.getByRole('region',{name:'IRP 수령 요건 요약',exact:true})).toContainText('요건 미충족');await expect(page.getByRole('region',{name:'연금저축 수령 요건 요약',exact:true})).toContainText('요건 충족');
-  await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2031-02-28');await menu(page,4);await expect(page.getByRole('region',{name:'IRP 수령 요건 요약',exact:true})).toContainText('요건 충족');
-  await menu(page,0);await page.getByRole('radio',{name:'정년퇴직',exact:true}).check();await menu(page,4);await expect(page.getByRole('region',{name:'IRP 수령 요건 요약',exact:true})).toContainText('요건 충족');
+  await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2031-02-28');await menu(page,4);await page.getByText('자산 활용 조건 자세히 보기',{exact:true}).click();await expect(page.getByRole('region',{name:'IRP 수령 요건 요약',exact:true})).toContainText('요건 충족');
+  await menu(page,0);await page.getByRole('radio',{name:'정년퇴직',exact:true}).check();await menu(page,4);await page.getByText('자산 활용 조건 자세히 보기',{exact:true}).click();await expect(page.getByRole('region',{name:'IRP 수령 요건 요약',exact:true})).toContainText('요건 충족');
   await menu(page,2);await details(page);await expect(page.getByLabel('IRP 최초 계좌 가입일',{exact:true})).toHaveValue('2025-05-10');
 });
 test('실제 이연퇴직소득 확인 예외·연간 한도 내외·재원별 세금',async({page})=>{

@@ -51,6 +51,11 @@ export function allowanceRate(months: number): number | null {
   if (!Number.isInteger(months) || months < 12) return null;
   return months < 60 ? 0.065 : months < 120 ? 0.2275 : months < 180 ? 0.2925 : months < 240 ? 0.325 : 0.39;
 }
+/** Shared statutory multiplication; whole-won floor, not agency rounding verification. */
+export function allowanceAmount(income: number, months: number, rate: number): number | null {
+  const n=BigInt(income)*BigInt(months)*BigInt(Math.round(rate*10000))/120000n;
+  return n>BigInt(Number.MAX_SAFE_INTEGER)?null:Number(n);
+}
 export function estimateAllowance(p: SimpleProfile, q: SimpleBenefits, date: string | null): BenefitEstimate {
   const r = empty(p.scheme === 'private-school' ? benefitSources.private : benefitSources.civil, '2026년 기준 입력 소득 가격 고정 · 세전 · 미래 소득 인상 미반영');
   if (p.scheme === 'national') {
@@ -82,9 +87,8 @@ export function estimateAllowance(p: SimpleProfile, q: SimpleBenefits, date: str
   r.formula = `기준소득월액 × ${r.months ?? '?'} / 12 × ${r.rate === null ? '?' : (r.rate * 100).toFixed(2)}% (33년 상한)`;
   if (!r.errors.length && r.salaryWon !== null && r.months !== null && r.rate !== null) {
     // One final whole-won floor, not an assertion of the agency's statutory rounding.
-    const n = BigInt(r.salaryWon) * BigInt(r.months) * BigInt(Math.round(r.rate * 10000)) / 120000n;
-    if (n > BigInt(Number.MAX_SAFE_INTEGER)) r.errors.push('금액 범위를 초과했습니다.');
-    else r.amountWon = Number(n);
+    r.amountWon = allowanceAmount(r.salaryWon,r.months,r.rate);
+    if (r.amountWon === null) r.errors.push('금액 범위를 초과했습니다.');
   }
   return r;
 }

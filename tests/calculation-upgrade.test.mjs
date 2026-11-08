@@ -38,16 +38,16 @@ test('주기가 다른 계좌의 실제 연도별 합산 한도와 누락 계좌
   f.irp.annual='18000001';assert.equal(calculateSimple(f,today).accountsTotal,null);
   f.irp.annual='18000000';f.saving.monthly='';assert.equal(calculateSimple(f,today).saving.amountWon,null);
 });
-test('환급은 실제 납입연도별 국세 공제와 여력·차년도 5월·퇴직일 제한 적용',()=>{
+test('참고 재투자는13.2%·연도별 한도·차년도5월·퇴직일 제한 적용',()=>{
   const f=fixture();f.profile.earlyDate='2028-06-30';f.reinvest=true;f.taxIncome='50000000';f.taxCapacity='2000000';
   const r=calculateSimple(f,today);
-  assert.equal(r.taxCredits['2026'],300000); // each account 2*50만원, 15%
-  assert.deepEqual(r.reinvestments,[{date:'2027-05-31',won:300000},{date:'2028-05-31',won:1350000}]);
-  assert.ok(r.reinvestEffect>1650000);assert.equal(r.irp.deposits,10000000+1650000);
+  assert.equal(r.taxCredits['2026'],264000); // 200만원 * 13.2%
+  assert.deepEqual(r.reinvestments,[{date:'2027-05-31',won:264000},{date:'2028-05-31',won:1188000}]);
+  assert.ok(r.reinvestEffect>1452000);assert.equal(r.irp.deposits,10000000+1452000);
   f.profile.earlyDate='2027-05-30';assert.deepEqual(calculateSimple(f,today).reinvestments,[]);
-  f.profile.earlyDate='2027-05-31';assert.deepEqual(calculateSimple(f,today).reinvestments,[{date:'2027-05-31',won:300000}]);
-  f.taxCapacity='0';assert.equal(calculateSimple(f,today).reinvestEffect,0);
-  f.taxCapacity='';assert.equal(calculateSimple(f,today).reinvestEffect,null);
+  f.profile.earlyDate='2027-05-31';assert.deepEqual(calculateSimple(f,today).reinvestments,[{date:'2027-05-31',won:264000}]);
+  f.taxCapacity='0';assert.equal(calculateSimple(f,today).reinvestEffect,264000); // legacy input ignored
+  f.taxCapacity='';assert.equal(calculateSimple(f,today).reinvestEffect,264000);
 });
 test('재투자 포함 납입한도 초과는 기본 결과를 보존하고 효과를 차단한다',()=>{
   const f=fixture();f.irp.monthly='1000000';f.saving.monthly='500000';const before=calculateSimple(f,today);f.reinvest=true;f.taxIncome='50000000';f.taxCapacity='2000000';const r=calculateSimple(f,today);

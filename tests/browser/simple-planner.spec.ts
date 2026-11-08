@@ -25,7 +25,7 @@ test('6개 메뉴·학교 구분 제거·연금 3개·국민연금 별도 처리
   await profile(page);await page.getByRole('radio',{name:'국민연금',exact:true}).check();await expect(page.getByText('국민연금 군복무 크레딧',{exact:true})).toBeVisible();
   await expect(page.getByLabel('임용 전 군복무기간을 연금 재직기간에 산입했습니까?',{exact:true})).toHaveCount(0);
   await page.getByText('정년일이 다른 경우 직접 수정',{exact:true}).click();await page.getByLabel('기관에서 확인한 정년일 사용',{exact:true}).check();await page.getByLabel('기관에서 확인한 정년일',{exact:true}).fill('2040-02-29');
-  await menu(page,3);await page.getByText('퇴직수당 예상액',{exact:true}).click();await expect(page.getByText('국민연금 가입자는 공무원·사학 퇴직수당 자동 지급 대상이 아닙니다.',{exact:false})).toBeVisible();
+  await menu(page,3);await page.getByText('계산 근거 보기 (퇴직수당)',{exact:true}).click();await expect(page.getByText('국민연금 가입자는 공무원·사학 퇴직수당 자동 지급 대상이 아닙니다.',{exact:false})).toBeVisible();
 });
 test('승급월 경계·군 산입·정년과 명퇴의 배타 선택 및 날짜 오류',async({page})=>{
   await profile(page,'2027-02-28');const condition=page.getByRole('region',{name:'공통 퇴직 조건'});await expect(condition).toContainText('22호봉');
@@ -44,44 +44,44 @@ test('최소 공제회 입력·고정 5%·0과 미입력·분할 기간 및 매�
   await expect(result.locator('.benefit-amount')).toHaveText(amount);await expect(page.getByRole('region',{name:'공제회 일시 수령 결과'})).toHaveCount(0);
   await page.getByText('적용 이율·가입 조건·계산 근거',{exact:true}).click();await expect(page.getByText('한국교직원공제회 2026년 7월 1일 기준 장기저축급여율 연복리 5.00%',{exact:false})).toBeVisible();
 });
-test('두 연금계좌는 각 2개 입력·고정 가정·재투자 미반영·독립 계산',async({page})=>{
+test('두 연금계좌는 각2개 입력·고정 가정·체크박스 재투자·독립 계산',async({page})=>{
   await profile(page);await menu(page,2);await expect(page.getByRole('textbox')).toHaveCount(4);await expect(page.getByRole('combobox')).toHaveCount(2);
   await page.getByLabel('IRP 현재 적립금 또는 평가금액 (만원)',{exact:true}).fill('0');await page.getByLabel('IRP 앞으로의 월 납입액 (만원)',{exact:true}).fill('10');
   const irp=page.getByRole('region',{name:'퇴직 시 IRP 예상 적립금',exact:true});await expect(irp.locator('.benefit-amount')).not.toHaveText('미입력 또는 계산 불가');await expect(page.getByRole('region',{name:'연금계좌 예상 적립금 합계'})).toContainText('미입력 또는 계산 불가');
   await page.getByLabel('연금저축 현재 적립금 또는 평가금액 (만원)',{exact:true}).fill('0');await page.getByLabel('연금저축 앞으로의 월 납입액 (만원)',{exact:true}).fill('0');
-  const sum=page.getByRole('region',{name:'연금계좌 예상 적립금 합계'}).locator('.benefit-amount'),before=await sum.innerText();await page.getByLabel('세액공제 환급액을 재투자하겠습니다.',{exact:true}).check();await expect(sum).toHaveText(before);await expect(page.locator('.profile-context').filter({hasText:'재투자 효과 미반영'})).toBeVisible();
+  const sum=page.getByRole('region',{name:'연금계좌 예상 적립금 합계'}).locator('.benefit-amount'),before=await sum.innerText();await page.getByLabel('세액공제 환급액을 재투자하겠습니다.',{exact:true}).check();await expect(sum).not.toHaveText(before);await expect(page.locator('.profile-context').filter({hasText:'13.2%'})).toBeVisible();
 });
 test('공통 퇴직일 변경이 모든 적립금·종합·AI에 즉시 연결된다',async({page})=>{
   await profile(page);await assets(page);await menu(page,4);const card=page.getByRole('region',{name:'주요 적립금 합계'}).locator('.benefit-amount'),before=await card.innerText();
   await expect(page.getByRole('figure',{name:'주요 적립금 구성 그래프'})).toBeVisible();await expect(page.getByRole('region',{name:'공적연금 요약'})).toContainText('추정에 필요한 정보 확인');
-  await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2031-11-08');await menu(page,4);await expect(card).not.toHaveText(before);await expect(page.getByRole('region',{name:'예상 퇴직일 요약'})).toContainText('2031-11-08');
+  await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2031-11-08');await menu(page,4);await expect(card).not.toHaveText(before);await expect(page.getByRole('region',{name:'은퇴설계 핵심 요약'})).toContainText('2031-11-08');
   await menu(page,5);await page.getByLabel('포함 정보·익명화·누락 사항을 확인했습니다.',{exact:true}).check();await page.getByRole('button',{name:'AI 요청문 생성',exact:true}).click();await expect(page.getByLabel('AI 분석 요청문',{exact:true})).toHaveValue(/가정 연 7%/);
 });
 test('수당 자동 추정·직접 금액과 자격 선택 제거·제도별 미지원·세전 합계',async({page},info)=>{
   await profile(page,'2031-08-31');await page.getByLabel('최초 임용일',{exact:true}).fill('2010-03-01');await menu(page,3);
-  const retirement=page.getByText('퇴직수당 예상액',{exact:true}).locator('..');await expect(retirement).not.toHaveAttribute('open');
+  const retirement=page.getByText('계산 근거 보기 (퇴직수당)',{exact:true}).locator('..');await expect(retirement).not.toHaveAttribute('open');
   await page.getByText('명예퇴직수당 예상액',{exact:true}).click();const h=page.getByRole('region',{name:'명예퇴직수당 결과'});await expect(h).toContainText('지급 미확정');await expect(h.locator('.benefit-amount')).not.toHaveText('미입력 또는 계산 불가');
   await expect(page.getByLabel('명예퇴직수당 지급 자격',{exact:true})).toHaveCount(0);await expect(page.getByLabel('명예퇴직수당 실제 선정',{exact:true})).toHaveCount(0);await expect(page.getByText('명예퇴직수당 직접 입력 (선택)',{exact:true})).toHaveCount(0);
-  await page.getByText('퇴직수당 예상액',{exact:true}).click();const a=page.getByRole('region',{name:'퇴직수당 결과',exact:true});await expect(a).toContainText('기준소득월액');
+  await page.getByText('계산 근거 보기 (퇴직수당)',{exact:true}).click();const a=page.getByRole('region',{name:'퇴직수당 결과',exact:true});await expect(a).toContainText('기준소득월액');
   await page.getByLabel('2026년 기준 퇴직수당용 기준소득월액 (만원, 선택)',{exact:true}).fill('600');await expect(a.locator('.benefit-amount')).toHaveText('5,031만원');
   const total=page.getByRole('region',{name:'퇴직급여 합계'});await expect(total).toContainText('세전');await expect(total).not.toContainText('완전한 합계 확인 불가');
   for(const width of info.project.name==='mobile'?[320,390]:[1440]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
   await page.screenshot({path:info.outputPath('automatic-benefits.png'),fullPage:true});
-  await menu(page,0);await page.getByRole('radio',{name:'사학연금',exact:true}).check();await menu(page,3);await page.getByText('명예퇴직수당 예상액',{exact:true}).click();await expect(h).toContainText('학교 정관');await page.getByText('퇴직수당 예상액',{exact:true}).click();await page.getByLabel('2026년 기준 퇴직수당용 기준소득월액 (만원, 선택)',{exact:true}).fill('600');await expect(a.locator('.benefit-amount')).toHaveText('5,031만원');
-  await menu(page,0);await page.getByRole('radio',{name:'공무원연금',exact:true}).check();await page.getByRole('radio',{name:'정년퇴직',exact:true}).check();await menu(page,3);await expect(page.getByText('명예퇴직수당 예상액',{exact:true})).toHaveCount(0);await expect(page.getByText('퇴직수당 예상액',{exact:true})).toBeVisible();
+  await menu(page,0);await page.getByRole('radio',{name:'사학연금',exact:true}).check();await menu(page,3);await page.getByText('명예퇴직수당 예상액',{exact:true}).click();await expect(h).toContainText('학교 정관');await page.getByText('계산 근거 보기 (퇴직수당)',{exact:true}).click();await page.getByLabel('2026년 기준 퇴직수당용 기준소득월액 (만원, 선택)',{exact:true}).fill('600');await expect(a.locator('.benefit-amount')).toHaveText('5,031만원');
+  await menu(page,0);await page.getByRole('radio',{name:'공무원연금',exact:true}).check();await page.getByRole('radio',{name:'정년퇴직',exact:true}).check();await menu(page,3);await expect(page.getByText('명예퇴직수당 예상액',{exact:true})).toHaveCount(0);await expect(page.getByText('계산 근거 보기 (퇴직수당)',{exact:true})).toBeVisible();
 });
 
 test('계좌별 월납·연납 입력 전환·금액 보존·부분 기간·환급 재투자',async({page},info)=>{
   await profile(page,'2028-06-30');await assets(page);await page.getByLabel('IRP 앞으로의 월 납입액 (만원)',{exact:true}).fill('50');const r=page.getByRole('region',{name:'퇴직 시 IRP 예상 적립금',exact:true});const before=await r.locator('.benefit-amount').innerText();
   await page.getByLabel('IRP 납입 주기',{exact:true}).selectOption('yearly');await expect(page.getByLabel('IRP 앞으로의 월 납입액 (만원)',{exact:true})).toHaveCount(0);await page.getByLabel('IRP 앞으로의 연 납입액 (만원)',{exact:true}).fill('600');await expect(r.locator('.benefit-amount')).not.toHaveText(before);await expect(page.getByLabel('연금저축 앞으로의 월 납입액 (만원)',{exact:true})).toBeVisible();
   await page.getByLabel('IRP 납입 주기',{exact:true}).selectOption('monthly');await expect(page.getByLabel('IRP 앞으로의 월 납입액 (만원)',{exact:true})).toHaveValue('50');await page.getByLabel('IRP 납입 주기',{exact:true}).selectOption('yearly');await expect(page.getByLabel('IRP 앞으로의 연 납입액 (만원)',{exact:true})).toHaveValue('600');
-  const baseline=await r.locator('.benefit-amount').innerText();await page.getByLabel('세액공제 환급액을 재투자하겠습니다.',{exact:true}).check();await expect(r.locator('.benefit-amount')).toHaveText(baseline);await page.getByLabel('재투자 가정 연 총급여 (만원, 선택)',{exact:true}).fill('5000');await page.getByLabel('재투자 가정 공제 전 소득세 여력 (만원, 선택)',{exact:true}).fill('200');await expect(r.locator('.benefit-amount')).not.toHaveText(baseline);
+  const baseline=await r.locator('.benefit-amount').innerText();await page.getByLabel('세액공제 환급액을 재투자하겠습니다.',{exact:true}).check();await expect(r.locator('.benefit-amount')).not.toHaveText(baseline);
   await page.screenshot({path:info.outputPath('account-cycles.png'),fullPage:true});
 });
 
 test('공식 연금은 해당 퇴직일에서만 재사용하고 다른 제도와 섞지 않는다',async({page})=>{
   await profile(page);await menu(page,4);await quote(page,'예상 월연금','1234567');await page.getByLabel('공적연금 지급개시일',{exact:true}).fill('2035-01-01');
-  const r=page.getByRole('region',{name:'공적연금 요약'});await expect(r).toContainText('123.4567만원 / 월');await expect(r).toContainText('공식 조회값');
+  const r=page.getByRole('region',{name:'공적연금 요약'});await expect(r).toContainText('123만원 / 월');await expect(r).toContainText('공식 조회값');
   await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2031-11-08');await menu(page,4);await expect(r).toContainText('추정에 필요한 정보 확인');await expect(r).toContainText('재확인 필요');
   await menu(page,0);await page.getByRole('radio',{name:'사학연금',exact:true}).check();await menu(page,4);await expect(page.getByLabel('예상 월연금 금액 (만원)',{exact:true})).toHaveValue('');
 });
@@ -147,20 +147,20 @@ test('만원 입력·천 단위·소수·음수/문자/범위 차단·빈 값 �
   await input.fill('10000');await expect(input).toHaveValue('10,000');await menu(page,2);await menu(page,1);await expect(input).toHaveValue('10,000');
 });
 
-test('공식 월연금 450만원·수당 입력 단위 고정·AI 원 단위 정확성',async({page})=>{
-  await profile(page,'2031-08-31');await page.getByLabel('최초 임용일',{exact:true}).fill('2010-03-01');await menu(page,3);await page.getByText('퇴직수당 예상액',{exact:true}).click();await page.getByLabel('2026년 기준 퇴직수당용 기준소득월액 (만원, 선택)',{exact:true}).fill('600');
+test('공식 월연금 450만원·수당 입력 단위 고정·AI 만원 표시·내부 단위 연결',async({page})=>{
+  await profile(page,'2031-08-31');await page.getByLabel('최초 임용일',{exact:true}).fill('2010-03-01');await menu(page,3);await page.getByText('계산 근거 보기 (퇴직수당)',{exact:true}).click();await page.getByLabel('2026년 기준 퇴직수당용 기준소득월액 (만원, 선택)',{exact:true}).fill('600');
   await expect(page.getByRole('region',{name:'퇴직수당 결과',exact:true})).toContainText('5,031만원');await expect(page.getByLabel('퇴직수당 단위',{exact:true})).toHaveCount(0);
   await menu(page,4);await quote(page,'예상 월연금','4500000');await page.getByLabel('공적연금 지급개시일',{exact:true}).fill('2035-01-01');
   await expect(page.getByRole('region',{name:'공적연금 요약'})).toContainText('450만원 / 월');
   await menu(page,5);await page.getByLabel('금융금액 표시 방식',{exact:true}).selectOption('exact');await page.getByLabel('포함 정보·익명화·누락 사항을 확인했습니다.',{exact:true}).check();await page.getByRole('button',{name:'AI 요청문 생성',exact:true}).click();
-  await expect(page.getByLabel('AI 분석 요청문',{exact:true})).toHaveValue(/4,500,000원/);await expect(page.getByLabel('AI 분석 요청문',{exact:true})).not.toHaveValue(/45,000,000,000원/);
+  await expect(page.getByLabel('AI 분석 요청문',{exact:true})).toHaveValue(/450만원/);await expect(page.getByLabel('AI 분석 요청문',{exact:true})).not.toHaveValue(/45,000,000,000원/);
 });
 
 test('짧은 납입기간은 연환산 없이 실제 연도별 납입 계획으로 판정',async({page})=>{
   await profile(page,'2026-12-08');await menu(page,2);
   await page.getByLabel('IRP 현재 적립금 또는 평가금액 (만원)',{exact:true}).fill('0');await page.getByLabel('IRP 앞으로의 월 납입액 (만원)',{exact:true}).fill('200');
   await page.getByLabel('연금저축 현재 적립금 또는 평가금액 (만원)',{exact:true}).fill('0');await page.getByLabel('연금저축 앞으로의 월 납입액 (만원)',{exact:true}).fill('0');
-  const r=page.getByRole('region',{name:'퇴직 시 IRP 예상 적립금',exact:true});await expect(r.locator('.benefit-amount')).toHaveText('200.2968만원');await expect(page.getByText('올해 이미 납입한 금액·다른 계좌·특례는 별도 확인해야 합니다.',{exact:false})).toBeVisible();
+  const r=page.getByRole('region',{name:'퇴직 시 IRP 예상 적립금',exact:true});await expect(r.locator('.benefit-amount')).toHaveText('200만원');await page.getByText('납입·재투자 가정 자세히 보기',{exact:true}).click();await expect(page.getByText('올해 이미 납입한 금액·다른 계좌·특례는 별도 확인해야 합니다.',{exact:false})).toBeVisible();
   await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2027-12-08');await menu(page,2);await expect(r).toContainText('1,800만원 한도를 초과');
   await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2026-11-08');await menu(page,2);await expect(r.locator('.benefit-amount')).toHaveText('0만원');
 });

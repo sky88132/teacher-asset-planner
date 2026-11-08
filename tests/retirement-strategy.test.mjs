@@ -79,6 +79,6 @@ test('퇴직일 변경은 조회값 무효화·공백과 지급표 갱신, 생�
   f.monthlyLivingCost='3500000';assert.deepEqual(calculateSimple(f,today),before);f.profile.earlyDate='2028-01-01';const changed=run(f);assert.equal(changed.a.publicStart,null);assert.notEqual(changed.a.split.first,before.split.rows[0].date);assert.equal(changed.a.expenseWon,3500000);
 });
 test('AI 요청문 연결은 조언·생활비·구간 포함, 익명화·금액 축약·복사 검사 유지',()=>{
-  const f=fixture({split:true,start:'2030-01-01'});f.monthlyLivingCost='3333333';const settings=createPromptWorkspace().settings;settings.money='exact';const text=generateSimplePrompt(f,settings,today);assert.match(text,/6-2. 은퇴설계 종합 분석/);assert.match(text,/3,333,333원/);assert.match(text,/검토할 대응/);assert.match(text,/남은 가상 잔액/);assert.ok(!text.includes('2030-01-01'));assert.deepEqual(privacyFindings(text,settings),[]);
-  const rounded=generateSimplePrompt(f,{...settings,money:'range'},today);assert.ok(!rounded.includes('3,333,333원'));assert.deepEqual(privacyFindings(rounded,settings),[]);
+  const f=fixture({split:true,start:'2030-01-01'});f.monthlyLivingCost='3333333';const settings=createPromptWorkspace().settings;settings.money='exact';const text=generateSimplePrompt(f,settings,today);assert.match(text,/6-2. 은퇴설계 종합 분석/);assert.match(text,/333만원/);assert.match(text,/검토할 대응/);assert.match(text,/남은 가상 잔액/);assert.ok(!text.includes('2030-01-01'));assert.deepEqual(privacyFindings(text,settings),[]);
+  const rounded=generateSimplePrompt(f,{...settings,money:'range'},today);assert.ok(!rounded.includes('333만원'));assert.deepEqual(privacyFindings(rounded,settings),[]);
 });

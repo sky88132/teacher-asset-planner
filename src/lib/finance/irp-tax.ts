@@ -1,10 +1,14 @@
 export const taxRule = { checkedOn: '2026-11-07', savingCap: 6000000, combinedCap: 9000000,
   source: 'https://www.nts.go.kr/nts/cm/cntnts/cntntsView.do?cntntsId=7875&mi=2227' } as const;
+export function pensionCreditBase(irp: number, saving: number) {
+  for (const n of [irp, saving]) if (!Number.isSafeInteger(n) || n < 0) throw new Error('유효한 원 단위 금액이 필요합니다.');
+  return Math.min(taxRule.combinedCap, irp + Math.min(saving, taxRule.savingCap));
+}
 export function pensionTaxCredit(irp: number, saving: number, incomeKind: 'wage' | 'comprehensive', income: number, capacity: number | null) {
   for (const n of [irp, saving, income, ...(capacity === null ? [] : [capacity])]) if (!Number.isSafeInteger(n) || n < 0) throw new Error('유효한 원 단위 금액이 필요합니다.');
   if (!['wage', 'comprehensive'].includes(incomeKind)) throw new Error('소득 구분을 확인해 주세요.');
   const rate = income <= (incomeKind === 'wage' ? 55000000 : 45000000) ? 15 : 12;
-  const eligible = Math.min(taxRule.combinedCap, irp + Math.min(saving, taxRule.savingCap));
+  const eligible = pensionCreditBase(irp, saving);
   const theoretical = Number(BigInt(eligible) * BigInt(rate) / 100n); // national income tax only, sub-won truncated
   return { eligible, rate, theoretical, usable: capacity === null ? null : Math.min(capacity, theoretical), cashRefund: null };
 }

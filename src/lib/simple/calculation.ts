@@ -5,10 +5,11 @@ import { simulateKtcuAccumulation, simulateVirtualWithdrawals } from '../finance
 import { addSimulationMonths, completedSimulationMonths } from '../finance/ktcu-validation.ts';
 import { contributionSchedule, annualContributions, growthFactor, type Deposit } from './account-schedule.ts';
 import { estimateHonorary, estimateAllowance } from './benefit-estimates.ts';
-import { pensionTaxCredit } from '../finance/irp-tax.ts';
+import { plannedReinvestment } from './reinvestment.ts';
 import { createPensionEstimateInput } from './pension-types.ts';
 import { estimateCivilPension, estimatePrivatePension } from './occupational-pension.ts';
 import { estimateNationalPension } from './national-pension.ts';
+import { estimateAllowanceReference } from './allowance-reference.ts';
 import { calculateAccountReceipt, createAccountReceiptInput } from './account-receipt.ts';
 import { isCalendarDate } from '../profile-validation.ts';
 import { simpleConfig } from './config.ts';
@@ -103,17 +104,16 @@ export function calculateSimple(input: SimpleInputs, today: string) {
     const error = [overLimitYears.join('·') + '년의 입력된 납입 계획 합계가 연금계좌 일반 개인납입 합산 연 1,800만원 한도를 초과합니다. 다른 납입·특례는 별도 확인이 필요합니다.'];
     irp = noAmount(error, date); saving = noAmount(error, date);
   }
+  const accountsWithoutReinvestment = sumKnown([irp, saving], date);
   const reinvestments: Deposit[] = [];
   let reinvestError = '';
   const taxCredits: Record<string, number> = {};
   if (input.reinvest) {
-    const income = moneyWon(input.taxIncome ?? ''), capacity = moneyWon(input.taxCapacity ?? '');
-    if (income.won === null || income.error || capacity.won === null || capacity.error) reinvestError = '재투자 효과 미반영 · 선택했으나 연 총급여·공제 전 소득세 여력 확인이 없어 계산 불가 (0원 확정 아님)';
-    else if (irp.amountWon === null || saving.amountWon === null || !date) reinvestError = '재투자 계산에는 두 계좌의 유효한 납입 계획과 잔액이 필요합니다.';
+    if (irp.amountWon === null || saving.amountWon === null || !date) reinvestError = '재투자 계산에는 두 계좌의 유효한 납입 계획과 잔액이 필요합니다. 없는 계좌는 0만원을 입력하세요.';
     else {
       for (let year = Number(today.slice(0, 4)); year <= Number(date.slice(0, 4)); year++) {
         const priorReinvest = reinvestments.filter(row => row.date.startsWith(String(year))).reduce((sum, row) => sum + row.won, 0);
-        const credit = pensionTaxCredit((irp.contributionsByYear?.[year] ?? 0) + priorReinvest, saving.contributionsByYear?.[year] ?? 0, 'wage', income.won, capacity.won).usable!;
+        const credit = plannedReinvestment((irp.contributionsByYear?.[year] ?? 0) + priorReinvest, saving.contributionsByYear?.[year] ?? 0);
         taxCredits[year] = credit;
         const refundDate = `${year + 1}-05-31`;
         if (credit > 0 && refundDate <= date) {
@@ -155,12 +155,13 @@ export function calculateSimple(input: SimpleInputs, today: string) {
   const accumulationTotal = sumKnown([ktcu, irp, saving], date);
   return { today, retirement, step, ktcu, split, splitError, irp, saving, pension, allowance, honorary,
     benefitsTotal, accountsTotal, accumulationTotal, accumulation, allowanceDetails, honoraryDetails, plannedTotals,
+    allowanceReference: estimateAllowanceReference(input.profile, quotes, date, honorary.amountWon),
     pensionDetails, pensionSource, pensionStartDate, pensionGapMonths, pensionGapDays,
     accountReceipts: {
       irp: calculateAccountReceipt(input.irp.receipt ?? createAccountReceiptInput(), input.profile.birthDate, date, today, pensionStartDate),
       saving: calculateAccountReceipt(input.saving.receipt ?? createAccountReceiptInput(), input.profile.birthDate, date, today, pensionStartDate),
     },
-    taxCredits, reinvestments: reinvestError ? [] : reinvestments, reinvestError,
+    accountsWithoutReinvestment, taxCredits, reinvestments: reinvestError ? [] : reinvestments, reinvestError,
     reinvestEffect: !input.reinvest || reinvestError || irp.amountWon === null ? null : irp.amountWon - (calculateAccount(input.irp, date, today, simpleConfig.irpRate).amountWon ?? irp.amountWon),
     residualMonths: date && retirement.normal ? completedSimulationMonths(date, retirement.normal) : null,
     serviceMonths: date && isCalendarDate(input.profile.appointmentDate) ? completedSimulationMonths(input.profile.appointmentDate, date) : null,

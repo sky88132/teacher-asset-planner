@@ -16,7 +16,7 @@ test('빈 값·0·소수·1원·만원/억원 경계·쉼표와 안전범위',()
   for(const raw of ['-1','abc','1e3','1.00001','900719925474.0992','999999999999999999999','1,00'])assert.ok(manwonToWon(raw).error);
   assert.equal(groupManwon('3000.0001'),'3,000.0001');
   assert.equal(formatWonAsKoreanCurrency(null),'미입력 또는 계산 불가');
-  for(const [n,text] of [[0,'0만원'],[30000000,'3,000만원'],[150000000,'1억 5,000만원'],[300000000,'3억원'],[4500000,'450만원'],[1,'0.0001만원'],[-5000,'-0.5만원']])assert.equal(formatWonAsKoreanCurrency(n),text);
+  for(const [n,text] of [[0,'0만원'],[30000000,'3,000만원'],[150000000,'1억 5,000만원'],[300000000,'3억원'],[4500000,'450만원'],[1,'0만원 초과~1만원 미만'],[-5000,'-1만원']])assert.equal(formatWonAsKoreanCurrency(n),text);
 });
 test('기존 원 및 만원 조회값은 표시만 변환하고 중복 환산하지 않는다',()=>{
   const legacy={amount:'450',unit:'manwon'};assert.equal(wonToManwon(changeMoneyUnit(legacy,'won').amount),'450');assert.deepEqual(legacy,{amount:'450',unit:'manwon'});
@@ -27,10 +27,10 @@ test('화면 단위 변경 전후 공제회·IRP·연금저축 복리 결과가 
   const next=structuredClone(old);for(const key of ['ktcu','irp','saving'])for(const field of ['balance','monthly'])next[key][field]=manwonToWon(wonToManwon(old[key][field])).valueWon;
   assert.deepEqual(calculateSimple(next,today),calculateSimple(old,today));
 });
-test('450만원 월연금은 AI 요청문에 4,500,000원으로 전달하며 적립금과 합산하지 않는다',()=>{
+test('450만원 월연금은 AI 요청문에 450만원으로 전달하며 적립금과 합산하지 않는다',()=>{
   const f=fixture();const q=f.benefits.civil.pension;Object.assign(q,{money:{amount:manwonToWon('450').valueWon,unit:'won'},retirementDate:f.profile.normalDate,queryDate:today,startDate:'2035-01-01',source:'official',taxBasis:'gross'});
   assert.equal(calculateSimple(f,today).pension.amountWon,4500000);
-  const text=generateSimplePrompt(f,{...createPromptWorkspace().settings,money:'exact'},today);assert.match(text,/4,500,000원/);assert.doesNotMatch(text,/45,000,000,000원/);assert.equal(calculateSimple(f,today).accumulationTotal,null);
+  const text=generateSimplePrompt(f,{...createPromptWorkspace().settings,money:'exact'},today);assert.match(text,/450만원/);assert.doesNotMatch(text,/45,000,000,000원/);assert.equal(calculateSimple(f,today).accumulationTotal,null);
 });
 test('경계 수정 1: 1개월 월200만원을 연환산하지 않고 실제 1회 납입으로 계산',()=>{
   const f=fixture();f.profile.normalDate='2026-12-08';Object.assign(f.irp,{balance:'0',monthly:manwonToWon('200').valueWon});Object.assign(f.saving,{balance:'0',monthly:'0'});

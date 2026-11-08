@@ -4,9 +4,10 @@ import { Field, MoneyField, OfficialLink, won } from './shared';
 export function AccountReceiptSummary({ title, result: r }: { title: string; result: AccountReceiptResult }) {
   return <section className="profile-context" aria-label={`${title} 수령 요건 요약`}><strong>{title} 연금수령 조건</strong>
     <p>연령·기간 요건 충족 예상일: {r.eligibleDate ?? '추가 확인 필요'}</p><p>{r.status}</p>
-    {!r.eligibleDate && r.errors.map(e => <p className="profile-help" key={e}>{e}</p>)}
+    <p className="profile-help">개시 신청·세금·한도 확인 필요 · 55세만으로 전액 자유 인출 불가</p>
+    <details className="simple-details"><summary>{title} 수령 판정 근거</summary>{!r.eligibleDate && r.errors.map(e => <p className="profile-help" key={e}>{e}</p>)}
     <p className="profile-help">{r.exceptionApplied ? '사용자 확인 이연퇴직소득 보유로 가입 5년 예외 반영 · 실제 자료 확인 필요' : '만 55세·가입 5년의 일반 요건 기준 · 미확인 퇴직급여 예외 미적용'}</p>
-    <p className="profile-help">금융기관에 연금개시 신청이 필요합니다. 조건 충족일은 실제 신청일·첫 지급일이 아니며, 55세 도달만으로 전액을 자유롭게 인출할 수 있다는 뜻이 아닙니다. 재원별 세금과 연간 한도를 확인하세요.</p>
+    <p className="profile-help">조건 충족일은 실제 신청일·지급일이 아닙니다. 실제 신청 후 재원별 세금과 연간 한도를 확인하세요.</p></details>
   </section>;
 }
 export function AccountReceiptPanel({ title, value, onChange, result: r }: { title: string; value?: AccountReceiptInput; onChange: (v: AccountReceiptInput) => void; result: AccountReceiptResult }) {

@@ -73,9 +73,9 @@ test('분할 기간 5~30년·첫 25일·마지막 정산과 총액을 검증한�
 test('일시금·분할 총액은 적립금 합계에 중복 합산하지 않는다',()=>{
   const f=fixture(),before=calculateSimple(f,today);f.ktcu.split=true;const after=calculateSimple(f,today);assert.equal(after.accumulationTotal,before.accumulationTotal);assert.equal(after.accumulationTotal,after.ktcu.amountWon+after.irp.amountWon+after.saving.amountWon);
 });
-test('재투자 체크는 유지하되 미확인 환급을 0원 또는 추가 자산으로 만들지 않는다',()=>{
-  const f=fixture(),before=calculateSimple(f,today);f.reinvest=true;const after=calculateSimple(f,today);assert.equal(after.accountsTotal,before.accountsTotal);assert.equal(after.accumulationTotal,before.accumulationTotal);
-  const text=generateSimplePrompt(f,createPromptWorkspace().settings,today);assert.match(text,/선택했으나/);assert.match(text,/0원 확정 아님/);
+test('재투자 체크는13.2% 계획 가정으로 반영하고 실제 환급과 구분한다',()=>{
+  const f=fixture(),before=calculateSimple(f,today);f.reinvest=true;const after=calculateSimple(f,today);assert.ok(after.accountsTotal>before.accountsTotal);assert.equal(after.accumulationTotal-before.accumulationTotal,after.reinvestEffect);
+  const text=generateSimplePrompt(f,createPromptWorkspace().settings,today);assert.match(text,/13.2%/);assert.match(text,/실제 환급 미확인/);
 });
 test('급여 합계는 두 자동 추정이 같은 가격·세전 기준에서 가능한 경우만 제공한다',()=>{
   const f=fixture();Object.assign(f.profile,{retirement:'early',appointmentDate:'2010-03-01',earlyDate:'2031-08-31',normalDate:'2042-08-31'});
@@ -96,7 +96,7 @@ test('기본정보만으로 6개 목적의 요청문을 생성하고 금융 누�
 });
 test('AI 금액은 현재 결과와 반올림을 사용하며 식별 필드·자유 메모를 내보내지 않는다',()=>{
   const f=fixture();f.profile.name='홍길동';f.profile.account='123456789123';f.benefits.civil.pension.assumptions='학교명: 가나다초등학교';quote(f,'pension',1234567);
-  const text=generateSimplePrompt(f,createPromptWorkspace().settings,today);assert.match(text,/약 1,200,000원/);assert.doesNotMatch(text,/홍길동|123456789123|가나다초등학교|1980-05-10|2005-03-01/);
+  const text=generateSimplePrompt(f,createPromptWorkspace().settings,today);assert.match(text,/123만원/);assert.doesNotMatch(text,/홍길동|123456789123|가나다초등학교|1980-05-10|2005-03-01/);
   f.profile.normalDate='2031-11-08';assert.match(generateSimplePrompt(f,createPromptWorkspace().settings,today),/재확인 필요/);
 });
 test('공식 2026 봉급표의 숫자와 상한을 대조하되 미래 봉급 산식으로 쓰지 않는다',()=>{

@@ -12,12 +12,18 @@ export function groupManwon(value: string): string {
   const [whole, fraction] = value.split('.');
   return whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (fraction === undefined ? '' : '.' + fraction);
 }
-/** Exact Korean display; up to 4 decimal places in 만원 preserve single won results. */
-export function formatWonAsKoreanCurrency(valueWon: number | null, missing = '미입력 또는 계산 불가'): string {
+/** Display only: integer 만원, half away from zero. Never feed this text back to a calculation. */
+export function formatWonAsKoreanCurrency(valueWon: number | null, missing = '미입력 또는 계산 불가', mode?: 'range'): string {
   if (valueWon === null || !Number.isSafeInteger(valueWon)) return missing;
+  if (mode === 'range' && valueWon !== 0) {
+    const n=BigInt(Math.abs(valueWon)), lower=n/1000000n*1000000n, upper=lower+1000000n;
+    if(upper>BigInt(Number.MAX_SAFE_INTEGER))return `${valueWon<0?'-':''}${formatWonAsKoreanCurrency(Number(lower))} (표시 상한 구간)`;
+    return valueWon > 0 ? `${formatWonAsKoreanCurrency(Number(lower))} 이상~${formatWonAsKoreanCurrency(Number(upper))} 미만 (100만원 구간)` : `−${formatWonAsKoreanCurrency(Number(upper))} 초과~${lower===0n?'0만원':'−'+formatWonAsKoreanCurrency(Number(lower))} 미만 (100만원 구간)`;
+  }
   const sign = valueWon < 0 ? '-' : '';
-  const n = BigInt(Math.abs(valueWon));
-  const eok = n / 100000000n, rest = n % 100000000n;
-  const manwon = groupManwon(wonToManwon(String(rest)));
+  const raw=BigInt(Math.abs(valueWon)), n=(raw+5000n)/10000n;
+  if (raw>0n && n===0n) return valueWon>0 ? '0만원 초과~1만원 미만' : '-1만원 초과~0만원 미만';
+  const eok = n / 10000n, rest = n % 10000n;
+  const manwon = rest.toLocaleString('ko-KR');
   return sign + (eok ? eok.toLocaleString('ko-KR') + '억' + (rest ? ' ' + manwon + '만원' : '원') : manwon + '만원');
 }
