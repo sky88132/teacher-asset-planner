@@ -6,8 +6,8 @@ import { addSimulationMonths, completedSimulationMonths } from '../finance/ktcu-
 import { growMonth } from '../finance/irp-simulation.ts';
 import { isCalendarDate } from '../profile-validation.ts';
 import { simpleConfig } from './config.ts';
-import type { SimpleAccount, SimpleInputs } from './model.ts';
-import { moneyWon, resolveRetirement, projectedStep } from './validation.ts';
+import type { SimpleAccount, SimpleInputs, SimpleScheme } from './model.ts';
+import { moneyWon, resolveRetirement, projectedStep, contributionLimitYears } from './validation.ts';
 
 export type SimpleAmount = { amountWon: number | null; errors: string[]; confidence: string; date: string | null;
   initial: number | null; deposits: number | null; gain: number | null; initialFuture: number | null; depositsFuture: number | null };
@@ -30,7 +30,7 @@ export function calculateAccount(input: SimpleAccount, date: string | null, toda
       initialFuture, depositsFuture: balance - initialFuture, date, errors: [], confidence: '조건부 추정값' };
   } catch (e) { return noAmount([(e as Error).message], date); }
 }
-export function quoteAmount(q: BenefitInput, kind: 'pension' | 'allowance' | 'honorary', date: string | null, today: string): SimpleAmount {
+export function quoteAmount(q: BenefitInput, kind: 'pension' | 'allowance' | 'honorary', date: string | null, today: string, context: { scheme?: SimpleScheme; birthDate?: string } = {}): SimpleAmount {
   const errors: string[] = [];
   const parsed = parseMoney(q.money);
   if (parsed.won === null || parsed.error) errors.push(parsed.error ?? '공식 조회 금액을 입력해 주세요.');
@@ -39,7 +39,13 @@ export function quoteAmount(q: BenefitInput, kind: 'pension' | 'allowance' | 'ho
   if (!isCalendarDate(q.queryDate) || q.queryDate > today) errors.push('조회 기준일을 확인해 주세요.');
   if (!['gross', 'net'].includes(q.taxBasis)) errors.push('세전·세후를 선택해 주세요.');
   if (!['official', 'user-estimate'].includes(q.source)) errors.push('금액 출처를 선택해 주세요.');
-  if (kind === 'pension' && (!isCalendarDate(q.startDate) || (!!date && q.startDate < date))) errors.push('연금 지급개시일을 확인해 주세요.');
+  if (kind === 'pension') {
+    if (!isCalendarDate(q.startDate) || (context.birthDate && isCalendarDate(context.birthDate) && q.startDate <= context.birthDate)) errors.push('연금 지급개시일을 확인해 주세요.');
+    else if (date && q.startDate < date) {
+      if (context.scheme !== 'national') errors.push('이 간편 모드의 공무원·사학 일반 퇴직연금은 현재 퇴직일 이후 개시일을 입력합니다. 재임용·별도 수급권은 기관 확인이 필요합니다.');
+      else if (q.source !== 'official') errors.push('퇴직 전 국민연금 개시일은 개인별 수급·감액 조건을 확인한 공식 조회값으로 입력해 주세요.');
+    }
+  }
   if (errors.length) return noAmount(errors, date);
   return { ...noAmount([], date), amountWon: parsed.won, confidence: q.source === 'official' ? '공식 조회값' : '조건부 추정값' };
 }
@@ -76,15 +82,13 @@ export function calculateSimple(input: SimpleInputs, today: string) {
   }
   let irp = calculateAccount(input.irp, date, today, simpleConfig.irpRate), saving = calculateAccount(input.saving, date, today, simpleConfig.savingRate);
   const irpMonthly = moneyWon(input.irp.monthly).won, savingMonthly = moneyWon(input.saving.monthly).won;
-  const overLimit = (irpMonthly !== null && irpMonthly > simpleConfig.annualPersonalLimit / 12)
-    || (savingMonthly !== null && savingMonthly > simpleConfig.annualPersonalLimit / 12)
-    || (irpMonthly !== null && savingMonthly !== null && irpMonthly + savingMonthly > simpleConfig.annualPersonalLimit / 12);
-  if (overLimit) {
-    const error = ['매월 계속 납입 계획이 연금계좌 일반 개인납입 합산 연 1,800만원 한도를 초과합니다. 다른 납입·특례는 별도 확인이 필요합니다.'];
+  const overLimitYears = contributionLimitYears([irpMonthly, savingMonthly], today, date);
+  if (overLimitYears.length) {
+    const error = [overLimitYears.join('·') + '년의 입력된 납입 계획 합계가 연금계좌 일반 개인납입 합산 연 1,800만원 한도를 초과합니다. 다른 납입·특례는 별도 확인이 필요합니다.'];
     irp = noAmount(error, date); saving = noAmount(error, date);
   }
   const quotes = input.benefits[input.profile.scheme];
-  const pension = quoteAmount(quotes.pension, 'pension', date, today);
+  const pension = quoteAmount(quotes.pension, 'pension', date, today, { scheme: input.profile.scheme, birthDate: input.profile.birthDate });
   const allowance = input.profile.scheme === 'national' ? noAmount(['국민연금 가입자는 공무원·사학 퇴직수당 대상이 아닙니다. 별도 법정 퇴직급여 적용·계속근로기간·평균임금 또는 DB/DC 내역을 확인해 주세요.'], date) : quoteAmount(quotes.allowance, 'allowance', date, today);
   let honorary = quoteAmount(quotes.honorary, 'honorary', date, today);
   if (input.profile.retirement !== 'early' || input.profile.scheme === 'national') honorary = noAmount(['명예퇴직수당 적용 대상·신분 확인 필요'], date);

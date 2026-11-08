@@ -45,3 +45,19 @@ export function projectedStep(p: SimpleProfile, date: string | null, today: stri
   }
   return step;
 }
+
+/** Known planned deposits only; missing accounts are not confirmed zero.
+ * Payment dates match the accumulation engine's completed monthly anniversaries.
+ * This is not a certification of the user's actual remaining annual allowance. */
+export function contributionLimitYears(monthlyWon: (number | null)[], today: string, date: string | null): number[] {
+  if (!date || !isCalendarDate(today) || !isCalendarDate(date) || date < today) return [];
+  const months = completedSimulationMonths(today, date);
+  if (months > simpleConfig.maxMonths) return [];
+  const knownMonthly = monthlyWon.reduce<bigint>((sum, n) => sum + (n !== null && Number.isSafeInteger(n) && n >= 0 ? BigInt(n) : 0n), 0n);
+  const totals = new Map<number, bigint>();
+  for (let i = 1; i <= months; i++) {
+    const year = Number(addSimulationMonths(today, i).slice(0, 4));
+    totals.set(year, (totals.get(year) ?? 0n) + knownMonthly);
+  }
+  return [...totals].filter(([, total]) => total > BigInt(simpleConfig.annualPersonalLimit)).map(([year]) => year);
+}

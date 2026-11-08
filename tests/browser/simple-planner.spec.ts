@@ -141,3 +141,21 @@ test('공식 월연금 450만원·수당 입력 단위 고정·AI 원 단위 정
   await menu(page,5);await page.getByLabel('금융금액 표시 방식',{exact:true}).selectOption('exact');await page.getByLabel('포함 정보·익명화·누락 사항을 확인했습니다.',{exact:true}).check();await page.getByRole('button',{name:'AI 요청문 생성',exact:true}).click();
   await expect(page.getByLabel('AI 분석 요청문',{exact:true})).toHaveValue(/4,500,000원/);await expect(page.getByLabel('AI 분석 요청문',{exact:true})).not.toHaveValue(/45,000,000,000원/);
 });
+
+test('짧은 납입기간은 연환산 없이 실제 연도별 납입 계획으로 판정',async({page})=>{
+  await profile(page,'2026-12-08');await menu(page,2);
+  await page.getByLabel('IRP 현재 적립금 또는 평가금액 (만원)',{exact:true}).fill('0');await page.getByLabel('IRP 앞으로의 월 납입액 (만원)',{exact:true}).fill('200');
+  await page.getByLabel('연금저축 현재 적립금 또는 평가금액 (만원)',{exact:true}).fill('0');await page.getByLabel('연금저축 앞으로의 월 납입액 (만원)',{exact:true}).fill('0');
+  const r=page.getByRole('region',{name:'퇴직 시 IRP 예상 적립금',exact:true});await expect(r.locator('.benefit-amount')).toHaveText('200만원');await expect(page.getByText('실제 잔여한도와 납입 가능 여부를 확정하지 않습니다.',{exact:false})).toBeVisible();
+  await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2027-12-08');await menu(page,2);await expect(r).toContainText('1,800만원 한도를 초과');
+  await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2026-11-08');await menu(page,2);await expect(r.locator('.benefit-amount')).toHaveText('0만원');
+});
+
+test('국민연금은 퇴직 전 공식 개시일 허용·공무원/사학 제한과 안내 유지',async({page})=>{
+  await profile(page,'2027-02-28');await page.getByLabel('생년월일',{exact:true}).fill('1960-05-10');await page.getByLabel('최초 임용일',{exact:true}).fill('1990-03-01');
+  await page.getByRole('radio',{name:'국민연금',exact:true}).check();await page.getByRole('radio',{name:'정년퇴직',exact:true}).check();await page.getByText('정년일이 다른 경우 직접 수정',{exact:true}).click();await page.getByLabel('기관에서 확인한 정년일 사용',{exact:true}).check();await page.getByLabel('기관에서 확인한 정년일',{exact:true}).fill('2027-02-28');
+  await menu(page,4);await quote(page,'예상 월연금','1000000');const start=page.getByLabel('공적연금 지급개시일',{exact:true});const r=page.getByRole('region',{name:'공적연금 요약'});
+  for(const date of ['2025-05-10','2027-02-28','2027-03-01']){await start.fill(date);await expect(r).toContainText('100만원 / 월');}
+  await start.fill('2025-05-10');await expect(r).toContainText('감액·지급정지');await page.getByLabel('예상 월연금 출처',{exact:true}).selectOption('user-estimate');await expect(r).toContainText('공식 조회값으로 입력');
+  await menu(page,0);await page.getByRole('radio',{name:'공무원연금',exact:true}).check();await menu(page,4);await quote(page,'예상 월연금','1000000');await start.fill('2025-05-10');await expect(r).toContainText('재임용·별도 수급권은 기관 확인');
+});
