@@ -147,3 +147,22 @@
 .planner-ui .money-input-wrap input{padding-right:62px}
 .planner-ui .money-input-wrap>span{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:13px;font-weight:600;color:#52627a;pointer-events:none}
 .planner-ui .money-field>.profile-help{font-size:11px;margin-top:8px}
+/* Date input: direct typing plus an inline calendar with a year/month jump. */
+.planner-ui .date-input-row{display:flex;align-items:stretch;gap:8px;margin-top:9px;min-width:0}
+.planner-ui .date-input-row input{min-width:0;flex:1;width:0;font-variant-numeric:tabular-nums}
+.planner-ui .date-calendar-trigger{display:flex;align-items:center;justify-content:center;gap:5px;flex-shrink:0;min-height:48px;padding:0 12px;border:1px solid #cad7e8;border-radius:10px;background:#f3f6fb;color:#345b8c;font-size:12px;font-weight:600;cursor:pointer}
+.planner-ui .date-field>p{margin:8px 0 0;font-size:11px}
+.planner-ui .date-picker{padding:14px;margin-top:12px;border:1px solid #d7e2f0;border-radius:14px;background:#fff;box-shadow:0 5px 16px #203e6b08}
+.planner-ui .date-picker-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:#2b4d7c}
+.planner-ui .date-picker-title button{padding:8px;min-height:44px;color:#526682;font-size:12px;cursor:pointer}
+.planner-ui .date-picker-selects{display:grid;grid-template-columns:1.3fr 1fr;gap:8px;margin:8px 0}
+.planner-ui .date-picker-selects select{min-height:44px;padding:8px;border:1px solid #d7dfeb;border-radius:9px;background:#f8faff;color:#244e84;font-size:15px;min-width:0;width:100%}
+.planner-ui .date-picker-month{display:flex;align-items:center;justify-content:space-between;font-size:13px;color:#3f597b;margin-bottom:6px}
+.planner-ui .date-picker-month button{min-width:40px;min-height:44px;border-radius:9px;font-size:24px;cursor:pointer}
+.planner-ui .date-picker-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px}
+.planner-ui .date-picker-days .weekday{text-align:center;font-size:11px;color:#63738a;padding:5px 0}
+.planner-ui .date-picker-days button{min-height:40px;border-radius:8px;font-size:13px;color:#29476c;padding:0;cursor:pointer;font-variant-numeric:tabular-nums}
+.planner-ui .date-picker-days button:hover{background:#edf3fe}
+.planner-ui .date-picker-days button.date-selected{background:#2b60ad;color:#fff;font-weight:700}
+.planner-ui .date-picker>p{font-size:11px;margin-top:10px}
+@media(max-width:760px){.planner-ui .date-picker{padding:12px 8px}.planner-ui .date-picker-selects select{font-size:16px}.planner-ui .date-calendar-trigger{padding:0 10px}}

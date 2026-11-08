@@ -1,3 +1,4 @@
+import { DateField } from './date-field';
 import { useId, useState } from 'react';
 import { manwonToWon, wonToManwon, groupManwon, formatWonAsKoreanCurrency } from '@/lib/simple/currency';
 import type { ReactNode } from 'react';
@@ -6,6 +7,7 @@ export const won = formatWonAsKoreanCurrency;
 export function Field({ label, value, onChange, type = 'text', children, disabled = false }: {
   label: string; value: string; onChange: (v: string) => void; type?: string; children?: ReactNode; disabled?: boolean;
 }) {
+  if (type === 'date' && !children) return <DateField label={label} value={value} onChange={onChange} disabled={disabled} />;
   return <div className="benefit-field"><label>{label}{children ? <select aria-label={label} value={value} onChange={e => onChange(e.target.value)} disabled={disabled}>{children}</select>
     : <input aria-label={label} type={type} inputMode={type === 'text' ? 'numeric' : undefined} value={value} enterKeyHint="next" onChange={e => onChange(e.target.value)} disabled={disabled} />}</label></div>;
 }

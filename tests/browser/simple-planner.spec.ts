@@ -159,3 +159,33 @@ test('국민연금은 퇴직 전 공식 개시일 허용·공무원/사학 제�
   await start.fill('2025-05-10');await expect(r).toContainText('감액·지급정지');await page.getByLabel('예상 월연금 출처',{exact:true}).selectOption('user-estimate');await expect(r).toContainText('공식 조회값으로 입력');
   await menu(page,0);await page.getByRole('radio',{name:'공무원연금',exact:true}).check();await menu(page,4);await quote(page,'예상 월연금','1000000');await start.fill('2025-05-10');await expect(r).toContainText('재임용·별도 수급권은 기관 확인');
 });
+
+test('날짜 직접 입력은 모바일 숫자 8자리·구분자·잘못된 날짜·입력 유지 지원',async({page})=>{
+  const birth=page.getByLabel('생년월일',{exact:true});await expect(birth).toHaveAttribute('type','text');await expect(birth).toHaveAttribute('inputmode','numeric');
+  await birth.pressSequentially('19800510');await expect(birth).toHaveValue('1980-05-10');await expect(birth).toHaveAttribute('aria-invalid','false');
+  await birth.fill('20260230');await expect(birth).toHaveValue('2026-02-30');await expect(birth).toHaveAttribute('aria-invalid','true');
+  await birth.fill('1980/05/10');await expect(birth).toHaveValue('1980-05-10');await menu(page,1);await menu(page,0);await expect(birth).toHaveValue('1980-05-10');
+});
+
+test('달력에서 1980년대·월 바로 선택·윤년·선택값 반영·좁은 화면',async({page},info)=>{
+  const trigger=page.getByRole('button',{name:'생년월일 달력 열기',exact:true});await trigger.click();const calendar=page.getByRole('region',{name:'생년월일 달력',exact:true});
+  await page.getByLabel('생년월일 달력 연도',{exact:true}).selectOption('1980');await page.getByLabel('생년월일 달력 월',{exact:true}).selectOption('2');await expect(calendar.getByRole('button',{name:'1980년 2월 29일',exact:true})).toBeVisible();
+  await expect(page.getByLabel('생년월일',{exact:true})).toHaveValue('');
+  for(const width of info.project.name==='mobile'?[320,390,640]:[900,1440]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+  await page.screenshot({path:info.outputPath('year-month-date-picker.png'),fullPage:true});
+  await calendar.getByRole('button',{name:'1980년 2월 29일',exact:true}).click();await expect(calendar).toHaveCount(0);await expect(page.getByLabel('생년월일',{exact:true})).toHaveValue('1980-02-29');await expect(trigger).toBeFocused();
+  await trigger.click();await expect(page.getByLabel('생년월일 달력 연도',{exact:true})).toHaveValue('1980');await expect(page.getByRole('button',{name:'1980년 2월 29일',exact:true})).toHaveAttribute('aria-pressed','true');
+  await page.getByLabel('생년월일 달력 연도',{exact:true}).selectOption('1981');await expect(calendar.getByRole('button',{name:'1981년 2월 29일',exact:true})).toHaveCount(0);
+  await page.getByLabel('생년월일 달력 월',{exact:true}).selectOption('1');await page.getByRole('button',{name:'생년월일 이전 달',exact:true}).click();await expect(page.getByLabel('생년월일 달력 연도',{exact:true})).toHaveValue('1980');await expect(page.getByLabel('생년월일 달력 월',{exact:true})).toHaveValue('12');
+  await page.getByRole('button',{name:'생년월일 다음 달',exact:true}).click();await expect(page.getByLabel('생년월일 달력 연도',{exact:true})).toHaveValue('1981');
+});
+
+test('달력 키보드·바깥 클릭·비활성·퇴직일 선택 후 계산 갱신',async({page})=>{
+  const trigger=page.getByRole('button',{name:'생년월일 달력 열기',exact:true});await trigger.focus();await trigger.press('Enter');await expect(trigger).toHaveAttribute('aria-expanded','true');
+  await page.getByLabel('생년월일 달력 연도',{exact:true}).press('Escape');await expect(trigger).toHaveAttribute('aria-expanded','false');await expect(trigger).toBeFocused();
+  await trigger.click();await page.getByLabel('최초 임용일',{exact:true}).click();await expect(trigger).toHaveAttribute('aria-expanded','false');
+  await profile(page);await assets(page);const result=page.getByRole('region',{name:'퇴직 시 IRP 예상 적립금',exact:true}).locator('.benefit-amount');const before=await result.innerText();await menu(page,0);
+  await page.getByRole('radio',{name:'정년퇴직',exact:true}).check();await expect(page.getByRole('button',{name:'명예퇴직 예정일 달력 열기',exact:true})).toBeDisabled();
+  await page.getByRole('radio',{name:'명예퇴직',exact:true}).check();await page.getByRole('button',{name:'명예퇴직 예정일 달력 열기',exact:true}).click();await page.getByLabel('명예퇴직 예정일 달력 연도',{exact:true}).selectOption('2031');await page.getByLabel('명예퇴직 예정일 달력 월',{exact:true}).selectOption('11');await page.getByRole('button',{name:'2031년 11월 8일',exact:true}).click();
+  await expect(page.getByLabel('명예퇴직 예정일',{exact:true})).toHaveValue('2031-11-08');await menu(page,2);await expect(result).not.toHaveText(before);
+});
