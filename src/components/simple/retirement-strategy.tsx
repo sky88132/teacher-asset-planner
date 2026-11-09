@@ -14,8 +14,9 @@ export function RetirementStrategy({ input, children, result: r }: { input: Simp
       <dl className="retirement-summary"><div><dt>예상 퇴직</dt><dd>{a.retirement ?? '확인 필요'} · {a.retirementAge === null ? '연령 확인 필요' : `만 ${a.retirementAge}세`}<br /><small>퇴직 참고 {r.step===null?'호봉 확인 필요':r.step+'호봉'} · 조건부</small></dd></div>
         <div><dt>분석에 적용한 연금 개시</dt><dd>{a.publicStart ?? '확인 필요'}</dd></div>
         <div><dt>{input.profile.retirement === 'early' ? '명예퇴직 후 소득 공백' : '퇴직 후 개시 전 기간'}</dt><dd>{a.gapDays === null ? '확인 필요' : `${a.gapMonths}개월(완료 월) · ${a.gapDays}일`}</dd></div>
-        <div><dt>예상 월 공적연금</dt><dd>{won(a.pensionWon, '월액 미확인')} / 월<br /><small>{r.pension.confidence}<br />{r.pensionSource==='teacher-model'?r.pensionDetails.priceYear+'년 개시 명목 가정':r.pensionSource==='automatic'?'2026년 고정 기준':'직접 입력 기준'}</small></dd></div></dl>
+        <div><dt>{r.pensionStatus.scope==='appointment-service-only'?'공적연금 참고 월액 (군 산입분 제외)':'예상 월 공적연금'}</dt><dd>{won(a.pensionWon, '월액 미확인')} / 월<br /><small>{r.pension.confidence}<br />{r.pensionSource==='teacher-model'?r.pensionDetails.priceYear+'년 개시 명목 가정':r.pensionSource==='automatic'?'2026년 고정 기준':'직접 입력 기준'}</small></dd></div></dl>
       <p className="profile-help">조건부 추정 · 세금 별도 확인 · 적립금은 즉시 인출 가능액과 다릅니다.</p>
+      {r.pensionStatus.state==='unavailable'&&<div className="profile-context" aria-label="월연금 계산 보류 이유"><strong>월연금을 계산하려면 확인이 필요합니다.</strong>{r.pensionStatus.reasons.map(reason=><p className="profile-help" key={reason}>{reason}</p>)}<p className="profile-help">퇴직 시 40호봉이 되는 것 자체는 차단 사유가 아닙니다. 현재40호봉의 과거 이력이나 2009년 이전 소득 등 필요한 자료가 없으면 금액을 만들지 않습니다. 아래 공식 조회액 직접 입력 또는 해당 공단 확인 자료를 이용해 주세요. 정상 개시일은 별도로 확인할 수 있습니다.</p></div>}
     </section>
     {children}
     <section className="benefit-result" aria-label="은퇴 시기 타임라인"><h3>은퇴 후 두 시기</h3>

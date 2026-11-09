@@ -13,12 +13,13 @@ export function SimplePublicPension({ input, onChange, result: r }: { input: Sim
   const v = q.pensionEstimate ?? createPensionEstimateInput();
   const update = (patch: Partial<PensionEstimateInput>) => onChange({ ...input, benefits: { ...input.benefits, [p.scheme]: { ...q, pensionEstimate: { ...v, ...patch } } } });
   const checked = !!r.retirement.date && v.confirmedRetirementDate === r.retirement.date && v.confirmedAppointmentDate === p.appointmentDate;
-  return <section className="benefit-result" aria-label="공적연금 요약"><h3>공적연금 예상 월수령액</h3>
+  return <section className="benefit-result" aria-label="공적연금 요약"><h3>{r.pensionStatus.scope==='appointment-service-only'?'공적연금 참고 월액 · 군 산입분 제외':'공적연금 예상 월수령액'}</h3>
     <strong className="benefit-amount">{won(r.pension.amountWon, '추정에 필요한 정보 확인')}{r.pension.amountWon !== null ? ' / 월' : ''}</strong>
     <p className="profile-help">{schemeNames[p.scheme]} · {r.pension.confidence} · {r.pensionSource === 'quote' ? q.pension.taxBasis === 'net' ? '입력액 세후' : q.pension.taxBasis === 'gross' ? '세전' : '세금 기준 확인 필요' : r.pensionSource === 'teacher-model' ? `세전 · ${details.priceYear}년 개시 명목 가정` : '세전 · 2026년 가격 고정'}</p>
     <p className="profile-help">{r.pensionSource === 'quote' ? '직접 입력한 조회액을 우선 표시합니다. 기관에 자동 조회하거나 진위를 검증한 값은 아닙니다.' : '웹앱의 조건부 추정이며 공단이 확정한 실제 지급액이 아닙니다. ' + details.externalValidation + '.'}</p>
     <p className="profile-context">정상 개시 예상일 {details.normalStartDate??'개인별 경과규정 확인 필요'} · 최초 지급대상월 {details.firstPaymentMonth??'확인 필요'} · 개시 전 공백 {r.pensionGapMonths===null?'미확인':r.pensionGapMonths+'개월(완료 월)·'+r.pensionGapDays+'일'}</p>
     <TeacherPensionScenarios result={r} />
+    {r.pensionSource==='teacher-model'&&r.teacherPension.excludesMilitary&&<p className="profile-context">{r.teacherPension.limitations.join(' ')}</p>}
     {r.teacherPension.eligible && !r.teacherPension.selected && r.teacherPension.errors.length>0 && <p className="profile-help">교원 모델 추정 보류: {r.teacherPension.errors.join(' ')}</p>}
     <TeacherPayDetails result={r} />
     <details className="simple-details"><summary>연금 개시·기간 자세히 보기</summary><dl className="benefit-details"><dt>정상 개시연령</dt><dd>{details.normalAge === null ? '개인별 경과규정 확인 필요' : `만 ${details.normalAge}세 · 일반 조건`}</dd>

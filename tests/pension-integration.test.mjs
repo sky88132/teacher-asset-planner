@@ -48,8 +48,8 @@ test('04·05·06 퇴직급여는 같은 선택 결과·미래 명목끼리만 �
 test('정년 선택은 명퇴수당·참고 합계에 명퇴 금액 미포함',()=>{
  const f=fixture();f.profile.retirement='normal';const r=calculateSimple(f,today);assert.equal(r.benefitSummary.totalWon,r.benefitSummary.allowance.amountWon);assert.equal(r.benefitSummary.honorary.amountWon,null);
 });
-test('구기간·40호봉·산입군·특수경력은 금액 보류하되 정상 개시일 유지',()=>{
- for(const patch of [{appointmentDate:'2007-04-01',step:'33'},{step:'40'},{military:'approved'}]){const f=fixture();Object.assign(f.profile,patch);const r=calculateSimple(f,today);assert.equal(r.pension.amountWon,null);assert.ok(r.pensionStartDate);assert.ok(r.teacherPension.errors.length);}
+test('구기간·40호봉·특수경력은 금액 보류하되 정상 개시일 유지',()=>{
+ for(const patch of [{appointmentDate:'2007-04-01',step:'33'},{step:'40'}]){const f=fixture();Object.assign(f.profile,patch);const r=calculateSimple(f,today);assert.equal(r.pension.amountWon,null);assert.ok(r.pensionStartDate);assert.ok(r.teacherPension.errors.length);}
  const f=fixture();f.benefits.civil.pensionEstimate.complexCareer=true;assert.equal(calculateSimple(f,today).pension.amountWon,null);
 });
 test('퇴직일·호봉·승급월·물가 변경은 재계산, 표시 반올림과 내부 원 합계 분리',()=>{

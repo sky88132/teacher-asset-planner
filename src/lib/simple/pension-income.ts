@@ -1,6 +1,12 @@
 import { parseMoney } from '../finance/pension-input-validation.ts';
 import type { SimpleProfile } from './model.ts';
 import type { PensionEstimate, PensionEstimateInput } from './pension-types.ts';
+/** Confirmation dates and UI mode are metadata, not supplied income or coefficients.
+ * Explicit 0/invalid non-empty input still selects validation; never silently replace it. */
+export function hasEnteredPensionIncome(v: PensionEstimateInput): boolean {
+  return [v.averageIncome,v.currentIncome,v.legacyIncome,v.redistributedIncome,v.factorPercent]
+    .some(raw=>raw!==undefined&&raw!==null&&raw!=='');
+}
 export function positiveMoney(raw: string, label: string, r: PensionEstimate): number | null {
   const p = parseMoney({ amount: raw, unit: 'won' });
   if (p.error || p.won === null || p.won <= 0) { r.errors.push(`${label}이 필요합니다. ${p.error ?? '0원보다 큰 공단 확인 소득자료를 만원 단위로 입력해 주세요.'}`); return null; }

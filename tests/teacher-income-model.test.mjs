@@ -67,9 +67,9 @@ test('확인 소득/조회 우선·오래된 조회는 모델로 조용히 대�
  const f=fixture();f.benefits.civil.pension.money={amount:'2000000',unit:'won'};const r=calculateSimple(f,today);assert.equal(r.pensionSource,'quote');assert.equal(r.pension.amountWon,null);
  f.benefits.civil.pension.money.amount='';f.profile.teacherModel=false;assert.equal(calculateSimple(f,today).pension.amountWon,null);
 });
-test('사학·국민·복잡한 경력·승인 군경력에 교원 자동 월액 강제 적용 금지',()=>{
+test('사학·국민·복잡한 경력에 자동 적용 금지·승인 군경력은 산입분 제외 참고만',()=>{
  for(const scheme of ['private-school','national']){const f=fixture();f.profile.scheme=scheme;const r=calculateSimple(f,today);assert.notEqual(r.pensionSource,'teacher-model');assert.equal(r.teacherPension.rows.length,0);}
- const f=fixture();f.profile.military='approved';let r=calculateSimple(f,today);assert.equal(r.pension.amountWon,null);assert.ok(r.pensionStartDate);
+ const f=fixture();f.profile.military='approved';let r=calculateSimple(f,today);assert.ok(r.pension.amountWon>0);assert.equal(r.pensionStatus.scope,'appointment-service-only');assert.match(r.pension.confidence,/군복무 산입분 제외/);assert.ok(r.pensionStartDate);
  f.profile.military='not';f.benefits.civil.pensionEstimate={...createPensionEstimateInput(),complexCareer:true};r=calculateSimple(f,today);assert.equal(r.pension.amountWon,null);assert.equal(r.teacherPension.rows.length,0);
 });
 test('명퇴와 퇴직수당은 기존 함수 재사용·원 합산 후 표시·미래 명목끼리만 합산',()=>{

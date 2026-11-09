@@ -44,10 +44,11 @@ export function calculateRetirementAnalysis(input: SimpleInputs, r: SimpleResult
     for (let i=0; i<dates.length; i++) {
       const from = dates[i], phase = !validTiming ? 'unknown' : from < start! ? 'before' : 'after';
       const sources: MonthlySource[] = [], missing = ['근로·임대·기타수입 미반영', 'IRP·연금저축 월 인출 미설계'];
+      if(r.pensionStatus.scope==='appointment-service-only')missing.push('군복무 산입분 제외 참고 월액 · 전체 공적연금 아님 · 실제 전체액의 하한 아님');
       if (phase === 'unknown') missing.push('공적연금 개시일 미확인: 전후 구분 보류');
       else if (phase === 'after') {
         if (r.pension.amountWon === null) missing.push('공적연금 월액 미확인');
-        else sources.push({ label: '공적연금', won: r.pension.amountWon, tax: r.pensionSource !== 'quote' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'gross' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'net' ? 'net' : 'unknown' });
+        else sources.push({ label: r.pensionStatus.scope==='appointment-service-only'?'공적연금 (군산입분 제외 참고)':'공적연금', won: r.pension.amountWon, tax: r.pensionSource !== 'quote' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'gross' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'net' ? 'net' : 'unknown' });
       }
       if (input.ktcu.split && !splitValid) missing.push('공제회 분할 월액·기간 미확인');
       if (first && last && from >= first && from <= last) sources.push({ label: from === last ? '공제회 마지막 정산' : '공제회 분할', won: from === last ? rows.at(-1)!.paymentWon : r.split!.monthlyWon, tax: 'gross' });

@@ -144,7 +144,16 @@ export function calculateSimple(input: SimpleInputs, today: string) {
   const pensionSource = quotes.pension.money.amount !== '' ? 'quote' as const : teacherSelected ? 'teacher-model' as const : 'automatic' as const;
   const pension: SimpleAmount = pensionSource === 'quote'
     ? quoteAmount(quotes.pension, 'pension', date, today, { scheme: input.profile.scheme, birthDate: input.profile.birthDate })
-    : { ...noAmount(pensionDetails.errors, date), amountWon: pensionDetails.amountWon, confidence: pensionDetails.confidence };
+    : { ...noAmount(teacherPension.eligible&&!teacherSelected&&teacherPension.errors.length?teacherPension.errors:pensionDetails.errors, date), amountWon: pensionDetails.amountWon, confidence: pensionDetails.confidence };
+  const pensionStatus = {
+    state:pension.amountWon===null?'unavailable' as const:'available' as const,
+    codes:pension.amountWon!==null?[]:pensionSource==='quote'?['QUOTE_VALIDATION_FAILED']:
+      teacherPension.eligible&&teacherPension.errorCodes.length?teacherPension.errorCodes:['CONFIRMED_INCOME_OR_CONTEXT_REQUIRED'],
+    reasons:pension.amountWon===null?pension.errors:[],
+    attemptedSource:pensionSource==='automatic'&&teacherPension.eligible?'teacher-model' as const:pensionSource,
+    scope:pensionSource==='teacher-model'&&teacherPension.excludesMilitary?'appointment-service-only' as const:'selected-input-or-model' as const,
+    limitationCodes:pensionSource==='teacher-model'&&teacherPension.excludesMilitary?['MILITARY_CREDIT_EXCLUDED']:[],
+  };
   const pensionStartDate = pensionSource === 'quote' ? pension.amountWon !== null ? quotes.pension.startDate : null
     : pensionDetails.firstPaymentMonth ? pensionDetails.firstPaymentMonth + '-01' : null;
   const pensionGapMonths = date && pensionStartDate ? Math.max(0, completedSimulationMonths(date, pensionStartDate)) : null;
@@ -168,7 +177,7 @@ export function calculateSimple(input: SimpleInputs, today: string) {
     benefitsTotal, accountsTotal, accumulationTotal, accumulation, allowanceDetails, honoraryDetails, plannedTotals,
     allowanceReference,
     teacherPay, teacherPension, teacherBenefits,
-    pensionDetails, pensionSource, pensionStartDate, pensionGapMonths, pensionGapDays,
+    pensionStatus, pensionDetails, pensionSource, pensionStartDate, pensionGapMonths, pensionGapDays,
     accountReceipts: {
       irp: calculateAccountReceipt(input.irp.receipt ?? createAccountReceiptInput(), input.profile.birthDate, date, today, pensionStartDate),
       saving: calculateAccountReceipt(input.saving.receipt ?? createAccountReceiptInput(), input.profile.birthDate, date, today, pensionStartDate),

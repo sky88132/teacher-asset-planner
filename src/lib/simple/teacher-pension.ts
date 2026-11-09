@@ -1,5 +1,6 @@
 import {projectWholeIncome,wholeIncome2026,wholeIncomeSources,type PensionVariable} from './pension-assumptions.ts';
 import type { SimpleProfile } from './model.ts';
+import { hasEnteredPensionIncome } from './pension-income.ts';
 import { estimateCivilPension } from './occupational-pension.ts';
 import type { PensionEstimate, PensionEstimateInput } from './pension-types.ts';
 import { teacherPayAssumptions, teacherPriceNote, teacherPaySources, salaryGrowth, type TeacherPayProjection } from './teacher-pay.ts';
@@ -21,13 +22,18 @@ export function redistributionPercent(personal: number, whole: number): number |
 export const teacherIncomeSensitivities = [
   { id: 'low', label: '보수적', percent: 90 }, { id: 'base', label: '기준', percent: 100 }, { id: 'high', label: '높은 소득 시나리오', percent: 110 },
 ] as const;
-export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput, pay: TeacherPayProjection, base: PensionEstimate, date: string | null, today: string) {
+export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput, pay: TeacherPayProjection, confirmedBase: PensionEstimate, date: string | null, today: string) {
   const errors = [...pay.errors, ...pay.historyErrors];
-  const hasIncome = !!(v.averageIncome || v.currentIncome || v.legacyIncome || v.redistributedIncome || v.factorPercent || v.confirmedRetirementDate || v.confirmedAppointmentDate || v.incomeMode !== 'average');
+  const hasIncome = hasEnteredPensionIncome(v);
   const eligible = p.scheme === 'civil' && p.teacherModel !== false && !hasIncome;
+  // Approval alone does not identify credit months/year. A separate appointment-only
+  // reference uses exactly the existing formulas, without claiming the full pension.
+  const excludesMilitary = eligible && p.military==='approved';
+  const modelProfile = excludesMilitary ? {...p,military:'not' as const} : p;
+  const base = excludesMilitary ? estimateCivilPension(modelProfile,v,date,today) : confirmedBase;
+  const limitations = excludesMilitary ? ['군복무 산입 승인 이력은 있으나 이 참고액은 임용 후 재직분만 계산했습니다. 군복무 산입분·산입에 따른 이행률과 상한 변화는 제외했으며 전체 예상 연금액이 아닙니다. 실제 전체액의 하한·최솟값도 아닙니다. 산입 개월·연도·소득과 경과규정은 공단 확인이 필요합니다.'] : [];
   if(p.appointmentDate<'2010-01-01') errors.push('2009년 이전 평균보수 현가액·재직기간별 이행률은 교원 봉급만으로 확인할 수 없습니다. 전체 월연금은 공단 확인 자료가 필요합니다.');
   if(v.complexCareer)errors.push('휴직·중단·시간제·재임용 등 별도 이력은 표준 보수 경로에 적용하지 않습니다.');
-  if(p.military==='approved')errors.push('군 산입 승인 경력은 공단 인정개월·산입연도·경과규정을 상세 설정에서 확인해 주세요. 표준 모델에 임의 가산하지 않습니다.');
   if(!base.normalStartDate||base.months===null||base.months<120||base.capMonths===null)errors.push('정상 개시일·10년 이상 인정기간을 확인해야 표준 월연금을 계산할 수 있습니다.');
   let remaining=base.capMonths??0, weighted=0n, months=0;
   const whole = projectWholeIncome(date?Number(date.slice(0,4)):0,base.normalStartDate?Number(base.normalStartDate.slice(0,4)):0,v.simulationInflation??'0');
@@ -48,14 +54,15 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
     const redistribution=redistributionPercent(nominalIncome,whole.startWon!)!;
     const redistributed=Number(BigInt(income)*BigInt(Math.round(redistribution*100))/10000n);
     const nominalRedistributed=Number(BigInt(nominalIncome)*BigInt(Math.round(redistribution*100))/10000n);
-    const generated={...v, averageIncome:String(income), redistributedIncome:String(redistributed), factorPercent:String(k),
+    const generated={...v, incomeMode:'average' as const, averageIncome:String(income), redistributedIncome:String(redistributed), factorPercent:String(k),
       confirmedRetirementDate:date, confirmedAppointmentDate:p.appointmentDate};
-    const basis=estimateCivilPension(p,generated,date,today);
+    const basis=estimateCivilPension(modelProfile,generated,date,today);
     // The statutory revaluation direction is reused; future civil pay growth is a 3% planning assumption.
-    const nominal=estimateCivilPension(p,{...generated,averageIncome:String(nominalIncome),
+    const nominal=estimateCivilPension(modelProfile,{...generated,averageIncome:String(nominalIncome),
       redistributedIncome:String(nominalRedistributed)},date,today);
     nominal.priceYear=startYear;nominal.method='교원 표준 보수 경로·법정 구간식 기반 가정 시뮬레이션 (개시연도 미래 명목)';
     nominal.confidence='가정 기반 시뮬레이션 · 표준 보수 일부 항목 · 세전 · 외부 금액 검증 미완료';
+    if(excludesMilitary)nominal.confidence+=' · 임용 후 재직분만 · 군복무 산입분 제외 · 전체 예상액 아님';
     nominal.notes=nominal.notes.filter(n=>!n.includes('2026년 가격 고정')&&!n.includes('01의 호봉')&&!n.startsWith('입력 평균소득은 2026년'));
     nominal.notes.push(teacherPayAssumptions,teacherPriceNote,
       '연도별 과거 실제 급여와 과거 법정 재평가계수는 확보하지 못해 2026 표 기준 역산 경로로 대체했습니다. 전년도 보수/5월 적용·1~4월 예외/직종별 평균수당까지 완성한 공식 기준소득월액이 아닙니다.',
@@ -65,6 +72,7 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
     nominal.sources=[...nominal.sources,...teacherPaySources,...wholeIncomeSources];
     nominal.notes=nominal.notes.filter(n=>!n.includes('대리 가정'));
     nominal.notes.push(whole.note);
+    nominal.notes.push(...limitations);
     const variables:PensionVariable[]=[
       {label:'개인 평균소득 B (2026 보수수준)',value:income,unit:'원/월',state:'사용자 지정 가정값',basis:'2026 표 기반 호봉 역산·표준 수당·90/100/110% 민감도. 실제 과거 봉급표·법정 재평가·직종별 평균 수당 미확인'},
       {label:'개인 평균소득 B (개시연도)',value:nominalIncome,unit:'원/월',state:'사용자 지정 가정값',basis:'2026 보수수준 B를 미래 보수 연3% 가정으로 환산·A와 같은 기준에서 비교'},
@@ -76,6 +84,15 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
     ];
     return {...s,variables,averageIncome2026Won:income,redistributionPercent:redistribution,factorPercent:k,basis2026Won:basis.amountWon,estimate:nominal};
   }):[];
-  return {eligible,rows,errors:[...new Set(errors)],averageIncome2026Won:average,assumedWholeIncomeWon:assumedWholeIncome,
+  // Stable reason codes identify blockers without logging dates, income or raw inputs.
+  const errorCodes = [
+    ...(pay.errors.length?['PAY_MODEL_UNAVAILABLE']:[]),
+    ...(pay.historyErrors.length?['PAY_HISTORY_UNRECONSTRUCTABLE']:[]),
+    ...(p.appointmentDate<'2010-01-01'?['PRE_2010_INCOME_REQUIRED']:[]),
+    ...(v.complexCareer?['COMPLEX_CAREER_UNSUPPORTED']:[]),
+    ...(!base.normalStartDate||base.months===null||base.months<120||base.capMonths===null?['PENSION_TIMING_OR_SERVICE_UNAVAILABLE']:[]),
+    ...(eligible&&whole.errors.length?['WHOLE_INCOME_ASSUMPTION_UNAVAILABLE']:[]),
+  ];
+  return {eligible,rows,errorCodes,excludesMilitary,limitations,errors:[...new Set(errors)],averageIncome2026Won:average,assumedWholeIncomeWon:assumedWholeIncome,
     wholeIncome:whole, selected:rows.find(r=>r.id==='base')?.estimate??null};
 }
