@@ -62,7 +62,9 @@ export function projectTeacherPay(p: SimpleProfile, date: string | null, today: 
       const when = `${year}-${String(month).padStart(2, '0')}-01`;
       // Current month uses the currently supplied step, including an increment due today.
       const step = when.slice(0, 7) === today.slice(0, 7) ? Number(p.step) : teacherStepAt(p, when, today);
-      if (step === null) { historyErrors.push('현재40호봉 또는 역산 호봉 범위로 과거 소득 경로를 확인할 수 없습니다.'); continue; }
+      if (step === null) { historyErrors.push(Number(p.step)===40
+        ? '40호봉 도달 시점과 과거 호봉 이력이 부족합니다. 상한에 머문 기간을 현재 호봉만으로 구분할 수 없어 전 재직기간 평균소득을 추정하지 않습니다.'
+        : '과거 호봉 역산값이 1~40호봉 범위를 벗어납니다. 초임 호봉·승급 제한 등 실제 호봉 이력 없이 현재 보수만으로 전 재직기간 평균소득을 대체할 수 없습니다.'); continue; }
       const base = rounded(teacherSalary2026[step - 1] * salaryGrowth(year));
       const years = Math.max(0, Math.floor((index - start) / 12));
       steps.push(step); salary += base; homeroom += 200000; teaching += 250000;

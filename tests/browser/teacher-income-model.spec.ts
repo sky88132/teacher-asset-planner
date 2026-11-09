@@ -3,6 +3,20 @@ const names=['교사 기본정보','교직원공제회','IRP·연금저축','퇴
 async function menu(p:Page,n:number){await p.getByRole('navigation',{name:'주요 메뉴'}).getByRole('button',{name:names[n]}).click();}
 async function profile(p:Page){for(const [label,value]of [['생년월일','1987-02-12'],['최초 임용일','2017-04-01'],['현재 호봉','20']])await p.getByLabel(label,{exact:true}).fill(value);await p.getByLabel('승급월',{exact:true}).selectOption('4');await p.getByRole('radio',{name:'명예퇴직',exact:true}).check();await p.getByLabel('명예퇴직 예정일',{exact:true}).fill('2039-08-31');}
 test.beforeEach(async({page})=>{await page.clock.install({time:new Date('2026-11-08T12:00:00+09:00')});await page.goto('/');});
+
+test('04 핵심 금액 기본 표시·합계 마지막·05 동일 금액·날짜 확인만으로 자동 연금 유지',async({page},info)=>{
+ await profile(page);await menu(page,3);
+ const h=page.getByRole('region',{name:'명예퇴직수당 예상액',exact:true}),a=page.getByRole('region',{name:'퇴직수당 참고 시뮬레이션',exact:true}),total=page.getByRole('region',{name:'퇴직급여 참고 합계',exact:true});
+ await expect(h.locator('.benefit-amount')).toBeVisible();await expect(a.locator('.benefit-amount').first()).toBeVisible();await expect(page.getByText('완전한 합계 확인 불가',{exact:true})).toHaveCount(0);
+ expect(await h.evaluate((el)=>Boolean(el.compareDocumentPosition(document.querySelector('[aria-label="퇴직수당 참고 시뮬레이션"]')!)&Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+ expect(await a.evaluate((el)=>Boolean(el.compareDocumentPosition(document.querySelector('[aria-label="퇴직급여 참고 합계"]')!)&Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+ const honorary=await h.locator('.benefit-amount').innerText(),allowance=await a.locator('.benefit-amount').first().innerText(),sum=await total.locator('.benefit-amount').innerText();
+ await page.screenshot({path:info.outputPath('benefits-default.png'),fullPage:true});
+ await menu(page,4);await expect(page.getByRole('region',{name:'명예퇴직수당 예상액',exact:true}).locator('.benefit-amount')).toHaveText(honorary);await expect(page.getByRole('region',{name:'퇴직수당 예상액',exact:true}).locator('.benefit-amount')).toHaveText(allowance);await expect(total.locator('.benefit-amount')).toHaveText(sum);
+ const pension=page.getByRole('region',{name:'공적연금 요약',exact:true}),before=await pension.locator('.benefit-amount').first().innerText();
+ await page.getByText('공적연금 추정 상세 설정 (선택)',{exact:true}).click();await page.getByLabel('소득·계수·가입기간을 현재 퇴직일 기준으로 확인했습니다.',{exact:true}).check();await expect(pension.locator('.benefit-amount').first()).toHaveText(before);
+ await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2040-08-31');await menu(page,4);await expect(pension.locator('.benefit-amount').first()).not.toHaveText(before);await expect(pension.locator('.benefit-amount').first()).not.toHaveText('추정에 필요한 정보 확인');
+});
 test('기본정보만으로3개 월연금·명목/2026 환산·급여 근거 기본 접힘',async({page},info)=>{
  await profile(page);await menu(page,4);const pension=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(pension.locator('.benefit-amount').first()).not.toHaveText('추정에 필요한 정보 확인');await expect(pension).toContainText('가정 기반 시뮬레이션');await expect(pension).toContainText('2052년 개시 명목');await expect(pension.locator('[aria-label="교원 보수 기반 월연금 시나리오"]>p>strong')).toHaveCount(3);await expect(pension).toContainText('2026 보수수준 환산');
  const pay=pension.getByText('교원 보수 추정 가정·연도별 근거',{exact:true}).locator('..');await expect(pay).not.toHaveAttribute('open');await pay.locator('summary').first().click();await expect(pay).toContainText('교직수당 월25만원');const year=pay.getByRole('row').filter({has:page.getByRole('cell',{name:'2027 · 12개월',exact:true})});await expect(year).toContainText('240만원');await expect(year).toContainText('192만원');

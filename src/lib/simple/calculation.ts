@@ -143,7 +143,7 @@ export function calculateSimple(input: SimpleInputs, today: string) {
   const pensionSource = quotes.pension.money.amount !== '' ? 'quote' as const : teacherSelected ? 'teacher-model' as const : 'automatic' as const;
   const pension: SimpleAmount = pensionSource === 'quote'
     ? quoteAmount(quotes.pension, 'pension', date, today, { scheme: input.profile.scheme, birthDate: input.profile.birthDate })
-    : { ...noAmount(pensionDetails.errors, date), amountWon: pensionDetails.amountWon, confidence: pensionDetails.confidence };
+    : { ...noAmount(pensionSource==='automatic' && teacherPension.eligible ? teacherPension.errors : pensionDetails.errors, date), amountWon: pensionDetails.amountWon, confidence: pensionDetails.confidence };
   const pensionStartDate = pensionSource === 'quote' ? pension.amountWon !== null ? quotes.pension.startDate : null
     : pensionDetails.firstPaymentMonth ? pensionDetails.firstPaymentMonth + '-01' : null;
   const pensionGapMonths = date && pensionStartDate ? Math.max(0, completedSimulationMonths(date, pensionStartDate)) : null;
@@ -160,10 +160,22 @@ export function calculateSimple(input: SimpleInputs, today: string) {
   const benefitsTotal = sumKnown(benefitItems, date);
   const accountsTotal = sumKnown([irp, saving], date);
   const accumulationTotal = sumKnown([ktcu, irp, saving], date);
+  const allowanceReference = estimateAllowanceReference(input.profile, quotes, date, honorary.amountWon);
+  const teacherBenefits = estimateTeacherBenefits(input.profile, quotes, date, retirement.normal, step, teacherPay);
+  // One presentation source for 04, 05 and 06. Keep the original fixed-price
+  // financial totals separate: reference scenarios are not confirmed assets.
+  const nominalBenefits = teacherBenefits.rows.length > 0;
+  const benefitReference = {
+    source: nominalBenefits ? 'teacher-model' as const : 'fixed-2026' as const,
+    date, priceYear: nominalBenefits ? teacherBenefits.priceYear : 2026, taxBasis: 'gross' as const,
+    honoraryWon: nominalBenefits ? teacherBenefits.honorary?.amountWon ?? null : honorary.amountWon,
+    rows: nominalBenefits ? teacherBenefits.rows.map(s => ({ label:s.label, honoraryWon:s.honoraryWon, allowanceWon:s.allowanceWon, combinedWon:s.combinedWon }))
+      : allowanceReference.rows.map(s => ({ label:s.label, honoraryWon:honorary.amountWon, allowanceWon:s.amountWon, combinedWon:s.combinedWon })),
+  };
   return { today, retirement, step, ktcu, split, splitError, irp, saving, pension, allowance, honorary,
     benefitsTotal, accountsTotal, accumulationTotal, accumulation, allowanceDetails, honoraryDetails, plannedTotals,
-    allowanceReference: estimateAllowanceReference(input.profile, quotes, date, honorary.amountWon),
-    teacherPay, teacherPension, teacherBenefits: estimateTeacherBenefits(input.profile, quotes, date, retirement.normal, step, teacherPay),
+    allowanceReference, benefitReference,
+    teacherPay, teacherPension, teacherBenefits,
     pensionDetails, pensionSource, pensionStartDate, pensionGapMonths, pensionGapDays,
     accountReceipts: {
       irp: calculateAccountReceipt(input.irp.receipt ?? createAccountReceiptInput(), input.profile.birthDate, date, today, pensionStartDate),

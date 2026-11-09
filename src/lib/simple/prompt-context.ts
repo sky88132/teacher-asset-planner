@@ -13,8 +13,11 @@ export function simplePromptContext(input: SimpleInputs, r: SimpleResults) {
     inputState: provided ? '사용자 입력값' : '미입력', state: a.amountWon === null ? '계산 불가' : state,
     amountWon: a.amountWon, unit, confidence: a.confidence, reasons: a.errors, review: '추가 검증 필요' });
   add('공적연금', r.pension, pensionInput, r.pensionSource === 'quote' ? q.pension.source === 'official' ? '공식 조회값' : '사용자 입력값' : r.pensionSource === 'teacher-model' || v?.incomeMode === 'current' ? '가정 기반 시뮬레이션' : '법령 기반 추정값', '월액');
-  add('퇴직수당', r.allowance, (q.income ?? '') !== '', '법령 기반 추정값');
-  if (input.profile.retirement === 'early') add('명예퇴직수당', r.honorary, true, '법령 기반 추정값');
+  const nominalBenefits = r.benefitReference.source === 'teacher-model';
+  const baseBenefit = r.benefitReference.rows.find(s=>s.label==='기준') ?? r.benefitReference.rows[Math.floor(r.benefitReference.rows.length/2)];
+  add('퇴직수당', nominalBenefits ? {...r.allowance, amountWon:baseBenefit?.allowanceWon??null, errors:[], confidence:'교원 보수 기반 · 미래 명목 · 세전'} : r.allowance,
+    (q.income ?? '') !== '', nominalBenefits ? '가정 기반 시뮬레이션' : '법령 기반 추정값');
+  if (input.profile.retirement === 'early') add('명예퇴직수당', nominalBenefits ? {...r.honorary, amountWon:r.benefitReference.honoraryWon, confidence:'봉급 연3% 가정 · 미래 명목 · 세전'} : r.honorary, true, nominalBenefits ? '가정 기반 시뮬레이션' : '법령 기반 추정값');
   for (const key of ['ktcu','irp','saving'] as const) add(key === 'ktcu' ? '교직원공제회' : key === 'irp' ? 'IRP' : '연금저축', r[key], accountHasPlan(input[key]), '가정 기반 시뮬레이션');
   const hasAccounts = accountHasPlan(input.irp) || accountHasPlan(input.saving) || [input.irp.receipt,input.saving.receipt].some(v => !!v &&
     [v.openedDate,v.applicationDate,v.referenceDate,v.referenceValue,v.annualWithdrawal,v.actualReceiptYears,v.deferredDepositDate].some(x => x !== '') || !!v && (v.deferred !== 'unknown' || v.specialHistory));

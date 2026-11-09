@@ -14,6 +14,25 @@ import { createPromptWorkspace } from '../src/lib/ai/prompt-input.ts';
 const today='2026-11-08';
 function fixture(){const f=createSimpleInputs();Object.assign(f.profile,{birthDate:'1987-02-12',appointmentDate:'2017-04-01',step:'20',promotionMonth:'4',retirement:'early',earlyDate:'2039-08-31',military:'not'});return f;}
 
+test('소득 없는 날짜 확인값은 자동 모델을 차단하지 않고 퇴직일 변경도 재계산',()=>{
+ const f=fixture(), initial=calculateSimple(f,today);
+ f.benefits.civil.pensionEstimate={...createPensionEstimateInput(),confirmedRetirementDate:f.profile.earlyDate,confirmedAppointmentDate:f.profile.appointmentDate};
+ let r=calculateSimple(f,today);assert.equal(r.pensionSource,'teacher-model');assert.equal(r.pension.amountWon,initial.pension.amountWon);
+ assert.equal(r.pensionStartDate,initial.pensionStartDate);assert.equal(r.pensionGapDays,initial.pensionGapDays);
+ f.profile.earlyDate='2040-08-31';r=calculateSimple(f,today);assert.equal(r.pensionSource,'teacher-model');assert.ok(r.pension.amountWon>0);assert.notEqual(r.pension.amountWon,initial.pension.amountWon);assert.notEqual(r.pensionGapDays,initial.pensionGapDays);
+ f.benefits.civil.pensionEstimate.averageIncome='5000000';r=calculateSimple(f,today);assert.equal(r.pensionSource,'automatic');assert.equal(r.pension.amountWon,null);
+});
+
+test('화면 참고 결과는 동일 퇴직일·세전·가격연도의 원단위 합계이며 고정 기준과 분리',()=>{
+ const f=fixture(),r=calculateSimple(f,today),v=r.benefitReference;
+ assert.equal(v.source,'teacher-model');assert.equal(v.date,f.profile.earlyDate);assert.equal(v.taxBasis,'gross');assert.equal(v.priceYear,2039);
+ assert.equal(v.honoraryWon,r.teacherBenefits.honorary.amountWon);
+ for(const row of v.rows)assert.equal(row.combinedWon,row.honoraryWon+row.allowanceWon);
+ assert.equal(r.benefitsTotal,null);assert.equal(r.accumulationTotal,null);
+ f.benefits.civil.income='5000000';const fixed=calculateSimple(f,today).benefitReference;
+ assert.equal(fixed.source,'fixed-2026');assert.equal(fixed.priceYear,2026);assert.equal(fixed.taxBasis,'gross');assert.equal(fixed.rows[0].combinedWon,fixed.rows[0].allowanceWon+fixed.honoraryWon);
+});
+
 test('공식2026 봉급표·연3%와 호봉효과는 한 번씩만 적용',()=>{
  const f=fixture(),pay=projectTeacherPay(f.profile,'2027-12-31',today),y=pay.rows.find(y=>y.year===2027);
  assert.equal(y.firstStep,20);assert.equal(y.lastStep,21);

@@ -22,9 +22,10 @@ export const teacherIncomeSensitivities = [
 ] as const;
 export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput, pay: TeacherPayProjection, base: PensionEstimate, date: string | null, today: string) {
   const errors = [...pay.errors, ...pay.historyErrors];
-  const hasIncome = !!(v.averageIncome || v.currentIncome || v.legacyIncome || v.redistributedIncome || v.factorPercent || v.confirmedRetirementDate || v.confirmedAppointmentDate || v.incomeMode !== 'average');
+  // A context confirmation is not income data. It must not disable generated income.
+  const hasIncome = !!(v.averageIncome || v.currentIncome || v.legacyIncome || v.redistributedIncome || v.factorPercent || v.incomeMode !== 'average');
   const eligible = p.scheme === 'civil' && p.teacherModel !== false && !hasIncome;
-  if(p.appointmentDate<'2010-01-01') errors.push('2009년 이전 평균보수 현가액·재직기간별 이행률은 교원 봉급만으로 확인할 수 없습니다. 전체 월연금은 공단 확인 자료가 필요합니다.');
+  if(p.appointmentDate<'2010-01-01') errors.push('2009년 이전분의 2007~2009년 평균보수월액 현가액과 기존 재직자용 재직기간별 적용비율이 부족합니다. 현재 보수 모델은 과세 보수 기초만 추정하므로 구법 평균보수와 신규자용이 아닌 경과 비율을 대체할 수 없습니다. 공단 확인 자료를 상세 설정에 입력해 주세요.');
   if(v.complexCareer)errors.push('휴직·중단·시간제·재임용 등 별도 이력은 표준 보수 경로에 적용하지 않습니다.');
   if(p.military==='approved')errors.push('군 산입 승인 경력은 공단 인정개월·산입연도·경과규정을 상세 설정에서 확인해 주세요. 표준 모델에 임의 가산하지 않습니다.');
   if(!base.normalStartDate||base.months===null||base.months<120||base.capMonths===null)errors.push('정상 개시일·10년 이상 인정기간을 확인해야 표준 월연금을 계산할 수 있습니다.');
@@ -59,6 +60,6 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
     nominal.sources=[...nominal.sources,...teacherPaySources];
     return {...s,averageIncome2026Won:income,redistributionPercent:redistribution,factorPercent:k,basis2026Won:basis.amountWon,estimate:nominal};
   }):[];
-  return {eligible,rows,errors:[...new Set(errors)],averageIncome2026Won:average,assumedWholeIncomeWon:assumedWholeIncome,
+  return {eligible,rows,errors:[...new Set([...errors,...rows.flatMap(s=>s.estimate.errors)])],averageIncome2026Won:average,assumedWholeIncomeWon:assumedWholeIncome,
     selected:rows.find(r=>r.id==='base')?.estimate??null};
 }
