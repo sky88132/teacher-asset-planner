@@ -1,6 +1,6 @@
 import type { SimpleInputs } from '@/lib/simple/model';
 import type { SimpleResults } from '@/lib/simple/calculation';
-import { teacherPayAssumptions, teacherPriceNote, teacherPaySources } from '@/lib/simple/teacher-pay';
+import { teacherPriceNote, teacherPaySources } from '@/lib/simple/teacher-pay';
 import { won, OfficialLink } from './shared';
 
 export function scenarioRange(values: (number | null)[], empty='전체액 확인 필요') {
@@ -10,7 +10,7 @@ export function scenarioRange(values: (number | null)[], empty='전체액 확인
 }
 export function TeacherPayDetails({ result:r }: {result:SimpleResults}) {
   return <details className="simple-details"><summary>교원 보수 추정 가정·연도별 근거</summary>
-    <p className="profile-help">{teacherPayAssumptions}</p><p className="profile-help">{teacherPriceNote}</p>
+    <p className="profile-help">{r.teacherPay.assumptions}</p><p className="profile-help">{teacherPriceNote}</p>
     {r.teacherPay.errors.map(e=><p className="profile-help" key={e}>{e}</p>)}
     {r.teacherPay.historyErrors.map(e=><p className="profile-help" key={e}>{e}</p>)}
     {r.teacherPension.eligible && r.teacherPension.errors.map(e=><p className="profile-help" key={e}>{e}</p>)}
@@ -24,7 +24,8 @@ export function TeacherPayDetails({ result:r }: {result:SimpleResults}) {
 }
 export function TeacherPensionScenarios({result:r}:{result:SimpleResults}) {
   if(r.pensionSource!=='teacher-model')return null;
-  return <div aria-label="교원 보수 기반 월연금 시나리오"><p className="profile-help">교원 봉급 및 수당, 연 3% 상승 가정에 따른 참고 추정액입니다. 실제 공단 예상액과 다를 수 있습니다.</p>
+  return <div aria-label="교원 보수 기반 월연금 시나리오"><p className="profile-help">교원 봉급 및 수당과 연 3% 봉급 상승 가정을 이용한 참고 추정액입니다. 실제 공단 예상 연금액과 다를 수 있습니다.</p>
+    {r.teacherPay.historyNote&&<p className="profile-help">{r.teacherPay.historyNote}</p>}
     {r.teacherPension.rows.map(s=><p key={s.id}><strong>{s.label}: {won(s.estimate.amountWon)} / 월</strong> · {s.estimate.priceYear}년 개시 명목 가정 <span className="profile-help">(2026 보수수준 환산 {won(s.basis2026Won)})</span></p>)}
     <p className="profile-help">90/100/110% 보수 기초 민감도입니다. 실제 지급범위·법정 최저/최고가 아니며 구간 경계에서 금액 순서가 달라질 수 있습니다. 실제 직종별 평균수당·과거 소득 재평가·퇴직 전3년 전체 평균은 미확인입니다.</p>
   </div>;

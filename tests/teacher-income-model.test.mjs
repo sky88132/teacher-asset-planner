@@ -14,6 +14,48 @@ import { createPromptWorkspace } from '../src/lib/ai/prompt-input.ts';
 const today='2026-11-08';
 function fixture(){const f=createSimpleInputs();Object.assign(f.profile,{birthDate:'1987-02-12',appointmentDate:'2017-04-01',step:'20',promotionMonth:'4',retirement:'early',earlyDate:'2039-08-31',military:'not'});return f;}
 
+test('40호봉은 최근 정기승급 도달 경로·표준소득의 참고 추정이며 AI에 가정 포함',()=>{
+ const f=fixture();f.profile.step='40';const r=calculateSimple(f,today);
+ assert.equal(teacherStepAt(f.profile,'2026-03-31',today),39);
+ assert.equal(teacherStepAt(f.profile,'2017-04-01',today),31);
+ assert.equal(r.teacherPay.rows[0].firstStep,31);assert.equal(r.teacherPay.historyErrors.length,0);
+ assert.equal(r.pensionSource,'teacher-model');assert.ok(r.teacherPension.rows.every(s=>s.estimate.amountWon>0));
+ assert.match(r.teacherPay.assumptions,/최근 정기승급일/);
+ assert.match(generateSimplePrompt(f,createPromptWorkspace().settings,today),/40호봉.*계획 가정/);
+ assert.ok(r.pensionStartDate);assert.ok(r.pensionGapMonths>0);
+});
+
+function legacyFixture(){
+ const f=fixture();Object.assign(f.profile,{appointmentDate:'2007-04-01',step:'33',earlyDate:'2037-08-31'});
+ // Synthetic user-supplied values, not a claim about an actual agency factor.
+ f.benefits.civil.pensionEstimate={...createPensionEstimateInput(),legacyIncome:'3000000',factorPercent:'95',confirmedAppointmentDate:f.profile.appointmentDate,confirmedRetirementDate:f.profile.earlyDate};
+ return f;
+}
+test('구기간 확인 변수는 교원 평균소득 모델과 결합·구간별 엔진·동일 가격 환산',()=>{
+ const f=legacyFixture(),r=calculateSimple(f,today);assert.equal(r.pensionSource,'teacher-model');assert.equal(r.pensionDetails.periods[0].months,33);
+ const legacyNominal=Math.round(3000000*salaryGrowth(r.pensionDetails.priceYear));
+ assert.equal(r.pensionDetails.periods[0].amountWon,Math.floor(legacyNominal*33*25/12000));
+ assert.ok(r.pensionDetails.periods[1].amountWon>0);assert.ok(r.pensionDetails.periods[2].amountWon>0);
+ for(const row of r.teacherPension.rows){assert.equal(row.factorPercent,95);assert.equal(row.estimate.periods[0].amountWon,r.pensionDetails.periods[0].amountWon);assert.match(row.estimate.notes.join(),/구기간.*동일하게 유지/);}
+ assert.equal(f.benefits.civil.pensionEstimate.averageIncome,'');assert.equal(f.benefits.civil.pensionEstimate.redistributedIncome,'');
+});
+test('구기간 확인일이 오래되면 자동 결합 금지·정상 개시와 공백은 유지',()=>{
+ const f=legacyFixture(),before=calculateSimple(f,today);f.profile.earlyDate='2038-08-31';const r=calculateSimple(f,today);
+ assert.equal(r.pension.amountWon,null);assert.match(r.teacherPension.errors.join(),/다시 확인/);assert.equal(r.pensionStartDate,before.pensionStartDate);assert.ok(r.pensionGapMonths>0);
+});
+test('구기간 변수 누락·잘못된 값·33년 초과는 임의 계수나 보수로 대체하지 않음',()=>{
+ for(const patch of [{legacyIncome:''},{factorPercent:''},{legacyIncome:'oops'},{factorPercent:'0'},{factorPercent:'oops'}]){
+  const f=legacyFixture();Object.assign(f.benefits.civil.pensionEstimate,patch);const r=calculateSimple(f,today);assert.equal(r.pension.amountWon,null);assert.ok(r.teacherPension.errors.length>0);assert.ok(r.pensionStartDate);
+ }
+ const f=legacyFixture();f.profile.earlyDate='2045-08-31';f.benefits.civil.pensionEstimate.confirmedRetirementDate=f.profile.earlyDate;
+ const r=calculateSimple(f,today);assert.equal(r.pension.amountWon,null);assert.match(r.teacherPension.errors.join(),/33년 초과/);
+});
+test('확인 적용비율만 입력해도 표준 평균소득 추정 유지·실제 평균소득 입력은 우선',()=>{
+ const f=fixture();f.benefits.civil.pensionEstimate={...createPensionEstimateInput(),factorPercent:'95',confirmedRetirementDate:f.profile.earlyDate,confirmedAppointmentDate:f.profile.appointmentDate};
+ let r=calculateSimple(f,today);assert.equal(r.pensionSource,'teacher-model');assert.equal(r.teacherPension.rows[1].factorPercent,95);
+ f.benefits.civil.pensionEstimate.averageIncome='5000000';r=calculateSimple(f,today);assert.equal(r.pensionSource,'automatic');assert.equal(r.pension.amountWon,null);
+});
+
 test('소득 없는 날짜 확인값은 자동 모델을 차단하지 않고 퇴직일 변경도 재계산',()=>{
  const f=fixture(), initial=calculateSimple(f,today);
  f.benefits.civil.pensionEstimate={...createPensionEstimateInput(),confirmedRetirementDate:f.profile.earlyDate,confirmedAppointmentDate:f.profile.appointmentDate};
@@ -39,10 +81,10 @@ test('공식2026 봉급표·연3%와 호봉효과는 한 번씩만 적용',()=>{
  assert.equal(y.salaryWon,3*Math.round(teacherSalary2026[19]*1.03)+9*Math.round(teacherSalary2026[20]*1.03));
  assert.equal(pay.finalSalaryWon,Math.round(teacherSalary2026[20]*1.03));assert.equal(salaryGrowth(2026),1);
 });
-test('승급 경계·40호봉 상한·과거 상한 경로는 임의 역산하지 않는다',()=>{
+test('승급 경계·40호봉 상한·과거 상한 경로의 계획 가정',()=>{
  const f=fixture();assert.equal(teacherStepAt(f.profile,'2026-04-01',today),20);assert.equal(teacherStepAt(f.profile,'2026-03-31',today),19);
  assert.equal(teacherStepAt(f.profile,'2027-03-31',today),20);assert.equal(teacherStepAt(f.profile,'2027-04-01',today),21);
- f.profile.step='40';const r=calculateSimple(f,today);assert.ok(r.teacherPay.historyErrors.length);assert.equal(r.pension.amountWon,null);assert.ok(r.teacherPay.finalSalaryWon>teacherSalary2026[39]);assert.equal(r.step,40);
+ f.profile.step='40';const r=calculateSimple(f,today);assert.equal(r.teacherPay.historyErrors.length,0);assert.ok(r.pension.amountWon>0);assert.ok(r.teacherPay.historyNote);assert.ok(r.teacherPay.finalSalaryWon>teacherSalary2026[39]);assert.equal(r.step,40);
 });
 test('담임20·교직25·급식16 분리와 연간 발생 수당의 월평균 환산',()=>{
  const f=fixture(),y=projectTeacherPay(f.profile,f.profile.earlyDate,today).rows.find(y=>y.year===2027);
@@ -60,8 +102,8 @@ test('부분 퇴직연도는 근무월 과세액과 연환산을 구분·퇴직 
  assert.equal(last.year,2039);assert.equal(last.months,8);assert.equal(last.homeroomWon,1600000);
  assert.equal(last.annualizedTaxableWon,Math.round(last.taxableWon*12/8));assert.ok(r.teacherPay.rows.every(x=>x.year<=2039));
 });
-test('현재40/역산불능은 월액 보류하되 정상 개시일 유지',()=>{
- const f=fixture();f.profile.step='40';let r=calculateSimple(f,today);assert.equal(r.pension.amountWon,null);assert.ok(r.pensionStartDate);
+test('현재40호봉은 계획 경로로 추정·역산 범위 이탈만 보류·개시 유지',()=>{
+ const f=fixture();f.profile.step='40';let r=calculateSimple(f,today);assert.ok(r.pension.amountWon>0);assert.ok(r.pensionStartDate);assert.match(r.pensionDetails.notes.join(),/40호봉.*계획 가정/);
  f.profile.step='2';r=calculateSimple(f,today);assert.ok(r.teacherPay.historyErrors.length);assert.equal(r.pension.amountWon,null);assert.ok(r.pensionStartDate);
 });
 test('공식 신규자 이행률 표의 기간 경계 및33년 고정',()=>{

@@ -4,6 +4,25 @@ async function menu(p:Page,n:number){await p.getByRole('navigation',{name:'주�
 async function profile(p:Page){for(const [label,value]of [['생년월일','1987-02-12'],['최초 임용일','2017-04-01'],['현재 호봉','20']])await p.getByLabel(label,{exact:true}).fill(value);await p.getByLabel('승급월',{exact:true}).selectOption('4');await p.getByRole('radio',{name:'명예퇴직',exact:true}).check();await p.getByLabel('명예퇴직 예정일',{exact:true}).fill('2039-08-31');}
 test.beforeEach(async({page})=>{await page.clock.install({time:new Date('2026-11-08T12:00:00+09:00')});await page.goto('/');});
 
+test('40호봉 기본정보의 참고 월액·최근 상한 도달 가정·정상 개시와 공백 기본 표시·AI',async({page},info)=>{
+ await profile(page);await page.getByLabel('현재 호봉',{exact:true}).fill('40');await menu(page,4);
+ const pension=page.getByRole('region',{name:'공적연금 요약',exact:true});
+ await expect(pension.locator('.benefit-amount').first()).not.toHaveText('추정에 필요한 정보 확인');
+ await expect(pension.locator('[aria-label="교원 보수 기반 월연금 시나리오"]')).toContainText('최근 정기승급일');
+ await expect(pension.locator(':scope>dl')).toContainText('2052-02-12');await expect(pension.locator(':scope>dl')).toContainText('149개월');await expect(pension.locator(':scope>dl')).toContainText('2026년 봉급표');
+ await pension.screenshot({path:info.outputPath('pension-step40.png')});
+ await menu(page,5);await page.getByLabel('포함 정보·익명화·누락 사항을 확인했습니다.',{exact:true}).check();await page.getByRole('button',{name:'AI 요청문 생성',exact:true}).click();await expect(page.getByLabel('AI 분석 요청문',{exact:true})).toHaveValue(/40호봉.*계획 가정/);
+});
+
+test('구기간 보수·적용비율 확인 후 교원 보수 평균으로 자동 월액·퇴직일 변경은 확인 무효',async({page})=>{
+ await profile(page);await page.getByLabel('최초 임용일',{exact:true}).fill('2007-04-01');await page.getByLabel('현재 호봉',{exact:true}).fill('33');await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2037-08-31');await menu(page,4);
+ const pension=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(pension).toContainText('2009년 이전');
+ await page.getByText('공적연금 추정 상세 설정 (선택)',{exact:true}).click();await page.getByLabel('구기간 평균보수월액 현가액 (만원)',{exact:true}).fill('300');await page.getByLabel('공단 확인 이행률·보정률 (%)',{exact:true}).fill('95');
+ await page.getByLabel('소득·계수·가입기간을 현재 퇴직일 기준으로 확인했습니다.',{exact:true}).check();await expect(pension.locator('.benefit-amount').first()).not.toHaveText('추정에 필요한 정보 확인');await expect(pension).toContainText('가정 기반 시뮬레이션');
+ await expect(page.getByLabel('공단 확인 평균기준소득월액 (만원)',{exact:true})).toHaveValue('');
+ await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2038-08-31');await menu(page,4);await expect(pension.locator('.benefit-amount').first()).toHaveText('추정에 필요한 정보 확인');await expect(pension).toContainText('다시 확인');await expect(page.getByRole('region',{name:'은퇴설계 핵심 요약',exact:true})).toContainText('2052');
+});
+
 test('04 핵심 금액 기본 표시·합계 마지막·05 동일 금액·날짜 확인만으로 자동 연금 유지',async({page},info)=>{
  await profile(page);await menu(page,3);
  const h=page.getByRole('region',{name:'명예퇴직수당 예상액',exact:true}),a=page.getByRole('region',{name:'퇴직수당 참고 시뮬레이션',exact:true}),total=page.getByRole('region',{name:'퇴직급여 참고 합계',exact:true});

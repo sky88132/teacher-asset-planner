@@ -23,10 +23,9 @@ export function regularBonusRate(years: number) {
 export function serviceBonusMonthly(years: number) {
   return years < 5 ? 30000 : years < 7 ? 40000 : years < 10 ? 50000 : years < 15 ? 60000 : years < 20 ? 80000 : years < 25 ? 110000 : 130000;
 }
-/** Past increments can only be inverted before the current step has reached the cap. */
+/** At the cap, choose the latest possible arrival as an explicit planning assumption. */
 export function teacherStepAt(p: SimpleProfile, date: string, today: string): number | null {
   if (date >= today) return projectedStep(p, date, today);
-  if (Number(p.step) === 40) return null;
   let increments = 0;
   for (let year = Number(date.slice(0, 4)); year <= Number(today.slice(0, 4)); year++) {
     const scheduled = `${year}-${p.promotionMonth.padStart(2, '0')}-01`;
@@ -44,14 +43,16 @@ export type TeacherPayYear = {
 };
 export function projectTeacherPay(p: SimpleProfile, date: string | null, today: string) {
   const errors: string[] = [], historyErrors: string[] = [], rows: TeacherPayYear[] = [];
+  const historyNote = p.step === '40' ? '40호봉 도달 이력이 없어 현재 기준 가장 최근 정기승급일에 40호봉에 도달한 것으로 가정해 과거 호봉을 역산합니다. 상한에 더 일찍 도달했다면 과거 보수가 달라집니다. 실제 호봉 이력이 아닌 계획 가정입니다.' : null;
+  const assumptions = teacherPayAssumptions + (historyNote ? ' ' + historyNote : '');
   if (p.teacherModel === false) errors.push('교원 표준 보수 가정을 사용하지 않았습니다.');
   if (p.scheme !== 'civil') errors.push('새 보수 모델은 일반 국공립 초·중등 호봉제 교원 시나리오에만 자동 적용합니다.');
   errors.push(...validateSimpleProfile(p, today));
   const lastDay = date ? new Date(Date.parse(date + 'T00:00:00Z') - 86400000).toISOString().slice(0, 10) : null;
-  if (!date || !lastDay || errors.length) return { rows, errors: [...new Set(errors)], historyErrors, final: null, finalSalaryWon: null, assumptions: teacherPayAssumptions };
+  if (!date || !lastDay || errors.length) return { rows, errors: [...new Set(errors)], historyErrors, final: null, finalSalaryWon: null, assumptions, historyNote };
   const start = monthIndex(p.appointmentDate), end = monthIndex(lastDay);
   if (end - start > 1200) errors.push('100년 초과 보수 경로는 지원하지 않습니다.');
-  if (errors.length) return { rows, errors, historyErrors, final: null, finalSalaryWon: null, assumptions: teacherPayAssumptions };
+  if (errors.length) return { rows, errors, historyErrors, final: null, finalSalaryWon: null, assumptions, historyNote };
   // Monthly remuneration reference, not an agency payroll or exact lunar-holiday cash schedule.
   for (let year = Number(p.appointmentDate.slice(0, 4)); year <= Number(lastDay.slice(0, 4)); year++) {
     let salary = 0, homeroom = 0, teaching = 0, serviceBonus = 0, regular = 0, holiday = 0, meal = 0;
@@ -62,9 +63,7 @@ export function projectTeacherPay(p: SimpleProfile, date: string | null, today: 
       const when = `${year}-${String(month).padStart(2, '0')}-01`;
       // Current month uses the currently supplied step, including an increment due today.
       const step = when.slice(0, 7) === today.slice(0, 7) ? Number(p.step) : teacherStepAt(p, when, today);
-      if (step === null) { historyErrors.push(Number(p.step)===40
-        ? '40호봉 도달 시점과 과거 호봉 이력이 부족합니다. 상한에 머문 기간을 현재 호봉만으로 구분할 수 없어 전 재직기간 평균소득을 추정하지 않습니다.'
-        : '과거 호봉 역산값이 1~40호봉 범위를 벗어납니다. 초임 호봉·승급 제한 등 실제 호봉 이력 없이 현재 보수만으로 전 재직기간 평균소득을 대체할 수 없습니다.'); continue; }
+      if (step === null) { historyErrors.push('과거 호봉 역산값이 1~40호봉 범위를 벗어납니다. 초임 호봉·승급 제한 등 실제 호봉 이력 없이 현재 보수만으로 전 재직기간 평균소득을 대체할 수 없습니다.'); continue; }
       const base = rounded(teacherSalary2026[step - 1] * salaryGrowth(year));
       const years = Math.max(0, Math.floor((index - start) / 12));
       steps.push(step); salary += base; homeroom += 200000; teaching += 250000;
@@ -86,6 +85,6 @@ export function projectTeacherPay(p: SimpleProfile, date: string | null, today: 
   }
   const final = rows.at(-1) ?? null, step = projectedStep(p, date, today);
   const finalSalaryWon = step === null ? null : rounded(teacherSalary2026[step - 1] * salaryGrowth(Number(date.slice(0, 4))));
-  return { rows, errors, historyErrors: [...new Set(historyErrors)], final, finalSalaryWon, assumptions: teacherPayAssumptions };
+  return { rows, errors, historyErrors: [...new Set(historyErrors)], final, finalSalaryWon, assumptions, historyNote };
 }
 export type TeacherPayProjection = ReturnType<typeof projectTeacherPay>;
