@@ -26,15 +26,20 @@ export function TeacherPensionScenarios({result:r}:{result:SimpleResults}) {
   if(r.pensionSource!=='teacher-model')return null;
   return <div aria-label="교원 보수 기반 월연금 시나리오"><p className="profile-help">봉급 연3%·담임 계속·일부 표준 수당 가정 · 공단 확정액 아님</p>
     {r.teacherPension.rows.map(s=><p key={s.id}><strong>{s.label}: {won(s.estimate.amountWon)} / 월</strong> · {s.estimate.priceYear}년 개시 명목 가정 <span className="profile-help">(2026 보수수준 환산 {won(s.basis2026Won)})</span></p>)}
+    <details className="simple-details"><summary>월연금 변수별 출처·자동 산출 과정</summary>
+      <p className="profile-help">{r.teacherPension.wholeIncome.note}</p>
+      {r.teacherPension.wholeIncome.years.map(y=><p key={y.year}>{y.year}년 전체 평균 {won(Math.round(y.nominalWon))} · {y.state} · 퇴직 전년도 물가 가정 환산 {won(Math.round(y.adjustedWon))}</p>)}
+      {r.teacherPension.rows.map(s=><section key={s.id}><h4>{s.label}</h4>{s.variables.map(v=><p className="profile-help" key={v.label}>{v.label}: {v.value===null?'미확인':v.unit==='원/월'?won(v.value):v.value+' '+v.unit} · {v.state} · {v.basis}</p>)}</section>)}
+    </details>
     <p className="profile-help">90/100/110% 보수 기초 민감도입니다. 실제 지급범위·법정 최저/최고가 아니며 구간 경계에서 금액 순서가 달라질 수 있습니다. 실제 직종별 평균수당·과거 소득 재평가·퇴직 전3년 전체 평균은 미확인입니다.</p>
   </div>;
 }
 export function BenefitReferenceTotals({input,result:r}:{input:SimpleInputs;result:SimpleResults}) {
   const early=input.profile.retirement==='early';
   const teacher=r.teacherBenefits, legacy=r.allowanceReference;
-  const primary=teacher.rows.length>0;
+  const primary=r.benefitSummary.nominal;
   const oldRows=legacy.rows.map(s=>({label:s.label,allowanceWon:s.amountWon,honoraryWon:r.honorary.amountWon,combinedWon:s.combinedWon}));
-  const rows=primary?teacher.rows:oldRows;
+  const rows=r.benefitSummary.rows;
   if(input.profile.scheme!=='civil'&&!rows.length)return null;
   return <section className="benefit-result" aria-label="퇴직급여 참고 합계"><h3>{early?'명예퇴직수당 + 퇴직수당 참고 합계':'퇴직수당 참고 시나리오'}</h3>
     <strong className="benefit-amount">{scenarioRange(rows.map(s=>early?s.combinedWon:s.allowanceWon),'전체 참고 합계 확인 필요')}</strong>

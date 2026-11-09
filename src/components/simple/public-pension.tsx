@@ -17,8 +17,9 @@ export function SimplePublicPension({ input, onChange, result: r }: { input: Sim
     <strong className="benefit-amount">{won(r.pension.amountWon, '추정에 필요한 정보 확인')}{r.pension.amountWon !== null ? ' / 월' : ''}</strong>
     <p className="profile-help">{schemeNames[p.scheme]} · {r.pension.confidence} · {r.pensionSource === 'quote' ? q.pension.taxBasis === 'net' ? '입력액 세후' : q.pension.taxBasis === 'gross' ? '세전' : '세금 기준 확인 필요' : r.pensionSource === 'teacher-model' ? `세전 · ${details.priceYear}년 개시 명목 가정` : '세전 · 2026년 가격 고정'}</p>
     <p className="profile-help">{r.pensionSource === 'quote' ? '직접 입력한 조회액을 우선 표시합니다. 기관에 자동 조회하거나 진위를 검증한 값은 아닙니다.' : '웹앱의 조건부 추정이며 공단이 확정한 실제 지급액이 아닙니다. ' + details.externalValidation + '.'}</p>
+    <p className="profile-context">정상 개시 예상일 {details.normalStartDate??'개인별 경과규정 확인 필요'} · 최초 지급대상월 {details.firstPaymentMonth??'확인 필요'} · 개시 전 공백 {r.pensionGapMonths===null?'미확인':r.pensionGapMonths+'개월(완료 월)·'+r.pensionGapDays+'일'}</p>
     <TeacherPensionScenarios result={r} />
-    {r.teacherPension.eligible && !r.teacherPension.selected && r.teacherPension.errors.length>0 && <p className="profile-help">교원 모델 추정 보류: {r.teacherPension.errors[0]}</p>}
+    {r.teacherPension.eligible && !r.teacherPension.selected && r.teacherPension.errors.length>0 && <p className="profile-help">교원 모델 추정 보류: {r.teacherPension.errors.join(' ')}</p>}
     <TeacherPayDetails result={r} />
     <details className="simple-details"><summary>연금 개시·기간 자세히 보기</summary><dl className="benefit-details"><dt>정상 개시연령</dt><dd>{details.normalAge === null ? '개인별 경과규정 확인 필요' : `만 ${details.normalAge}세 · 일반 조건`}</dd>
       <dt>정상 수급조건 충족 예상일</dt><dd>{details.normalStartDate ?? '인정 가입기간·개인별 예외 확인 필요'}</dd>
@@ -30,7 +31,9 @@ export function SimplePublicPension({ input, onChange, result: r }: { input: Sim
     <p className="profile-help">개인별 정상 개시 조건을 적용합니다. 감액·지급정지·세금·실제 입금일은 별도 확인하며 월연금을 목돈에 더하지 않습니다.</p>
     {r.pension.errors.length > 0 && <details className="simple-details"><summary>공적연금 추가 확인 사항 ({r.pension.errors.length})</summary><ul className="profile-help" aria-label="공적연금 추가 확인 사항">{r.pension.errors.map(error => <li key={error}>{error}</li>)}</ul></details>}
     <details className="simple-details"><summary>공적연금 추정 상세 설정 (선택)</summary>
-      <p className="profile-help">호봉과 예상 최종봉급만으로 평균소득을 만들지 않습니다. 아래 기초 소득자료가 있으면 예상 월연금을 자동 계산합니다. 공단 자료의 재평가·상한 반영 여부를 확인하세요. 04의 퇴직수당용 소득을 연금 평균소득으로 자동 재사용하지 않습니다.</p>
+      <p className="profile-help">일반 공무원 교원은 별도의 표준 보수 경로로 참고 시뮬레이션을 제공합니다. 아래 공단 확인 소득 경로와 구분하며 공식 조회액이 우선합니다. 공단 자료의 재평가·상한 반영 여부를 확인하세요. 04의 퇴직수당용 소득을 연금 평균소득으로 자동 재사용하지 않습니다.</p>
+      {p.scheme==='civil'&&<Field label="교원 시나리오 미래 물가상승률 가정 (%)" inputMode="decimal" value={v.simulationInflation??'0'} onChange={simulationInflation=>update({simulationInflation})}/>}
+      <p className="profile-help">미래 물가는 기본 0% 고정 가정이며 공식 예측이 아닙니다. 퇴직 전 3년 전체 평균의 물가 환산에만 사용합니다. 실제 과거 물가·고시액이 부족한 퇴직연도는 자동 경로를 보류합니다.</p>
       <Field label="공적연금 소득 적용 방식" value={v.incomeMode} onChange={incomeMode => update({ incomeMode: incomeMode as PensionEstimateInput['incomeMode'] })}><option value="average">공단 확인 평균소득 사용</option><option value="current">현재 소득 고정 시나리오</option></Field>
       {v.incomeMode === 'average' ? <MoneyField label="공단 확인 평균기준소득월액 (만원)" valueWon={v.averageIncome} onChangeWon={averageIncome => update({ averageIncome })} />
         : <><MoneyField label="공적연금 현재 기준소득월액 (만원)" valueWon={v.currentIncome} onChangeWon={currentIncome => update({ currentIncome })} /><label className="checkbox"><input type="checkbox" checked={v.constantIncome} onChange={e => update({ constantIncome: e.target.checked })} />현재 소득을 전체 가입기간의 재평가 평균소득으로 가정하겠습니다.</label><p className="profile-help">실제 법정 평균소득을 산출한 것이 아닙니다. 과거·미래 소득이 다르면 실제 연금액과 차이가 날 수 있는 가정 시나리오입니다.</p></>}

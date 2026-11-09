@@ -1,4 +1,5 @@
 export type PensionEstimateInput = {
+  simulationInflation?: string;
   incomeMode: 'average' | 'current'; averageIncome: string; currentIncome: string; constantIncome: boolean;
   legacyIncome: string; redistributedIncome: string; factorPercent: string;
   complexCareer: boolean; militaryMonths: string; militaryCreditYear: string; recognizedAt2016: string;
@@ -7,7 +8,7 @@ export type PensionEstimateInput = {
   confirmedRetirementDate: string; confirmedAppointmentDate: string; verifiedNormalDate: string;
 };
 export function createPensionEstimateInput(): PensionEstimateInput {
-  return { incomeMode: 'average', averageIncome: '', currentIncome: '', constantIncome: false,
+  return { simulationInflation: '0', incomeMode: 'average', averageIncome: '', currentIncome: '', constantIncome: false,
     legacyIncome: '', redistributedIncome: '', factorPercent: '', complexCareer: false,
     militaryMonths: '', militaryCreditYear: '', recognizedAt2016: '', nationalStartMonth: '', nationalEndMonth: '', nationalAutomaticEnd: true,
     nationalLastFiveIncome: '', nationalMilitaryMonths: '', nationalChildMonths: '',

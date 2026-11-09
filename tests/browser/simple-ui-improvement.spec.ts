@@ -6,7 +6,7 @@ async function profile(page:Page,appointment='2010-01-01',date='2030-01-01'){
 }
 test.beforeEach(async({page})=>{await page.clock.install({time:new Date('2026-11-08T12:00:00+09:00')});await page.goto('/');});
 test('미입력 소득의 세 시나리오는 개인 소득·기존 합계와 구분한다',async({page},info)=>{
-  await profile(page);await menu(page,3);const card=page.getByRole('region',{name:'퇴직수당 참고 시뮬레이션',exact:true});await expect(card.locator('.benefit-amount').first()).toHaveText('3,713만원 ~ 5,569만원');for(const text of ['476만원','595만원','714만원','2026년 소득 수준 고정 가정','개인 공식 조회액 아님'])await expect(card).toContainText(text);await expect(page.getByRole('region',{name:'퇴직급여 합계',exact:true})).toContainText('완전한 합계 확인 불가');
+  await profile(page);await menu(page,3);await page.getByText('2026년 소득 수준 고정 상세 비교',{exact:true}).click();const card=page.getByRole('region',{name:'퇴직수당 참고 시뮬레이션',exact:true});await expect(card.locator('.benefit-amount').first()).toHaveText('3,713만원 ~ 5,569만원');for(const text of ['476만원','595만원','714만원','2026년 소득 수준 고정 가정','개인 공식 조회액 아님'])await expect(card).toContainText(text);await expect(page.getByRole('region',{name:'퇴직급여 참고 합계',exact:true})).not.toContainText('완전한 합계 확인 불가');
   await page.getByText('계산 근거 보기 (퇴직수당)',{exact:true}).click();await page.getByLabel('2026년 기준 퇴직수당용 기준소득월액 (만원, 선택)',{exact:true}).fill('400.0001');await expect(card.locator('.benefit-amount').first()).toHaveText('3,120만원');await expect(page.getByLabel('2026년 기준 퇴직수당용 기준소득월액 (만원, 선택)',{exact:true})).toHaveValue('400.0001');
   if(info.project.name==='mobile')await page.setViewportSize({width:320,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);await card.screenshot({path:info.outputPath('allowance-reference.png')});
 });

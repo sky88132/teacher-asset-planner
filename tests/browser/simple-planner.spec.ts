@@ -25,7 +25,7 @@ test('6개 메뉴·학교 구분 제거·연금 3개·국민연금 별도 처리
   await profile(page);await page.getByRole('radio',{name:'국민연금',exact:true}).check();await expect(page.getByText('국민연금 군복무 크레딧',{exact:true})).toBeVisible();
   await expect(page.getByLabel('임용 전 군복무기간을 연금 재직기간에 산입했습니까?',{exact:true})).toHaveCount(0);
   await page.getByText('정년일이 다른 경우 직접 수정',{exact:true}).click();await page.getByLabel('기관에서 확인한 정년일 사용',{exact:true}).check();await page.getByLabel('기관에서 확인한 정년일',{exact:true}).fill('2040-02-29');
-  await menu(page,3);await page.getByText('계산 근거 보기 (퇴직수당)',{exact:true}).click();await expect(page.getByText('국민연금 가입자는 공무원·사학 퇴직수당 자동 지급 대상이 아닙니다.',{exact:false})).toBeVisible();
+  await menu(page,3);await page.getByText('계산 근거 보기 (퇴직수당)',{exact:true}).click();await expect(page.getByRole('region',{name:'퇴직수당 결과',exact:true})).toContainText('국민연금 가입자는 공무원·사학 퇴직수당 자동 지급 대상이 아닙니다.');
 });
 test('승급월 경계·군 산입·정년과 명퇴의 배타 선택 및 날짜 오류',async({page})=>{
   await profile(page,'2027-02-28');const condition=page.getByRole('region',{name:'공통 퇴직 조건'});await expect(condition).toContainText('22호봉');
@@ -64,7 +64,7 @@ test('수당 자동 추정·직접 금액과 자격 선택 제거·제도별 미
   await expect(page.getByLabel('명예퇴직수당 지급 자격',{exact:true})).toHaveCount(0);await expect(page.getByLabel('명예퇴직수당 실제 선정',{exact:true})).toHaveCount(0);await expect(page.getByText('명예퇴직수당 직접 입력 (선택)',{exact:true})).toHaveCount(0);
   await page.getByText('계산 근거 보기 (퇴직수당)',{exact:true}).click();const a=page.getByRole('region',{name:'퇴직수당 결과',exact:true});await expect(a).toContainText('기준소득월액');
   await page.getByLabel('2026년 기준 퇴직수당용 기준소득월액 (만원, 선택)',{exact:true}).fill('600');await expect(a.locator('.benefit-amount')).toHaveText('5,031만원');
-  const total=page.getByRole('region',{name:'퇴직급여 합계'});await expect(total).toContainText('세전');await expect(total).not.toContainText('완전한 합계 확인 불가');
+  const total=page.getByRole('region',{name:'퇴직급여 참고 합계'});await expect(total).toContainText('세전');await expect(total).not.toContainText('완전한 합계 확인 불가');
   for(const width of info.project.name==='mobile'?[320,390]:[1440]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
   await page.screenshot({path:info.outputPath('automatic-benefits.png'),fullPage:true});
   await menu(page,0);await page.getByRole('radio',{name:'사학연금',exact:true}).check();await menu(page,3);await page.getByText('명예퇴직수당 예상액',{exact:true}).click();await expect(h).toContainText('학교 정관');await page.getByText('계산 근거 보기 (퇴직수당)',{exact:true}).click();await page.getByLabel('2026년 기준 퇴직수당용 기준소득월액 (만원, 선택)',{exact:true}).fill('600');await expect(a.locator('.benefit-amount')).toHaveText('5,031만원');

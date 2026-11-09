@@ -1,3 +1,4 @@
+import {selectBenefitSummary} from './benefit-summary.ts';
 import type { BenefitInput } from '../finance/pension-input.ts';
 import { parseMoney } from '../finance/pension-input-validation.ts';
 import { createKtcuInput } from '../finance/ktcu-input.ts';
@@ -160,10 +161,13 @@ export function calculateSimple(input: SimpleInputs, today: string) {
   const benefitsTotal = sumKnown(benefitItems, date);
   const accountsTotal = sumKnown([irp, saving], date);
   const accumulationTotal = sumKnown([ktcu, irp, saving], date);
-  return { today, retirement, step, ktcu, split, splitError, irp, saving, pension, allowance, honorary,
+  const allowanceReference = estimateAllowanceReference(input.profile, quotes, date, honorary.amountWon);
+  const teacherBenefits = estimateTeacherBenefits(input.profile, quotes, date, retirement.normal, step, teacherPay);
+  const benefitSummary = selectBenefitSummary(input, teacherBenefits, allowanceReference, allowance, honorary);
+  return { benefitSummary, today, retirement, step, ktcu, split, splitError, irp, saving, pension, allowance, honorary,
     benefitsTotal, accountsTotal, accumulationTotal, accumulation, allowanceDetails, honoraryDetails, plannedTotals,
-    allowanceReference: estimateAllowanceReference(input.profile, quotes, date, honorary.amountWon),
-    teacherPay, teacherPension, teacherBenefits: estimateTeacherBenefits(input.profile, quotes, date, retirement.normal, step, teacherPay),
+    allowanceReference,
+    teacherPay, teacherPension, teacherBenefits,
     pensionDetails, pensionSource, pensionStartDate, pensionGapMonths, pensionGapDays,
     accountReceipts: {
       irp: calculateAccountReceipt(input.irp.receipt ?? createAccountReceiptInput(), input.profile.birthDate, date, today, pensionStartDate),

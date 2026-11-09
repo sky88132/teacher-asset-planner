@@ -36,7 +36,7 @@ export function estimateAllowanceReference(p: SimpleProfile, q: SimpleBenefits, 
     const postWon=months!==null&&rowRate!==null&&s.income!==null&&s.income>0?allowanceAmount(s.income,oldMonths?newMonths:months,rowRate):null;
     const oldWon=oldMonths&&oldReady&&oldRate!==null?allowanceAmount(legacy.won!,oldMonths,oldRate):oldMonths?null:0;
     const sum=oldWon!==null&&postWon!==null?BigInt(oldWon)+BigInt(postWon):null;
-    const amountWon=rowErrors.length||sum===null||sum>BigInt(Number.MAX_SAFE_INTEGER)?null:Number(sum);
+    const amountWon=oldMonths?(rowErrors.length||sum===null||sum>BigInt(Number.MAX_SAFE_INTEGER)?null:Number(sum)):base.amountWon;
     const combined=amountWon!==null&&honoraryWon!==null?BigInt(amountWon)+BigInt(honoraryWon):null;
     return {...s,months,rate:rowRate,oldMonths,newMonths:oldMonths?newMonths:months,oldRate,oldWon,postWon,amountWon,
       combinedWon:combined!==null&&combined<=BigInt(Number.MAX_SAFE_INTEGER)?Number(combined):null,errors:rowErrors};

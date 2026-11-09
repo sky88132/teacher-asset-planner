@@ -18,7 +18,7 @@ function fixture(scheme='civil',appointment='2016-01-01',date='2026-12-31') {
 }
 function estimate(f){return calculateSimple(f,today);}
 for(const scheme of ['civil','private-school','national'])test(`${scheme} 공단 입력 없는 기본정보는 명시적 교원 모델과 확인 소득을 구분한다`,()=>{
-  const f=fixture(scheme);delete f.benefits[scheme].pensionEstimate;const r=estimate(f);if(scheme==='civil'){assert.equal(r.pensionSource,'teacher-model');assert.ok(r.pension.amountWon>0);assert.match(r.pension.confidence,/가정 기반/);f.profile.teacherModel=false;assert.equal(estimate(f).pension.amountWon,null);}else assert.equal(r.pension.amountWon,null);assert.match(estimate(f).pension.errors.join(),/평균기준소득월액/);
+  const f=fixture(scheme,'2016-01-01','2029-12-31');delete f.benefits[scheme].pensionEstimate;const r=estimate(f);if(scheme==='civil'){assert.equal(r.pensionSource,'teacher-model');assert.ok(r.pension.amountWon>0);assert.match(r.pension.confidence,/가정 기반/);f.profile.teacherModel=false;assert.equal(estimate(f).pension.amountWon,null);}else assert.equal(r.pension.amountWon,null);assert.match(estimate(f).pension.errors.join(),/평균기준소득월액/);
   assert.ok(r.pensionDetails.sources.every(x=>/^https:\/\//.test(x.url)));assert.equal(r.pensionDetails.externalValidation,'외부 금액 검증 미완료');
 });
 for(const scheme of ['civil','private-school'])test(`${scheme} 2016년 이후 연도별 지급률 산술 · 개시일은 소득 누락에도 표시`,()=>{

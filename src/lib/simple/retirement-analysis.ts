@@ -28,15 +28,15 @@ export function calculateRetirementAnalysis(input: SimpleInputs, r: SimpleResult
   const splitBalanceAtStart = rows.length && validTiming ? paidBeforeStart.at(-1)?.balanceWon ?? r.ktcu.amountWon : null;
   const lumpItems = [
     ...(!input.ktcu.split ? [{ label: '공제회 일시금', won: r.ktcu.amountWon }] : []),
-    { label: '퇴직수당', won: r.allowance.amountWon },
-    ...(input.profile.retirement === 'early' ? [{ label: '명예퇴직수당', won: r.honorary.amountWon }] : []),
+    { label: '퇴직수당', won: r.benefitSummary.allowance.amountWon },
+    ...(input.profile.retirement === 'early' ? [{ label: '명예퇴직수당', won: r.benefitSummary.honorary.amountWon }] : []),
   ];
   const accounts = (['irp','saving'] as const).map(key => ({ key, title: key === 'irp' ? 'IRP' : '연금저축',
     balanceWon: r[key].amountWon, receipt: r.accountReceipts[key],
     eligibleAtRetirement: !retirement || !r.accountReceipts[key].eligibleDate ? null : r.accountReceipts[key].eligibleDate! <= retirement,
   }));
   const windows: IncomeWindow[] = [];
-  const lumpPriceCompatible = !retirement || retirement.slice(0,4)==='2026' || input.ktcu.split || r.ktcu.amountWon===null || !lumpItems.some(x=>x.label!=='공제회 일시금'&&x.won!==null);
+  const lumpPriceCompatible = r.benefitSummary.nominal || !retirement || retirement.slice(0,4)==='2026' || input.ktcu.split || r.ktcu.amountWon===null || !lumpItems.some(x=>x.label!=='공제회 일시금'&&x.won!==null);
   if (retirement && isCalendarDate(retirement)) {
     const points = new Set([retirement]);
     for (const date of [start, first, last, last ? dayAfter(last) : null]) if (date && date > retirement) points.add(date);
@@ -66,7 +66,7 @@ export function calculateRetirementAnalysis(input: SimpleInputs, r: SimpleResult
     publicStart: start, normalPublicDate: r.pensionDetails.normalStartDate, validTiming,
     gapMonths: r.pensionGapMonths, gapDays: r.pensionGapDays, pensionWon: r.pension.amountWon,
     expenseWon, expenseError: expense.error, windows, lumpItems, lumpPriceCompatible, lumpTotalWon: lumpPriceCompatible?sum(lumpItems.map(x => x.won)):null,
-    accounts, accumulationWon: r.accumulationTotal, benefitsWon: r.benefitsTotal,
+    accounts, accumulationWon: r.accumulationTotal, benefitsWon: r.benefitSummary.totalWon,
     split: { selected: input.ktcu.split, valid: splitValid, years: input.ktcu.years, first, last,
       balanceSnapshotDate: validTiming ? (start! > retirement! ? start! : retirement!) : null,
       monthlyWon: splitValid ? r.split!.monthlyWon : null, lastPaymentWon: splitValid ? r.split!.lastPaymentWon : null,

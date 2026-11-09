@@ -56,7 +56,7 @@ test('재분배 비율은 공식 경계표를 적용·전체평균을 개인소�
 test('연도별 지급률·2035이후1.7%·기본정보 자동 시나리오와 개시 명목/2026 환산',()=>{
  assert.deepEqual([2016,2026,2034,2035,2050].map(occupationalRate),[18780,17360,17040,17000,17000]);
  const f=fixture(),r=calculateSimple(f,today);assert.equal(r.pensionSource,'teacher-model');assert.ok(r.pension.amountWon>0);assert.equal(r.teacherPension.rows.length,3);
- for(const s of r.teacherPension.rows){assert.ok(s.basis2026Won>0);assert.ok(s.estimate.amountWon>s.basis2026Won);assert.equal(s.estimate.priceYear,2052);assert.match(s.estimate.notes.join(),/실제 급여/);assert.match(s.estimate.notes.join(),/대리 가정/);}
+ for(const s of r.teacherPension.rows){assert.ok(s.basis2026Won>0);assert.ok(s.estimate.amountWon>s.basis2026Won);assert.equal(s.estimate.priceYear,2052);assert.match(s.estimate.notes.join(),/실제 급여/);assert.match(s.estimate.notes.join(),/퇴직 전 3개 연도 평균/);}
  assert.equal(r.pension.amountWon,r.teacherPension.rows[1].estimate.amountWon);assert.equal(r.pensionDetails.periods[2].months,r.pensionDetails.months);
 });
 test('2010~2015와2016 이후 두 구간·2009이전은 자료 없이 전체액을 만들지 않음',()=>{
