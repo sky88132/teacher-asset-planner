@@ -4,9 +4,14 @@ import { ageAt } from '../finance/cashflow-validation.ts';
 import { isCalendarDate } from '../profile-validation.ts';
 import { moneyWon } from './validation.ts';
 
-export type MonthlySource = { label: string; won: number; tax: 'gross' | 'net' | 'unknown' };
+/** price: 'nominal' = future-year money at the payment date; 'current' = 2026/today-level or a user quote.
+ * won2026 is an existing model-provided 2026-level equivalent of a nominal amount (never derived here). */
+export type MonthlySource = { label: string; won: number; tax: 'gross' | 'net' | 'unknown'; price?: 'nominal' | 'current'; won2026?: number | null };
+/** differenceWon compares only same-money-basis amounts with the living cost (entered at today's prices).
+ * subtotal2026Won/difference2026Won are the 2026-level comparison when future nominal amounts have a model equivalent. */
 export type IncomeWindow = { from: string; until: string | null; phase: 'before' | 'after' | 'unknown'; label: string;
-  sources: MonthlySource[]; subtotalWon: number | null; tax: 'gross' | 'net' | 'unknown'; differenceWon: number | null; missing: string[] };
+  sources: MonthlySource[]; subtotalWon: number | null; tax: 'gross' | 'net' | 'unknown'; differenceWon: number | null;
+  expenseComparable: boolean; subtotal2026Won: number | null; difference2026Won: number | null; missing: string[] };
 function sum(values: (number | null)[]): number | null {
   if (!values.length || values.some(n => n === null || !Number.isSafeInteger(n) || n < 0)) return null;
   const total = values.reduce<bigint>((a, n) => a + BigInt(n!), 0n);
@@ -36,7 +41,9 @@ export function calculateRetirementAnalysis(input: SimpleInputs, r: SimpleResult
     eligibleAtRetirement: !retirement || !r.accountReceipts[key].eligibleDate ? null : r.accountReceipts[key].eligibleDate! <= retirement,
   }));
   const windows: IncomeWindow[] = [];
-  const lumpPriceCompatible = r.benefitSummary.nominal || !retirement || retirement.slice(0,4)==='2026' || input.ktcu.split || r.ktcu.amountWon===null || !lumpItems.some(x=>x.label!=='공제회 일시금'&&x.won!==null);
+  // The teacher model's headline monthly pension is start-year nominal money; its 2026-level equivalent comes from the same row.
+  const teacherPension2026Won = r.pensionSource === 'teacher-model' ? r.teacherPension.rows.find(row => row.id === 'base')?.basis2026Won ?? null : null;
+  const lumpPriceCompatible =r.benefitSummary.nominal || !retirement || retirement.slice(0,4)==='2026' || input.ktcu.split || r.ktcu.amountWon===null || !lumpItems.some(x=>x.label!=='공제회 일시금'&&x.won!==null);
   if (retirement && isCalendarDate(retirement)) {
     const points = new Set([retirement]);
     for (const date of [start, first, last, last ? dayAfter(last) : null]) if (date && date > retirement) points.add(date);
@@ -48,10 +55,11 @@ export function calculateRetirementAnalysis(input: SimpleInputs, r: SimpleResult
       if (phase === 'unknown') missing.push('공적연금 개시일 미확인: 전후 구분 보류');
       else if (phase === 'after') {
         if (r.pension.amountWon === null) missing.push('공적연금 월액 미확인');
-        else sources.push({ label: r.pensionStatus.scope==='appointment-service-only'?'공적연금 (군산입분 제외 참고)':'공적연금', won: r.pension.amountWon, tax: r.pensionSource !== 'quote' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'gross' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'net' ? 'net' : 'unknown' });
+        else sources.push({ label: r.pensionStatus.scope==='appointment-service-only'?'공적연금 (군산입분 제외 참고)':'공적연금', won: r.pension.amountWon, tax: r.pensionSource !== 'quote' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'gross' ? 'gross' : input.benefits[input.profile.scheme].pension.taxBasis === 'net' ? 'net' : 'unknown',
+          ...(r.pensionSource === 'teacher-model' ? { price: 'nominal' as const, won2026: teacherPension2026Won } : { price: 'current' as const }) });
       }
       if (input.ktcu.split && !splitValid) missing.push('공제회 분할 월액·기간 미확인');
-      if (first && last && from >= first && from <= last) sources.push({ label: from === last ? '공제회 마지막 정산' : '공제회 분할', won: from === last ? rows.at(-1)!.paymentWon : r.split!.monthlyWon, tax: 'gross' });
+      if (first && last && from >= first && from <= last) sources.push({ label: from === last ? '공제회 마지막 정산' : '공제회 분할', won: from === last ? rows.at(-1)!.paymentWon : r.split!.monthlyWon, tax: 'gross', price: 'nominal', won2026: null });
       const tax = sources[0]?.tax ?? 'unknown';
       const priceCompatible = !(r.pensionSource==='automatic' && sources.length>1 && from.slice(0,4)!=='2026');
       const compatible = tax !== 'unknown' && sources.every(s => s.tax === tax) && priceCompatible;
@@ -59,8 +67,19 @@ export function calculateRetirementAnalysis(input: SimpleInputs, r: SimpleResult
       if (sources.length && !compatible) missing.push('세전·세후 또는 미확인 기준이 달라 월액 합산 보류');
       const subtotalWon = compatible ? sum(sources.map(s => s.won)) : null;
       const label = !first || !last ? '월액 확인 범위' : from < first ? '공제회 첫 지급 전' : from === last ? '공제회 최종 지급일·정산액' : from > last ? '공제회 분할 종료 후' : '공제회 정기 분할 지급 중';
+      // Living cost is entered at today's prices. Future-year nominal amounts are not compared with it directly.
+      const sameYear = from.slice(0, 4) === '2026';
+      const expenseComparable = sameYear || sources.every(s => s.price !== 'nominal');
+      const subtotal2026Won = !compatible || !sources.length ? null
+        : expenseComparable ? subtotalWon
+        : sources.every(s => s.price !== 'nominal' || s.won2026 != null) ? sum(sources.map(s => s.price === 'nominal' ? s.won2026! : s.won)) : null;
+      if (!expenseComparable && subtotalWon !== null) missing.push(subtotal2026Won !== null
+        ? '미래 명목 월액은 현재 물가 기준 희망 생활비와 직접 비교하지 않고 2026 보수수준 환산액으로 비교'
+        : '공제회 분할 등 미래 명목 월액은 현재 물가 기준 희망 생활비와 화폐가치가 달라 비교 보류');
       windows.push({ from, until: dates[i+1] ?? null, phase, label, sources, subtotalWon, tax,
-        differenceWon: expenseWon !== null && subtotalWon !== null ? subtotalWon - expenseWon : null, missing });
+        differenceWon: expenseComparable && expenseWon !== null && subtotalWon !== null ? subtotalWon - expenseWon : null,
+        expenseComparable, subtotal2026Won,
+        difference2026Won: expenseWon !== null && subtotal2026Won !== null ? subtotal2026Won - expenseWon : null, missing });
     }
   }
   return { retirement, retirementAge: retirement && isCalendarDate(input.profile.birthDate) ? ageAt(input.profile.birthDate, retirement) : null,
