@@ -13,11 +13,20 @@ for(const id of ['A','B','C'])test(`월액 재현 ${id}: 반환상태·05용월�
  assert.ok(generateSimplePrompt(f,{...createPromptWorkspace().settings,money:'exact'},today).includes(formatWonAsKoreanCurrency(r.pension.amountWon)));assert.deepEqual(f,before);
  if(id!=='A'){assert.equal(r.step,40);assert.equal(r.teacherPay.historyErrors.length,0);}if(id==='B'){assert.equal(r.pensionStatus.scope,'appointment-service-only');assert.deepEqual(r.pensionStatus.limitationCodes,['MILITARY_CREDIT_EXCLUDED']);assert.match(r.pension.confidence,/군복무 산입분 제외/);const g=structuredClone(f);g.profile.military='not';const plain=calculateSimple(g,today);assert.equal(r.pension.amountWon,plain.pension.amountWon);assert.equal(r.pensionDetails.months,plain.pensionDetails.months);}
 });
-test('군 산입 정보와 임용 후 참고 범위는 혼합하지 않고 종합·AI에 제한 보존',()=>{
- const f=pensionDisplayCase('B'),r=calculateSimple(f,today);Object.assign(f.benefits.civil.pensionEstimate,{militaryMonths:'24',militaryCreditYear:'2020'});const x=calculateSimple(f,today);
- assert.equal(x.pension.amountWon,r.pension.amountWon);assert.equal(x.pensionDetails.months,414);assert.equal(x.pensionStatus.scope,'appointment-service-only');assert.equal(f.profile.military,'approved');
- const a=calculateRetirementAnalysis(f,x);assert.ok(a.windows.every(w=>w.missing.some(s=>s.includes('군복무 산입분 제외'))));
+test('군 산입 승인만 있으면 임용 후 참고액·제한을 종합·AI에 보존',()=>{
+ const f=pensionDisplayCase('B'),r=calculateSimple(f,today);assert.equal(r.pensionStatus.scope,'appointment-service-only');
+ const a=calculateRetirementAnalysis(f,r);assert.ok(a.windows.every(w=>w.missing.some(s=>s.includes('군복무 산입분 제외'))));
  const text=generateSimplePrompt(f,createPromptWorkspace().settings,today);assert.ok(text.includes('군복무 산입분 제외'));assert.ok(text.includes('전체 예상액 아님'));assert.ok(text.includes('하한·최솟값도 아닙니다'));
+});
+test('군 산입 개월·연도를 입력하면 자동 추정에 같은 법정 산식으로 포함',()=>{
+ const f=pensionDisplayCase('B'),r=calculateSimple(f,today);Object.assign(f.benefits.civil.pensionEstimate,{militaryMonths:'24',militaryCreditYear:'2020'});const x=calculateSimple(f,today);
+ assert.equal(x.pensionSource,'teacher-model');assert.equal(x.pensionStatus.scope,'selected-input-or-model');assert.deepEqual(x.pensionStatus.limitationCodes,[]);
+ // 414 service months + 24 credited = 438, capped at the 36-year (432-month) transitional maximum.
+ assert.equal(r.pensionDetails.months,414);assert.equal(x.pensionDetails.months,432);assert.ok(x.pension.amountWon>r.pension.amountWon);assert.equal(x.pension.amountWon,8751980);
+ assert.ok(x.pensionDetails.notes.some(n=>n.includes('군복무 산입 24개월')));
+ const a=calculateRetirementAnalysis(f,x);assert.ok(a.windows.every(w=>!w.missing.some(s=>s.includes('군복무 산입분 제외'))));
+ const text=generateSimplePrompt(f,createPromptWorkspace().settings,today);assert.ok(!text.includes('전체 예상액 아님'));
+ Object.assign(f.benefits.civil.pensionEstimate,{militaryCreditYear:'2014'});const bad=calculateSimple(f,today);assert.equal(bad.pension.amountWon,null);assert.ok(bad.pension.errors.some(e=>e.includes('2016년 이후')));
 });
 test('현재1~39에서 미래40은 차단하지 않음·호봉과 승급월 변경은 실제 갱신',()=>{
  const f=pensionDisplayCase('C'),r=calculateSimple(f,today);assert.equal(r.step,40);

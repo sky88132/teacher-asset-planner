@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createSimpleInputs, schemeNames } from '@/lib/simple/model';
 import { calculateSimple } from '@/lib/simple/calculation';
+import { createPensionEstimateInput } from '@/lib/simple/pension-types';
 import { todayInKorea } from '@/lib/profile-validation';
 import { createPromptWorkspace } from '@/lib/ai/prompt-input';
 import { SimpleProfilePanel } from './simple/profile';
@@ -27,7 +28,8 @@ export function SimplePlanner() {
       <div className="eyebrow">RETIREMENT PLANNING</div><div className="page-heading"><div><h1>{menus[active]}</h1><p>{descriptions[active]}</p></div><span className="step-badge">STEP {String(active + 1).padStart(2, '0')} <span>/ 06</span></span></div>
       <div className="mode-bar"><div><strong>간편 계산 모드</strong><span>퇴직일은 기본정보에서 한 번만 입력합니다.</span></div><span className="coming">정밀 계산 모드 · 준비 중</span></div>
       <div className="content-grid"><section className={`card form-card panel-${active}`}><div className="card-heading"><div><span className="section-tag">{String(active + 1).padStart(2, '0')} · SIMPLE PLAN</span><h2>{['나의 은퇴 기준 설정', '장기저축 계획', '연금계좌별 납입 계획', '퇴직급여 예상액 계산', '나의 은퇴 대시보드', '분석 요청문 만들기'][active]}</h2></div><span className="panel-step">{String(active + 1).padStart(2, '0')}</span></div>
-        {active === 0 ? <SimpleProfilePanel value={input.profile} onChange={profile => setInput({ ...input, profile })} result={result} />
+        {active === 0 ? <SimpleProfilePanel value={input.profile} onChange={profile => setInput({ ...input, profile })} result={result}
+            estimate={input.benefits[input.profile.scheme].pensionEstimate ?? createPensionEstimateInput()} onEstimateChange={patch => { const q = input.benefits[input.profile.scheme]; setInput({ ...input, benefits: { ...input.benefits, [input.profile.scheme]: { ...q, pensionEstimate: { ...(q.pensionEstimate ?? createPensionEstimateInput()), ...patch } } } }); }} />
           : active === 1 ? <SimpleKtcuPanel value={input.ktcu} onChange={ktcu => setInput({ ...input, ktcu })} result={result} />
           : active === 2 ? <SimpleAccountsPanel value={input} onChange={setInput} result={result} />
           : active === 3 ? <SimpleBenefitsPanel input={input} onChange={setInput} result={result} />

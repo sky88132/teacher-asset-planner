@@ -4,7 +4,9 @@ import { validateSimpleProfile } from '@/lib/simple/validation';
 import type { SimpleResults } from '@/lib/simple/calculation';
 import { simpleConfig, teacherSalary2026 } from '@/lib/simple/config';
 import { Field, OfficialLink, won } from './shared';
-export function SimpleProfilePanel({ value, onChange, result }: { value: SimpleProfile; onChange: (v: SimpleProfile) => void; result: SimpleResults }) {
+import type { PensionEstimateInput } from '@/lib/simple/pension-types';
+export function SimpleProfilePanel({ value, onChange, result, estimate, onEstimateChange }: { value: SimpleProfile; onChange: (v: SimpleProfile) => void; result: SimpleResults;
+  estimate?: PensionEstimateInput; onEstimateChange?: (patch: Partial<PensionEstimateInput>) => void }) {
   const set = <K extends keyof SimpleProfile>(key: K, v: SimpleProfile[K]) => onChange({ ...value, [key]: v });
   const errors = validateSimpleProfile(value, result.today);
   return <div className="simple-panel">
@@ -16,6 +18,10 @@ export function SimpleProfilePanel({ value, onChange, result }: { value: SimpleP
       <Field label="승급월" value={value.promotionMonth} onChange={v => set('promotionMonth', v)}><option value="">선택해 주세요</option>{Array.from({ length: 12 }, (_, i) => <option key={i} value={i + 1}>{i + 1}월</option>)}</Field></div>
     {value.scheme === 'national' ? <div className="profile-context"><strong>국민연금 군복무 크레딧</strong><p>공무원연금의 임용 전 산입 절차를 적용하지 않습니다. 군복무 종료 시점·중복 인정 여부 등 개인 조건을 국민연금공단에 확인해 주세요. 가입기간은 자동 추가하지 않습니다.</p><OfficialLink href={simpleConfig.militaryNationalUrl}>국민연금 군복무 크레딧 안내</OfficialLink></div> : <>
       <Field label="임용 전 군복무기간을 연금 재직기간에 산입했습니까?" value={value.military} onChange={v => set('military', v as SimpleProfile['military'])}><option value="approved">산입 승인 완료</option><option value="not">산입하지 않음</option><option value="unknown">확인 필요</option></Field>
+      {value.military === 'approved' && estimate && onEstimateChange && <div className="profile-context military-credit"><div className="benefit-fields">
+        <Field label="군복무 산입 개월 (공단 인정)" inputMode="numeric" value={estimate.militaryMonths} onChange={militaryMonths => onEstimateChange({ militaryMonths: militaryMonths.replace(/D/g, '') })} />
+        <Field label="군복무 산입연도" inputMode="numeric" value={estimate.militaryCreditYear} onChange={militaryCreditYear => onEstimateChange({ militaryCreditYear: militaryCreditYear.replace(/D/g, '').slice(0, 4) })} /></div>
+        <p className="profile-help">예: 육군 21개월 → 21. 산입연도는 산입 신청이 승인된 해입니다(복무한 해가 아님). 2016년 이후 산입만 자동 계산하며, 입력하면 05의 월연금 추정에 군 산입분이 포함됩니다. 비워 두면 임용 후 재직분만 계산합니다.</p></div>}
       <details className="simple-details"><summary>군복무기간 산입 자세히 보기</summary><p className="profile-help">군복무기간 산입은 임용 전 병역법에 따른 복무기간을 관련 연금제도의 재직기간으로 인정받는 절차입니다. 단순히 군 복무를 마쳤다는 의미가 아니며 신청·승인 여부와 소급기여금 납부 상태에 따라 실제 연금 산정 조건이 달라질 수 있습니다. 승인과 완납은 별개이며 인정 재직월수를 자동 추가하지 않습니다. 현행 시행령 제20조는 재직기간 합산절차이며 임용 전 복무기간 산입절차는 제23조입니다.</p>
         {value.scheme === 'civil' ? <><OfficialLink href={simpleConfig.militaryCivilUrl}>공무원연금 산입 신청 안내</OfficialLink> · <OfficialLink href={simpleConfig.militaryCivilLawUrl}>공무원연금법 시행령 제18·20·23조</OfficialLink></> : <><OfficialLink href={simpleConfig.militaryPrivateUrl}>사학연금법 제31조</OfficialLink> · <OfficialLink href={simpleConfig.militaryPrivateProcedureUrl}>사학연금 시행령 제17조의3 · 별도 산입절차</OfficialLink></>}</details></>}
     </fieldset><fieldset className="benefit-section profile-stage"><legend><span className="stage-number">3</span> 예상 퇴직 방식</legend><div className="school-options">{[['normal', '정년퇴직'], ['early', '명예퇴직']].map(([key, name]) => <label className={`school ${value.retirement === key ? 'chosen' : ''}`} key={key}><input type="radio" name="simple-retirement" checked={value.retirement === key} onChange={() => set('retirement', key as SimpleProfile['retirement'])} /><strong>{name}</strong></label>)}</div></fieldset>

@@ -25,7 +25,10 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
   const eligible = p.scheme === 'civil' && p.teacherModel !== false && !hasIncome;
   // Approval alone does not identify credit months/year. A separate appointment-only
   // reference uses exactly the existing formulas, without claiming the full pension.
-  const excludesMilitary = eligible && p.military==='approved';
+  // Entered credit months and credit year are passed to the same statutory formula (validated there).
+  // Without them, approval alone stays an appointment-only reference.
+  const militaryEntered = p.military==='approved' && v.militaryMonths!=='' && v.militaryCreditYear!=='';
+  const excludesMilitary = eligible && p.military==='approved' && !militaryEntered;
   const modelProfile = excludesMilitary ? {...p,military:'not' as const} : p;
   const base = excludesMilitary ? estimateCivilPension(modelProfile,v,date,today) : confirmedBase;
   const limitations = excludesMilitary ? ['군복무 산입 승인 이력은 있으나 이 참고액은 임용 후 재직분만 계산했습니다. 군복무 산입분·산입에 따른 이행률과 상한 변화는 제외했으며 전체 예상 연금액이 아닙니다. 실제 전체액의 하한·최솟값도 아닙니다. 산입 개월·연도·소득과 경과규정은 공단 확인이 필요합니다.'] : [];
@@ -70,13 +73,14 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
     nominal.notes=nominal.notes.filter(n=>!n.includes('대리 가정'));
     nominal.notes.push(whole.note);
     nominal.notes.push(...limitations);
+    if(militaryEntered)nominal.notes.push(`군복무 산입 ${v.militaryMonths}개월을 인정 재직기간·적용비율·재직기간 상한에 포함했습니다. 산입 기간의 소득은 임용 후 표준 보수 평균과 같다고 가정했습니다. 산입 개월·연도는 공단 확인값을 입력하세요.`);
     const variables:PensionVariable[]=[
       {label:'개인 평균소득 B (2026 보수수준)',value:income,unit:'원/월',state:'사용자 지정 가정값',basis:'2026 표 기반 호봉 역산·표준 수당·90/100/110% 민감도. 실제 과거 봉급표·법정 재평가·직종별 평균 수당 미확인'},
       {label:'개인 평균소득 B (개시연도)',value:nominalIncome,unit:'원/월',state:'사용자 지정 가정값',basis:'2026 보수수준 B를 미래 보수 연3% 가정으로 환산·A와 같은 기준에서 비교'},
       {label:'공무원 전체 평균 A (개시연도)',value:whole.startWon,unit:'원/월',state:'공식 통계에 근거한 추정값',basis:whole.note},
       {label:'소득재분배 평균소득 (개시연도)',value:nominalRedistributed,unit:'원/월',state:'사용자 지정 가정값',basis:'가정 B/A와 법률13387호 부칙9조2항 구간표·원 미만 최종 절사'},
       {label:'재직기간별 적용비율',value:k,unit:'%',state:'공식 확인값',basis:'시행령 부칙10조10항 신규자 표·개인 재직기간은 연속경력 가정'},
-      {label:'인정 재직기간',value:base.months,unit:'개월',state:'사용자 지정 가정값',basis:'임용월부터 퇴직 전일까지·법정 상한·군복무 및 복잡 경력 미반영'},
+      {label:'인정 재직기간',value:base.months,unit:'개월',state:'사용자 지정 가정값',basis:militaryEntered?`임용월부터 퇴직 전일까지 + 입력한 군복무 산입 ${v.militaryMonths}개월(${v.militaryCreditYear}년 산입)·법정 상한·복잡 경력 미반영`:'임용월부터 퇴직 전일까지·법정 상한·군복무 및 복잡 경력 미반영'},
       {label:'과거 실제 소득·공식 재평가계수',value:null,unit:'',state:'미확인·계산 불가',basis:'2026 보수수준 대체 경로로 참고 시뮬레이션만 제공'},
     ];
     return {...s,variables,averageIncome2026Won:income,redistributionPercent:redistribution,factorPercent:k,basis2026Won:basis.amountWon,estimate:nominal};
