@@ -100,7 +100,11 @@ function calculateOccupational(p: SimpleProfile, v: PensionEstimateInput, date: 
   const k = factor(v.factorPercent, r);
   const legacy = oldMonths ? positiveMoney(v.legacyIncome, '2009년 이전분의 재평가된 평균보수월액', r) : 0;
   const redistributed = recentMonths ? positiveMoney(v.redistributedIncome, '소득재분배가 반영된 평균기준소득월액', r) : 0;
-  if (oldMonths && (r.months ?? 0) > 396) r.errors.push('2009년 이전 재직분이 있는 33년 초과 경력은 구법/신법 상한 배분·비교조정의 외부 검증이 남아 금액을 제공하지 않습니다.');
+  // Civil Act (Law 15523) supplementary Art.24 caps total service at 33~36 years. Months beyond the cap are
+  // excluded from the most recent period (no contributions are paid past the cap: Act Art.67(1)).
+  // The 2016+ portion is still limited by the former 1.9%/33-year formula below (supplementary Art.13(4)).
+  const totalMonths = rows.reduce((n, x) => n + x.months, 0);
+  if (totalMonths > r.capMonths) r.notes.push(`재직기간 상한 ${r.capMonths / 12}년을 넘는 ${totalMonths - r.capMonths}개월은 최근 재직기간부터 제외했습니다(상한 이후 기여금 미납 규정에 따른 해석). 공단 조회액과 대조가 필요합니다.`);
   r.formula = '구기간: 평균보수×(20년 미만 2.5%×연수 / 이상 50%+초과연수×2%). 2010~2015: 평균기준소득×적용비율×연수×1.9%. 2016 이후: 재분배소득×적용비율×1% + 평균소득×적용비율×(연도별 지급률−1%), 총 재직 30년 초과분은 개인소득×연도별 지급률.';
   if (!r.errors.length && average !== null && k !== null && legacy !== null && redistributed !== null) try {
     const a = BigInt(average), b = BigInt(legacy), c = BigInt(redistributed);

@@ -44,7 +44,28 @@ test('지급률·재직 상한·30년 경계 및 신규 36년 상한을 분리�
   for(const [months,cap] of [[179,432],[180,420],[203,420],[204,408],[251,408],[252,396]])assert.equal(occupationalCap(months),cap);
   const f=fixture('civil','2016-01-01','2055-12-31');f.profile.birthDate='1995-05-10';const r=estimate(f);assert.equal(r.pensionDetails.months,432);assert.equal(r.pensionDetails.capMonths,432);
   const v=f.benefits.civil.pensionEstimate;v.redistributedIncome='3000000';const lower=estimate(f);assert.equal(r.pension.amountWon-lower.pension.amountWon,300000); // 30 years * 1% * 100만원 only
-  const old=fixture('civil','1999-01-01','2035-12-31');assert.equal(estimate(old).pension.amountWon,null);assert.match(estimate(old).pension.errors.join(),/33년 초과/);
+});
+// 15523호 부칙 제24조 상한·제13조제4항 1.9% 비교·제15조제14항 종전기간 산식을 함께 적용 (손계산 기대값)
+for(const scheme of ['civil','private-school'])test(`${scheme} 2009년 이전 재직분이 있는 33년 초과 경력도 상한 배분 후 계산`,()=>{
+  const f=fixture(scheme,'1999-01-01','2035-12-31'),r=estimate(f);
+  assert.deepEqual(r.pension.errors,[]);
+  assert.equal(r.pensionDetails.capMonths,408); // 2016년 전 204개월(17년) → 34년
+  assert.deepEqual(r.pensionDetails.periods.map(x=>x.months),[132,72,204]); // 2016년 이후 240개월 중 상한까지 204개월
+  assert.deepEqual(r.pensionDetails.periods.map(x=>x.amountWon),[825000,456000,1201520]);
+  assert.equal(r.pension.amountWon,2482520);
+  assert.match(r.pensionDetails.notes.join(),/상한 34년을 넘는 36개월은 최근 재직기간부터 제외/);
+  // 재분배 소득이 높으면 2016년 이후분은 종전 1.9% × 잔여 16년(=396-132-72개월) 상한에 걸린다
+  f.benefits[scheme].pensionEstimate.redistributedIncome='4500000';const capped=estimate(f);
+  assert.equal(capped.pensionDetails.periods[2].amountWon,4000000*19*192/12/1000);
+  assert.equal(capped.pension.amountWon,825000+456000+1216000);assert.match(capped.pensionDetails.notes.join(),/비교 상한/);
+});
+test('상한 경계: 2016년 전 재직 15/17/21년 경계별 34~36년 상한과 상한 미만 경력은 제외 안내 없음',()=>{
+  // 2016년 전 재직: 2001-02 179개월 / 2001-01 180개월 / 1999-02 203개월 / 1999-01 204개월 / 1996-01 240개월
+  for(const [appointment,cap] of [['2001-02-01',432],['2001-01-01',420],['1999-02-01',420],['1999-01-01',408],['1996-01-01',408]]){
+    const f=fixture('civil',appointment,'2041-12-31');const r=estimate(f);
+    assert.equal(r.pensionDetails.capMonths,cap,appointment);assert.equal(r.pensionDetails.months,cap,appointment);assert.ok(r.pension.amountWon>0,appointment);
+  }
+  const short=fixture('civil','2005-01-01');assert.ok(!estimate(short).pensionDetails.notes.join().includes('최근 재직기간부터 제외'));
 });
 test('현재 소득만으로 평균소득을 확정하지 않으며 명시적 고정 시나리오를 구분',()=>{
   const f=fixture(),v=f.benefits.civil.pensionEstimate;v.incomeMode='current';v.currentIncome='4000000';let r=estimate(f);assert.equal(r.pension.amountWon,null);assert.match(r.pension.errors.join(),/명시적/);
