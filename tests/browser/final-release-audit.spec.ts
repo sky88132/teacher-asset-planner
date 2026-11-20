@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 import scenarios from '../fixtures/final-release-scenarios.json';
-const menus=['교사 기본정보','교직원공제회','IRP·연금저축','퇴직급여 계산','은퇴설계 종합','AI 분석 요청문'];
-async function menu(page:Page,n:number){await page.getByRole('navigation',{name:'주요 메뉴'}).getByRole('button',{name:menus[n]}).click();}
+import { openMenu } from './helpers';
+async function menu(page:Page,n:number){await openMenu(page,n);}
 async function profile(page:Page,s:typeof scenarios[number]){
   await page.getByLabel('생년월일',{exact:true}).fill(s.birth);await page.getByLabel('최초 임용일',{exact:true}).fill(s.appointment);await page.getByLabel('현재 호봉',{exact:true}).fill('30');await page.getByLabel('승급월',{exact:true}).selectOption('3');await page.getByRole('radio',{name:{civil:'공무원연금','private-school':'사학연금',national:'국민연금'}[s.scheme],exact:true}).check();
   if(s.scheme==='national'){await page.getByText('정년일이 다른 경우 직접 수정',{exact:true}).click();await page.getByLabel('기관에서 확인한 정년일 사용',{exact:true}).check();await page.getByLabel('기관에서 확인한 정년일',{exact:true}).fill('2042-08-31');}

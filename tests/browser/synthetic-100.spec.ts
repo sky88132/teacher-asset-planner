@@ -3,9 +3,9 @@ import {syntheticCases,basisDate,buildSyntheticInput} from '../support/synthetic
 import {calculateSimple} from '../../src/lib/simple/calculation';
 import {pensionDisplay} from '../../src/lib/simple/pension-display';
 import {wonToManwon,formatWonAsKoreanCurrency} from '../../src/lib/simple/currency';
-const menuNames=['교사 기본정보','교직원공제회','IRP·연금저축','퇴직급여 계산','은퇴설계 종합','AI 분석 요청문'];
+import { openMenu } from './helpers';
 const representatives=[0,4,8,7,12,18,19,23,47,60,93,99];
-async function menu(p:Page,n:number){await p.getByRole('navigation',{name:'주요 메뉴'}).getByRole('button',{name:menuNames[n]}).click();}
+async function menu(p:Page,n:number){await openMenu(p,n);}
 async function money(p:Page,label:string,raw:string){await p.getByLabel(label,{exact:true}).fill(wonToManwon(raw));}
 for(const index of representatives){const c=syntheticCases[index];test(`가상 ${c.id} UI·종합·AI 일치 (고정 가상 자료)`,async({page,context},info)=>{
  const f=buildSyntheticInput(c),q=f.benefits[f.profile.scheme],v=q.pensionEstimate!;const r=calculateSimple(f,basisDate),external:string[]=[],writes:string[]=[],errors:string[]=[];

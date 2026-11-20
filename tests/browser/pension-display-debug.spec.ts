@@ -3,9 +3,9 @@ import {pensionDisplayCase,pensionDisplayBasis} from '../support/pension-display
 import {calculateSimple} from '../../src/lib/simple/calculation';
 import {pensionDisplay} from '../../src/lib/simple/pension-display';
 import {formatWonAsKoreanCurrency as won} from '../../src/lib/simple/currency';
-const names=['교사 기본정보','교직원공제회','IRP·연금저축','퇴직급여 계산','은퇴설계 종합','AI 분석 요청문'];
+import { openMenu } from './helpers';
 const baseline=process.env.PENSION_DISPLAY_BASELINE==='1';
-async function menu(p:Page,n:number){await p.getByRole('navigation',{name:'주요 메뉴'}).getByRole('button',{name:names[n]}).click();}
+async function menu(p:Page,n:number){await openMenu(p,n);}
 async function enter(p:Page,id:string){const f=pensionDisplayCase(id);await p.goto('/');for(const [label,v]of [['생년월일',f.profile.birthDate],['최초 임용일',f.profile.appointmentDate],['현재 호봉',f.profile.step]])await p.getByLabel(label,{exact:true}).fill(v);await p.getByLabel('승급월',{exact:true}).selectOption(f.profile.promotionMonth);await p.getByLabel('임용 전 군복무기간을 연금 재직기간에 산입했습니까?',{exact:true}).selectOption(f.profile.military);
  if(id==='A'){await p.getByRole('radio',{name:'명예퇴직',exact:true}).check();await p.getByLabel('명예퇴직 예정일',{exact:true}).fill(f.profile.earlyDate);}
  await menu(p,4);if(id==='C'){await p.getByText('공적연금 추정 상세 설정 (선택)',{exact:true}).click();await p.getByLabel('소득·계수·가입기간을 현재 퇴직일 기준으로 확인했습니다.',{exact:true}).check();await p.getByLabel('공적연금 소득 적용 방식',{exact:true}).selectOption('current');}return f;

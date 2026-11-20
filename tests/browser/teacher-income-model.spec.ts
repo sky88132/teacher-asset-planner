@@ -1,6 +1,6 @@
 import {test,expect,type Page} from '@playwright/test';
-const names=['교사 기본정보','교직원공제회','IRP·연금저축','퇴직급여 계산','은퇴설계 종합','AI 분석 요청문'];
-async function menu(p:Page,n:number){await p.getByRole('navigation',{name:'주요 메뉴'}).getByRole('button',{name:names[n]}).click();}
+import { openMenu } from './helpers';
+async function menu(p:Page,n:number){await openMenu(p,n);}
 async function profile(p:Page){for(const [label,value]of [['생년월일','1987-02-12'],['최초 임용일','2017-04-01'],['현재 호봉','20']])await p.getByLabel(label,{exact:true}).fill(value);await p.getByLabel('승급월',{exact:true}).selectOption('4');await p.getByRole('radio',{name:'명예퇴직',exact:true}).check();await p.getByLabel('명예퇴직 예정일',{exact:true}).fill('2039-08-31');}
 test.beforeEach(async({page})=>{await page.clock.install({time:new Date('2026-11-08T12:00:00+09:00')});await page.goto('/');});
 test('기본정보만으로3개 월연금·명목/2026 환산·급여 근거 기본 접힘',async({page},info)=>{

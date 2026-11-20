@@ -1,6 +1,6 @@
 import { test,expect,type Page } from '@playwright/test';
-const names=['교사 기본정보','교직원공제회','IRP·연금저축','퇴직급여 계산','은퇴설계 종합','AI 분석 요청문'];
-async function menu(page:Page,n:number){await page.getByRole('navigation',{name:'주요 메뉴'}).getByRole('button',{name:names[n]}).click();}
+import { openMenu } from './helpers';
+async function menu(page:Page,n:number){await openMenu(page,n);}
 async function profile(page:Page,appointment='2010-01-01',date='2030-01-01'){
   await page.getByLabel('생년월일',{exact:true}).fill('1970-05-10');await page.getByLabel('최초 임용일',{exact:true}).fill(appointment);await page.getByLabel('현재 호봉',{exact:true}).fill('30');await page.getByLabel('승급월',{exact:true}).selectOption('3');await page.getByRole('radio',{name:'명예퇴직',exact:true}).check();await page.getByLabel('명예퇴직 예정일',{exact:true}).fill(date);
 }

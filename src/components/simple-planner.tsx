@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { createSimpleInputs, schemeNames } from '@/lib/simple/model';
 import { calculateSimple } from '@/lib/simple/calculation';
 import { createPensionEstimateInput } from '@/lib/simple/pension-types';
@@ -11,21 +11,27 @@ import { SimpleBenefitsPanel } from './simple/benefits';
 import { SimpleOverview } from './simple/overview';
 import { SimplePromptPanel } from './simple/prompt';
 import { simpleDisclaimer } from '@/lib/simple/config';
+import { HelpFaq } from './simple/help-faq';
 const descriptions = ['기본정보를 입력하고 나에게 맞는 은퇴 기준을 확인하세요.', '지금의 저축이 퇴직 시점에 얼마나 자랄지 살펴보세요.', '두 연금계좌의 납입 계획과 예상 적립금을 함께 확인하세요.', '기본정보로 수당을 추정하고 계산 근거와 지급 조건을 확인하세요.', '나의 은퇴 준비를 한눈에 확인하고 다음 계획을 세워보세요.', '내 계산 결과를 바탕으로 나만의 분석 요청문을 만드세요.'];
 const menus = ['교사 기본정보','교직원공제회','IRP·연금저축','퇴직급여 계산','은퇴설계 종합','AI 분석 요청문'];
+// Shorter labels for the six-column mobile tab bar. The button keeps the full name as its accessible name.
+const shortMenus = ['기본정보','공제회','연금계좌','퇴직급여','종합','AI 요청'];
 export function SimplePlanner() {
   const [active, setActive] = useState(0), [input, setInput] = useState(createSimpleInputs);
   const [workspace, setWorkspace] = useState(createPromptWorkspace);
   const [today, setToday] = useState<string | null>(null);
   useEffect(() => { setToday(todayInKorea()); }, []);
+  // Move keyboard / screen-reader focus to the new step title after a step change (not on first load).
+  const heading = useRef<HTMLHeadingElement>(null), moved = useRef(false);
+  useEffect(() => { if (moved.current) heading.current?.focus({ preventScroll: true }); }, [active]);
   const result = useMemo(() => today ? calculateSimple(input, today) : null, [input, today]);
   if (!today || !result) return <main><p className="profile-help">간편 계산 화면을 준비하고 있습니다.</p></main>;
-  const navigate = (index: number) => { setActive(index); window.scrollTo({ top: 0, behavior: 'auto' }); };
-  return <div className="shell planner-ui"><aside className="sidebar"><a className="brand" href="/" onClick={e => { e.preventDefault(); navigate(0); }}><span className="brand-icon" aria-hidden="true">T<span>·</span></span><span>교사 은퇴 연금<br />시뮬레이터<small>TEACHER RETIREMENT PLANNER</small></span></a><div className="nav-label">나의 은퇴 설계</div>
-    <nav aria-label="주요 메뉴">{menus.map((name, i) => <button key={name} className={`nav-item ${active === i ? 'selected' : ''}`} aria-current={active === i ? 'step' : undefined} onClick={() => navigate(i)}><span className="nav-number">{String(i + 1).padStart(2, '0')}</span>{name}</button>)}</nav>
+  const navigate = (index: number) => { moved.current = true; setActive(index); window.scrollTo({ top: 0, behavior: 'auto' }); };
+  return <div className="shell planner-ui"><a className="skip-link" href="#main-content">본문 바로가기</a><aside className="sidebar"><a className="brand" href="/" onClick={e => { e.preventDefault(); navigate(0); }}><span className="brand-icon" aria-hidden="true">T<span>·</span></span><span>교사 은퇴 연금<br />시뮬레이터<small>TEACHER RETIREMENT PLANNER</small></span></a><div className="nav-label">나의 은퇴 설계</div>
+    <nav aria-label="주요 메뉴">{menus.map((name, i) => <button key={name} className={`nav-item ${active === i ? 'selected' : ''}`} aria-current={active === i ? 'step' : undefined} onClick={() => navigate(i)}><span className="nav-number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span><span className="nav-full">{name}</span><span className="nav-short" aria-hidden="true">{shortMenus[i]}</span></button>)}</nav>
     <div className="privacy"><span>◈ 개인정보 보호</span><p>입력 정보는 저장되지 않으며, 새로고침하면 초기화됩니다.</p></div><div className="sidebar-bottom">선생님의 오늘과 내일을 잇는 설계</div></aside>
-    <div className="workspace"><header><span>나의 은퇴 설계 <span className="breadcrumb">/ {menus[active]}</span></span><span className="status"><i />로그인 없는 간편 계산</span></header><main>
-      <div className="eyebrow">RETIREMENT PLANNING</div><div className="page-heading"><div><h1>{menus[active]}</h1><p>{descriptions[active]}</p></div><span className="step-badge">STEP {String(active + 1).padStart(2, '0')} <span>/ 06</span></span></div>
+    <div className="workspace"><header><span>나의 은퇴 설계 <span className="breadcrumb">/ {menus[active]}</span></span><span className="status"><i />로그인 없는 간편 계산</span></header><main id="main-content" tabIndex={-1}>
+      <div className="eyebrow">RETIREMENT PLANNING</div><div className="page-heading"><div><h1 ref={heading} tabIndex={-1}>{menus[active]}</h1><p>{descriptions[active]}</p></div><span className="step-badge">STEP {String(active + 1).padStart(2, '0')} <span>/ 06</span></span></div>
       <div className="step-progress" aria-hidden="true"><i style={{ width: `${(active + 1) / 6 * 100}%` }} /></div>
       <div className="mode-bar"><div><strong>간편 계산 모드</strong><span>퇴직일은 기본정보에서 한 번만 입력합니다.</span></div><span className="coming">정밀 계산 모드 · 준비 중</span></div>
       <div className="content-grid"><section className={`card form-card panel-${active}`}><div className="card-heading"><div><span className="section-tag">{String(active + 1).padStart(2, '0')} · SIMPLE PLAN</span><h2>{['나의 은퇴 기준 설정', '장기저축 계획', '연금계좌별 납입 계획', '퇴직급여 예상액 계산', '나의 은퇴 대시보드', '분석 요청문 만들기'][active]}</h2></div><span className="panel-step">{String(active + 1).padStart(2, '0')}</span></div>
@@ -37,7 +43,7 @@ export function SimplePlanner() {
           : active === 4 ? <SimpleOverview input={input} onChange={setInput} result={result} />
           : <SimplePromptPanel result={result} onInputChange={setInput} input={input} today={today} value={workspace} onChange={setWorkspace} />}
         <div className="simple-navigation">{active > 0 && <button className="secondary" onClick={() => navigate(active - 1)}>이전 단계</button>}{active < 5 && <button className="primary" onClick={() => navigate(active + 1)}>다음 단계 →</button>}{active === 0 && <button className="secondary" onClick={() => navigate(5)}>AI 요청문으로 바로 이동</button>}</div>
-      </section><aside className="right-column"><section className="card summary"><span className="section-tag">MY PLAN</span><h2>나의 퇴직 기준</h2><div className="summary-row"><span>가입 제도</span><strong>{schemeNames[input.profile.scheme]}</strong></div><div className="summary-row"><span>퇴직 방식</span><strong>{input.profile.retirement === 'early' ? '명예퇴직' : '정년퇴직'}</strong></div><div className="summary-row"><span>예상 퇴직일</span><strong>{result.retirement.date ?? '확인 필요'}</strong></div><p>입력한 금융정보는 선택한 퇴직일에 맞춰 자동 갱신됩니다. 공식 조회액의 가정 퇴직일이 다르면 재확인이 필요합니다.</p><button className="secondary" onClick={() => navigate(4)}>종합 결과 보기</button></section><section className="note"><span>참고용 시뮬레이션</span><h3>공식 조회값과 가정을 구분합니다</h3><p>{simpleDisclaimer}</p></section></aside></div>
+      </section><aside className="right-column"><section className="card summary"><span className="section-tag">MY PLAN</span><h2>나의 퇴직 기준</h2><div className="summary-row"><span>가입 제도</span><strong>{schemeNames[input.profile.scheme]}</strong></div><div className="summary-row"><span>퇴직 방식</span><strong>{input.profile.retirement === 'early' ? '명예퇴직' : '정년퇴직'}</strong></div><div className="summary-row"><span>예상 퇴직일</span><strong>{result.retirement.date ?? '확인 필요'}</strong></div><p>입력한 금융정보는 선택한 퇴직일에 맞춰 자동 갱신됩니다. 공식 조회액의 가정 퇴직일이 다르면 재확인이 필요합니다.</p><button className="secondary" onClick={() => navigate(4)}>종합 결과 보기</button></section><section className="note"><span>참고용 시뮬레이션</span><h3>공식 조회값과 가정을 구분합니다</h3><p>{simpleDisclaimer}</p></section><HelpFaq step={active} /></aside></div>
       <footer>교사 은퇴 연금 시뮬레이터 · 입력 기준일 {today}</footer>
     </main></div></div>;
 }
