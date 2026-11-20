@@ -4,6 +4,7 @@ import type { IncomeWindow, RetirementAnalysis } from '@/lib/simple/retirement-a
 import { ageAt } from '@/lib/finance/cashflow-validation';
 import { isCalendarDate } from '@/lib/profile-validation';
 import { won } from './shared';
+import { pensionDisplay } from '@/lib/simple/pension-display';
 
 const DAY = 86400000;
 const days = (from: string, until: string) => Math.round((Date.parse(until + 'T00:00:00Z') - Date.parse(from + 'T00:00:00Z')) / DAY);
@@ -20,20 +21,20 @@ const shortLabel = (w: IncomeWindow) => w.label === '공제회 첫 지급 전' ?
 export function KeyFacts({ input, result: r, analysis: a }: { input: SimpleInputs; result: SimpleResults; analysis: RetirementAnalysis }) {
   const early = input.profile.retirement === 'early';
   const startAge = a.publicStart && isCalendarDate(a.publicStart) && isCalendarDate(input.profile.birthDate) ? ageAt(input.profile.birthDate, a.publicStart) : null;
-  const pension2026 = r.pensionSource === 'teacher-model' ? r.teacherPension.rows.find(x => x.id === 'base')?.basis2026Won ?? null : null;
+  const pd = pensionDisplay(r);
   const splitCoversGap = a.split.valid && a.split.monthlyWon !== null && (a.split.beforeCount ?? 0) > 0;
   const gapSentence = !a.validTiming || a.gapMonths === null ? '퇴직일과 연금 개시일이 확인되면 소득 공백을 계산합니다.'
     : a.gapDays === 0 ? '퇴직과 함께 공적연금을 받을 수 있어 소득 공백이 없습니다.'
     : `퇴직 후 공적연금을 받기까지 약 ${yearsMonths(a.gapMonths)}이 비어요. ${splitCoversGap ? `이 기간에는 공제회 분할금(월 ${won(a.split.monthlyWon)})이 주요 수입입니다.` : '이 기간의 생활비 재원을 먼저 준비해야 합니다.'}`;
   const pensionSentence = a.pensionWon === null ? (r.pensionStatus.preparing ? '공적연금 자동 추정은 준비 중입니다.' : '공적연금 월액은 아직 확인되지 않았습니다.')
-    : `연금을 받기 시작하면 월 ${won(a.pensionWon)}(세전${pension2026 !== null ? `, 지금 가치로 약 ${won(pension2026)}` : ''})을 예상합니다.`;
+    : pd.present ? `연금은 지금 가치로 월 약 ${won(pd.primaryWon)}을 예상합니다(세전, ${pd.futureYear}년에 실제 받는 금액은 ${won(pd.futureWon)}).` : `연금을 받기 시작하면 월 ${won(a.pensionWon)}(세전)을 예상합니다.`;
   return <section className="benefit-result dashboard-hero" aria-label="은퇴설계 핵심 요약"><h3>한눈에 보는 나의 은퇴</h3>
     <p className="dashboard-headline">{gapSentence} {pensionSentence}</p>
     <dl className="retirement-summary">
       <div className="fact fact-retire"><dt>퇴직</dt><dd><b>{a.retirement ?? '확인 필요'}</b><small>{a.retirementAge === null ? '연령 확인 필요' : `만 ${a.retirementAge}세`} · {early ? '명예퇴직' : '정년퇴직'}{r.step === null ? '' : ` · ${r.step}호봉`}</small></dd></div>
       <div className="fact fact-start"><dt>공적연금 개시</dt><dd><b>{a.publicStart ?? '확인 필요'}</b><small>{startAge === null ? '개시 연령 확인 필요' : `만 ${startAge}세부터`}</small></dd></div>
       <div className="fact fact-gap"><dt>{early ? '명예퇴직 후 소득 공백' : '퇴직 후 개시 전 기간'}</dt><dd><b>{a.gapMonths === null || a.gapDays === null ? '확인 필요' : a.gapDays === 0 ? '없음' : yearsMonths(a.gapMonths)}</b><small>{a.gapDays === null ? '날짜 확인 후 계산' : `${a.gapMonths}개월(완료 월) · ${a.gapDays}일`}</small></dd></div>
-      <div className="fact fact-pension"><dt>{r.pensionStatus.scope === 'appointment-service-only' ? '공적연금 참고 월액 (군 산입분 제외)' : '예상 월 공적연금'}</dt><dd><b>{won(a.pensionWon, '월액 미확인')}{a.pensionWon === null ? '' : ' / 월'}</b><small>{a.pensionWon === null ? (r.pensionStatus.preparing ? '자동 추정 준비 중' : '아래 공적연금에서 확인') : pension2026 !== null ? `지금 가치 약 ${won(pension2026)} · 세전` : r.pensionSource === 'quote' ? '직접 입력한 조회액' : '세전 · 2026년 기준'}</small></dd></div>
+      <div className="fact fact-pension"><dt>{r.pensionStatus.scope === 'appointment-service-only' ? '공적연금 참고 월액 (군 산입분 제외)' : '예상 월 공적연금'}</dt><dd><b>{won(pd.primaryWon, '월액 미확인')}{pd.primaryWon === null ? '' : ' / 월'}</b><small>{a.pensionWon === null ? (r.pensionStatus.preparing ? '자동 추정 준비 중' : '아래 공적연금에서 확인') : pd.present ? `지금 가치 · ${pd.futureYear}년 실제 ${won(pd.futureWon)} · 세전` : r.pensionSource === 'quote' ? '직접 입력한 조회액' : '세전 · 2026년 기준'}</small></dd></div>
     </dl>
     {r.pensionStatus.state === 'unavailable' && <div className="profile-context" aria-label="월연금 계산 보류 이유"><strong>{r.pensionStatus.preparing ? '2009년 이전 임용자의 자동 월연금 추정은 준비 중입니다.' : '월연금을 계산하려면 확인이 필요합니다.'}</strong>
       <details className="simple-details"><summary>이유와 대안 보기</summary>{r.pensionStatus.reasons.map(reason => <p className="profile-help" key={reason}>{reason}</p>)}{!r.pensionStatus.preparing && <p className="profile-help">퇴직 시 40호봉이 되는 것 자체는 차단 사유가 아닙니다. 현재40호봉의 과거 이력이나 2009년 이전 소득 등 필요한 자료가 없으면 금액을 만들지 않습니다. 아래 공식 조회액 직접 입력 또는 해당 공단 확인 자료를 이용해 주세요. 정상 개시일은 별도로 확인할 수 있습니다.</p>}</details></div>}
@@ -50,7 +51,7 @@ export function IncomeFlowChart({ input, analysis: a }: { input: SimpleInputs; a
   const groups = (['before', 'after'] as const).map(phase => ({ phase, items: shown.map((w, i) => ({ w, weight: weight[i] })).filter(x => x.w.phase === phase) })).filter(g => g.items.length);
   const kinds = new Set(shown.flatMap(w => w.sources.map(s => kindOf(s.label))));
   return <section className="benefit-result" aria-label="은퇴 시기 타임라인"><h3>퇴직 후 월수입 흐름</h3>
-    <p className="profile-help">막대 너비는 기간, 높이는 월 지급액입니다. 세전 · 확인된 정기 지급액만 표시합니다.</p>
+    <p className="profile-help">막대 너비는 기간, 높이는 월 지급액입니다. 금액은 그 해에 실제 받는 미래 금액(세전)이며 확인된 정기 지급액만 표시합니다.</p>
     {!a.validTiming ? <p className="profile-help">날짜가 확인되면 공백을 계산합니다.</p>
       : <>{a.gapDays === 0 && <p className="profile-context">개시 전 공백 0: 연금이 퇴직일 또는 그 전에 이미 개시됩니다.</p>}
         <figure className="flow-chart" aria-label="퇴직 후 월수입 흐름 그래프">

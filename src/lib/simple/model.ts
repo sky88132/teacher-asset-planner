@@ -5,6 +5,8 @@ export type SimpleScheme = 'civil' | 'private-school' | 'national';
 export const schemeNames: Record<SimpleScheme, string> = { civil: '공무원연금', 'private-school': '사학연금', national: '국민연금' };
 export type SimpleProfile = {
   teacherModel?: boolean;
+  /** Assumed yearly civil-service pay growth (%). Blank/undefined = 2.5. */
+  salaryGrowthPercent?: string;
   birthDate: string; appointmentDate: string; scheme: SimpleScheme; step: string; promotionMonth: string;
   military: 'approved' | 'not' | 'unknown'; retirement: 'normal' | 'early'; earlyDate: string;
   manualNormal: boolean; normalDate: string;

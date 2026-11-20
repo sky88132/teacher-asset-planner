@@ -1,6 +1,7 @@
 import {test,expect,type Page} from '@playwright/test';
 import {createSimpleInputs} from '../../src/lib/simple/model';
 import {calculateSimple} from '../../src/lib/simple/calculation';
+import {pensionDisplay} from '../../src/lib/simple/pension-display';
 import {formatWonAsKoreanCurrency as won} from '../../src/lib/simple/currency';
 const today='2026-11-09',names=['교사 기본정보','교직원공제회','IRP·연금저축','퇴직급여 계산','은퇴설계 종합','AI 분석 요청문'];
 async function menu(p:Page,n:number){await p.getByRole('navigation',{name:'주요 메뉴'}).getByRole('button',{name:names[n]}).click();}
@@ -8,7 +9,7 @@ function input(){const f=createSimpleInputs();Object.assign(f.profile,{birthDate
 async function profile(p:Page){const f=input();for(const [label,v]of [['생년월일',f.profile.birthDate],['최초 임용일',f.profile.appointmentDate],['현재 호봉',f.profile.step]])await p.getByLabel(label,{exact:true}).fill(v);await p.getByLabel('승급월',{exact:true}).selectOption('4');await p.getByRole('radio',{name:'명예퇴직',exact:true}).check();await p.getByLabel('명예퇴직 예정일',{exact:true}).fill(f.profile.earlyDate);}
 test.beforeEach(async({page})=>{await page.clock.install({time:new Date(today+'T12:00:00+09:00')});await page.goto('/');await profile(page);});
 test('기본정보만 입력한 월연금은 엔진과 일치·공식 변수 입력 불필요·개시일 표시',async({page})=>{
- const r=calculateSimple(input(),today);await menu(page,4);const p=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(p.locator('.benefit-amount').first()).toHaveText(won(r.pension.amountWon)+' / 월');await expect(p).toContainText(r.pensionDetails.normalStartDate!);await expect(p).toContainText('공백');await page.getByText('월연금 변수별 출처·자동 산출 과정',{exact:true}).click();await expect(p).toContainText('퇴직 전 3개 연도 평균');await expect(p).toContainText('공식 통계에 근거한 추정값');await expect(p).toContainText('미확인·계산 불가');
+ const r=calculateSimple(input(),today);await menu(page,4);const p=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(p.locator('.benefit-amount').first()).toHaveText(won(pensionDisplay(r).primaryWon)+' / 월');await expect(p).toContainText(r.pensionDetails.normalStartDate!);await expect(p).toContainText('공백');await page.getByText('월연금 변수별 출처·자동 산출 과정',{exact:true}).click();await expect(p).toContainText('퇴직 전 3개 연도 평균');await expect(p).toContainText('공식 통계에 근거한 추정값');await expect(p).toContainText('미확인·계산 불가');
 });
 test('명퇴04 순서·펼치지 않은 금액·05·06 동일값·원 합산 후 만원 표시',async({page,context})=>{
  await context.grantPermissions(['clipboard-read','clipboard-write']);const r=calculateSimple(input(),today),b=r.benefitSummary;await menu(page,3);

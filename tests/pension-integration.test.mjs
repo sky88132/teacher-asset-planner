@@ -13,8 +13,8 @@ const today='2026-11-09';
 function fixture(){const f=createSimpleInputs();f.benefits.civil.pensionEstimate=createPensionEstimateInput();Object.assign(f.profile,{birthDate:'1987-02-12',appointmentDate:'2017-04-01',step:'20',promotionMonth:'4',retirement:'early',earlyDate:'2039-08-31',military:'not'});return f;}
 test('전체 평균: 직전1년이 아닌 퇴직전3년·각연도 물가·개시 환산을 분리',()=>{
  const a=projectWholeIncome(2029,2035,'2');assert.deepEqual(a.years.map(x=>x.year),[2026,2027,2028]);
- const mean=(5950000*1.02**2+5950000*1.03*1.02+5950000*1.03**2)/3;
- assert.ok(Math.abs(a.precedingYearWon-mean)<.000001);assert.equal(a.startWon,Math.round(mean*1.03**7));assert.notEqual(a.precedingYearWon,a.years.at(-1).nominalWon);
+ const mean=(5950000*1.02**2+5950000*1.025*1.02+5950000*1.025**2)/3;
+ assert.ok(Math.abs(a.precedingYearWon-mean)<.000001);assert.equal(a.startWon,Math.round(mean*1.025**7));assert.notEqual(a.precedingYearWon,a.years.at(-1).nominalWon);
  assert.equal(a.years[0].state,'공식 확인값');assert.equal(a.years[1].state,'공식 통계에 근거한 추정값');
 });
 test('전체 평균: 물가0은 고정 가정이고 실제 과거 물가 누락은 차단',()=>{

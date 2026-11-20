@@ -21,19 +21,19 @@ test('공식 조회 우선·오래된 조회를 자동 시나리오로 대체하
  await menu(page,0);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2040-08-31');await menu(page,4);await expect(pension.locator('.benefit-amount').first()).toHaveText('추정에 필요한 정보 확인');await expect(pension).toContainText('재확인');
 });
 test('가정 해제·사학·국민연금에는 교원 자동 월액을 강제하지 않음',async({page})=>{
- await profile(page);await page.getByText('교원 표준 보수·연금 추정 가정',{exact:true}).click();await page.getByLabel('봉급 연3% 상승·담임수당 계속·일반 교원 표준 수당 가정 사용',{exact:true}).uncheck();await menu(page,4);await expect(page.getByRole('region',{name:'공적연금 요약',exact:true}).locator('.benefit-amount').first()).toHaveText('추정에 필요한 정보 확인');
+ await profile(page);await page.getByText('교원 표준 보수·연금 추정 가정',{exact:true}).click();await page.getByLabel('봉급 상승·담임수당 계속·일반 교원 표준 수당 가정 사용',{exact:true}).uncheck();await menu(page,4);await expect(page.getByRole('region',{name:'공적연금 요약',exact:true}).locator('.benefit-amount').first()).toHaveText('추정에 필요한 정보 확인');
  await menu(page,0);await page.getByRole('radio',{name:'사학연금',exact:true}).check();await menu(page,4);await expect(page.locator('[aria-label="교원 보수 기반 월연금 시나리오"]')).toHaveCount(0);await menu(page,0);await page.getByRole('radio',{name:'국민연금',exact:true}).check();await menu(page,4);await expect(page.locator('[aria-label="교원 보수 기반 월연금 시나리오"]')).toHaveCount(0);
 });
-test('AI에3%·담임·시점·참고 합계 반영·익명 복사·모바일6메뉴',async({page,context},info)=>{
- await context.grantPermissions(['clipboard-read','clipboard-write']);await profile(page);await menu(page,5);await page.getByLabel('은퇴 후 희망 월 생활비(만원)',{exact:true}).fill('350');await page.getByLabel('포함 정보·익명화·누락 사항을 확인했습니다.',{exact:true}).check();await page.getByRole('button',{name:'AI 요청문 생성',exact:true}).click();const draft=page.getByLabel('AI 분석 요청문',{exact:true});await expect(draft).toHaveValue(/봉급표 연 3%/);await expect(draft).toHaveValue(/담임수당 계속/);await expect(draft).toHaveValue(/미래 명목/);await expect(draft).toHaveValue(/동일 가정 기준 세전 참고 합계/);await expect(draft).not.toHaveValue(/1987-02-12|2017-04-01/);await page.getByRole('button',{name:'전체 복사',exact:true}).click();await expect.poll(()=>page.evaluate(()=>navigator.clipboard.readText())).toContain('봉급표 연 3%');
+test('AI에 보수상승률·담임·시점·참고 합계 반영·익명 복사·모바일6메뉴',async({page,context},info)=>{
+ await context.grantPermissions(['clipboard-read','clipboard-write']);await profile(page);await menu(page,5);await page.getByLabel('은퇴 후 희망 월 생활비(만원)',{exact:true}).fill('350');await page.getByLabel('포함 정보·익명화·누락 사항을 확인했습니다.',{exact:true}).check();await page.getByRole('button',{name:'AI 요청문 생성',exact:true}).click();const draft=page.getByLabel('AI 분석 요청문',{exact:true});await expect(draft).toHaveValue(/봉급표 연 상승률 가정/);await expect(draft).toHaveValue(/담임수당 계속/);await expect(draft).toHaveValue(/미래 명목/);await expect(draft).toHaveValue(/동일 가정 기준 세전 참고 합계/);await expect(draft).not.toHaveValue(/1987-02-12|2017-04-01/);await page.getByRole('button',{name:'전체 복사',exact:true}).click();await expect.poll(()=>page.evaluate(()=>navigator.clipboard.readText())).toContain('봉급표 연 상승률 가정');
  if(info.project.name==='mobile')await page.setViewportSize({width:320,height:844});for(let n=0;n<6;n++){await menu(page,n);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
 });
 
 test('1월1일 미래 소득 경계·펼친 보수표 모바일·참고 합계 연결',async({page},info)=>{
  await profile(page);await page.getByLabel('명예퇴직 예정일',{exact:true}).fill('2040-01-01');await menu(page,3);
  const total=page.getByRole('region',{name:'퇴직급여 참고 합계',exact:true});await expect(total).toContainText('2040년 미래 명목');
- // Independent fixed fixture: 9,912,217 won income proxy × 273/12 years × 39%, then integer-manwon display.
- await expect(total.locator(':scope>.profile-context').nth(1)).toContainText('퇴직수당 8,795만원');
+ // Independent fixed fixture: 9,296,299 won income proxy (2.5% pay growth) × 273/12 years × 39%, then integer-manwon display.
+ await expect(total.locator(':scope>.profile-context').nth(1)).toContainText('퇴직수당 8,248만원');
  await menu(page,4);await page.getByText('교원 보수 추정 가정·연도별 근거',{exact:true}).click();
  if(info.project.name==='mobile')await page.setViewportSize({width:320,height:844});
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);

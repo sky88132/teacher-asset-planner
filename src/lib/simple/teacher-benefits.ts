@@ -11,8 +11,8 @@ export function estimateTeacherBenefits(p: SimpleProfile, q: SimpleBenefits, dat
   // components follow salary-table growth; fixed homeroom/teaching/service additions do not.
   const salaryLinkedMonthly = pay.final ? (pay.final.salaryWon + pay.final.regularBonusWon + pay.final.holidayBonusWon) / pay.final.months : 0;
   const income=pay.final && date ? Math.round(pay.final.incomeProxyWon + salaryLinkedMonthly *
-    (salaryGrowth(Number(date.slice(0,4))) / salaryGrowth(pay.final.year) - 1)) : null;
-  const honorary=date&&pay.finalSalaryWon!==null?estimateHonorary(p,date,normal,step,{won:pay.finalSalaryWon,year:Number(date.slice(0,4))}):null;
+    (salaryGrowth(Number(date.slice(0,4)),pay.growthRate) / salaryGrowth(pay.final.year,pay.growthRate) - 1)) : null;
+  const honorary=date&&pay.finalSalaryWon!==null?estimateHonorary(p,date,normal,step,{won:pay.finalSalaryWon,year:Number(date.slice(0,4)),rate:pay.growthRate}):null;
   const rows=!errors.length&&date&&income!==null?teacherIncomeSensitivities.map(s=>{
     // Pay is an annualized standard-component proxy. Never written into the user's official-income field.
     const baseIncome=Math.floor(income*s.percent/100);

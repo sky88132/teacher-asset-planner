@@ -8,14 +8,16 @@ import type { SimpleResults } from '@/lib/simple/calculation';
 import { Field, MoneyField, OfficialLink, won } from './shared';
 import { SimpleQuoteEditor } from './benefits';
 import { Fragment } from 'react';
+import { pensionDisplay } from '@/lib/simple/pension-display';
 
 export function SimplePublicPension({ input, onChange, result: r }: { input: SimpleInputs; onChange: (v: SimpleInputs) => void; result: SimpleResults }) {
-  const p = input.profile, q = input.benefits[p.scheme], details = r.pensionDetails;
+  const p = input.profile, q = input.benefits[p.scheme], details = r.pensionDetails, pd = pensionDisplay(r);
   const v = q.pensionEstimate ?? createPensionEstimateInput();
   const update = (patch: Partial<PensionEstimateInput>) => onChange({ ...input, benefits: { ...input.benefits, [p.scheme]: { ...q, pensionEstimate: { ...v, ...patch } } } });
   const checked = !!r.retirement.date && v.confirmedRetirementDate === r.retirement.date && v.confirmedAppointmentDate === p.appointmentDate;
   return <section className="benefit-result" aria-label="공적연금 요약"><h3>{r.pensionStatus.scope==='appointment-service-only'?'공적연금 참고 월액 · 군 산입분 제외':'공적연금 예상 월수령액'}</h3>
-    <strong className="benefit-amount">{won(r.pension.amountWon, r.pensionStatus.preparing ? '준비 중 · 2009년 이전 임용자 자동 추정' : '추정에 필요한 정보 확인')}{r.pension.amountWon !== null ? ' / 월' : ''}</strong>
+    <strong className="benefit-amount">{won(pd.primaryWon, r.pensionStatus.preparing ? '준비 중 · 2009년 이전 임용자 자동 추정' : '추정에 필요한 정보 확인')}{pd.primaryWon !== null ? ' / 월' : ''}</strong>
+    {pd.present && <p className="pension-future">지금 가치 기준(2026년 보수 수준 환산) · <span>{pd.futureYear}년에 실제 받는 금액 {won(pd.futureWon)} / 월</span></p>}
     <p className="profile-help">{schemeNames[p.scheme]} · {r.pension.confidence} · {r.pensionSource === 'quote' ? q.pension.taxBasis === 'net' ? '입력액 세후' : q.pension.taxBasis === 'gross' ? '세전' : '세금 기준 확인 필요' : r.pensionSource === 'teacher-model' ? `세전 · ${details.priceYear}년 개시 명목 가정` : '세전 · 2026년 가격 고정'}</p>
     <p className="profile-context">정상 개시 예상일 {details.normalStartDate??'개인별 경과규정 확인 필요'} · 최초 지급대상월 {details.firstPaymentMonth??'확인 필요'} · 개시 전 공백 {r.pensionGapMonths===null?'미확인':r.pensionGapMonths+'개월(완료 월)·'+r.pensionGapDays+'일'}</p>
     <TeacherPensionScenarios result={r} />

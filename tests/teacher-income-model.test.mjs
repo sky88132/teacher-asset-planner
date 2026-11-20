@@ -17,8 +17,8 @@ function fixture(){const f=createSimpleInputs();Object.assign(f.profile,{birthDa
 test('공식2026 봉급표·연3%와 호봉효과는 한 번씩만 적용',()=>{
  const f=fixture(),pay=projectTeacherPay(f.profile,'2027-12-31',today),y=pay.rows.find(y=>y.year===2027);
  assert.equal(y.firstStep,20);assert.equal(y.lastStep,21);
- assert.equal(y.salaryWon,3*Math.round(teacherSalary2026[19]*1.03)+9*Math.round(teacherSalary2026[20]*1.03));
- assert.equal(pay.finalSalaryWon,Math.round(teacherSalary2026[20]*1.03));assert.equal(salaryGrowth(2026),1);
+ assert.equal(y.salaryWon,3*Math.round(teacherSalary2026[19]*1.025)+9*Math.round(teacherSalary2026[20]*1.025));
+ assert.equal(pay.finalSalaryWon,Math.round(teacherSalary2026[20]*1.025));assert.equal(salaryGrowth(2026),1);
 });
 test('승급 경계·40호봉 상한·과거 상한 경로는 임의 역산하지 않는다',()=>{
  const f=fixture();assert.equal(teacherStepAt(f.profile,'2026-04-01',today),20);assert.equal(teacherStepAt(f.profile,'2026-03-31',today),19);
@@ -30,7 +30,7 @@ test('담임20·교직25·급식16 분리와 연간 발생 수당의 월평균 �
  assert.equal(y.homeroomWon,2400000);assert.equal(y.teachingWon,3000000);assert.equal(y.mealWon,1920000);
  assert.equal(y.taxableWon,y.salaryWon+y.homeroomWon+y.teachingWon+y.serviceBonusWon+y.regularBonusWon+y.holidayBonusWon);
  assert.equal(y.grossWon-y.taxableWon,y.mealWon);assert.equal(y.holidayBonusWon,Math.round(y.salaryWon*.1));
- assert.equal(y.incomeProxyWon,Math.round(y.taxableWon/12));assert.equal(y.basis2026IncomeWon,Math.round(y.incomeProxyWon/1.03));
+ assert.equal(y.incomeProxyWon,Math.round(y.taxableWon/12));assert.equal(y.basis2026IncomeWon,Math.round(y.incomeProxyWon/1.025));
 });
 test('정근수당2025개정 구간·가산금 장기근속 추가분',()=>{
  assert.deepEqual([0,1,2,4,5,6,7,8,9,10].map(regularBonusRate),[.1,.1,.2,.2,.25,.3,.35,.4,.45,.5]);
@@ -93,7 +93,7 @@ test('2026 수당과 공제회 미래 적립금을 합산하지 않고 월연금
  const f=fixture();Object.assign(f.ktcu,{balance:'10000000',monthly:'0'});f.benefits.civil.income='5000000';const r=calculateSimple(f,today),a=calculateRetirementAnalysis(f,r);assert.equal(a.lumpPriceCompatible,false);assert.equal(a.lumpTotalWon,null);assert.ok(!a.lumpItems.some(x=>x.label.includes('공적연금')));
 });
 test('AI 요청문은 익명 가정·시점·월연금·수당 참고 합계와 남은 확인사항 반영',()=>{
- const f=fixture(),text=generateSimplePrompt(f,createPromptWorkspace().settings,today);for(const term of ['봉급표 연 3%','담임수당 계속','미래 명목','2026 보수수준 환산','동일 가정 기준 세전 참고 합계','실제 소득이 아닌','외부 금액 검증 미완료'])assert.ok(text.includes(term),term);assert.ok(!text.includes(f.profile.birthDate));assert.ok(!text.includes(f.profile.appointmentDate));assert.equal(f.benefits.civil.income,undefined);
+ const f=fixture(),text=generateSimplePrompt(f,createPromptWorkspace().settings,today);for(const term of ['봉급표 연 상승률 가정','담임수당 계속','미래 명목','2026 보수수준 환산','공무원 보수 상승률 가정 연 2.5%','동일 가정 기준 세전 참고 합계','실제 소득이 아닌','외부 금액 검증 미완료'])assert.ok(text.includes(term),term);assert.ok(!text.includes(f.profile.birthDate));assert.ok(!text.includes(f.profile.appointmentDate));assert.equal(f.benefits.civil.income,undefined);
 });
 
 test('1월1일 퇴직연도 환산은 봉급 연동분만3%·담임/교직/정근가산 고정',()=>{
@@ -102,7 +102,7 @@ test('1월1일 퇴직연도 환산은 봉급 연동분만3%·담임/교직/정�
  const linked=(last.salaryWon+last.regularBonusWon+last.holidayBonusWon)/last.months;
  const expected=Math.round(last.incomeProxyWon+linked*(salaryGrowth(2040)/salaryGrowth(2039)-1));
  const base=r.teacherBenefits.rows.find(x=>x.id==='base');assert.equal(base.incomeWon,expected);
- assert.ok(base.incomeWon<Math.round(last.incomeProxyWon*1.03));
+ assert.ok(base.incomeWon<Math.round(last.incomeProxyWon*1.025));
  assert.equal(last.homeroomWon/last.months,200000);assert.equal(last.teachingWon/last.months,250000);
  assert.equal(base.combinedWon,base.allowanceWon+base.honoraryWon);
 });

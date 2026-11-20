@@ -1,6 +1,6 @@
 import type { SimpleInputs } from '@/lib/simple/model';
 import type { SimpleResults } from '@/lib/simple/calculation';
-import { teacherPayAssumptions, teacherPriceNote, teacherPaySources } from '@/lib/simple/teacher-pay';
+import { teacherPayAssumptions, teacherPriceNote, teacherPaySources, growthPercentText } from '@/lib/simple/teacher-pay';
 import { won, OfficialLink } from './shared';
 
 export function scenarioRange(values: (number | null)[], empty='전체액 확인 필요') {
@@ -24,11 +24,11 @@ export function TeacherPayDetails({ result:r }: {result:SimpleResults}) {
 }
 export function TeacherPensionScenarios({result:r}:{result:SimpleResults}) {
   if(r.pensionSource!=='teacher-model')return null;
-  const top=Math.max(1,...r.teacherPension.rows.map(s=>s.estimate.amountWon??0));
+  const top=Math.max(1,...r.teacherPension.rows.map(s=>s.basis2026Won??0));
   return <div className="scenario-list" aria-label="교원 보수 기반 월연금 시나리오"><p className="profile-help">보수 상승 가정에 따른 세 가지 시나리오 · 공단 확정액 아님</p>
-    {r.teacherPension.rows.map(s=><p key={s.id} className={`scenario-row scenario-${s.id}`}><strong>{s.label}: {won(s.estimate.amountWon)} / 월</strong><span className="scenario-bar" aria-hidden="true"><i style={{width:`${(s.estimate.amountWon??0)/top*100}%`}} /></span><span className="profile-help">{s.estimate.priceYear}년 개시 명목 가정 · 2026 보수수준 환산 {won(s.basis2026Won)}</span></p>)}
+    {r.teacherPension.rows.map(s=><p key={s.id} className={`scenario-row scenario-${s.id}`}><strong>{s.label}: {won(s.basis2026Won)} / 월 (지금 가치)</strong><span className="scenario-bar" aria-hidden="true"><i style={{width:`${(s.basis2026Won??0)/top*100}%`}} /></span><span className="profile-help">{s.estimate.priceYear}년 개시 명목 {won(s.estimate.amountWon)} · 2026 보수수준 환산</span></p>)}
     <details className="simple-details"><summary>월연금 변수별 출처·자동 산출 과정</summary>
-      <p className="profile-help">봉급 연3%·담임 계속·일부 표준 수당 가정. 90/100/110% 보수 기초 민감도입니다. 실제 지급범위·법정 최저/최고가 아니며 구간 경계에서 금액 순서가 달라질 수 있습니다. 실제 직종별 평균수당·과거 소득 재평가·퇴직 전3년 전체 평균은 미확인입니다.</p>
+      <p className="profile-help">봉급 연 {growthPercentText(r.teacherPay.growthRate)} 상승·담임 계속·일부 표준 수당 가정. 90/100/110% 보수 기초 민감도입니다. 실제 지급범위·법정 최저/최고가 아니며 구간 경계에서 금액 순서가 달라질 수 있습니다. 실제 직종별 평균수당·과거 소득 재평가·퇴직 전3년 전체 평균은 미확인입니다.</p>
       <p className="profile-help">{r.teacherPension.wholeIncome.note}</p>
       {r.teacherPension.wholeIncome.years.map(y=><p key={y.year}>{y.year}년 전체 평균 {won(Math.round(y.nominalWon))} · {y.state} · 퇴직 전년도 물가 가정 환산 {won(Math.round(y.adjustedWon))}</p>)}
       {r.teacherPension.rows.map(s=><section key={s.id}><h4>{s.label}</h4>{s.variables.map(v=><p className="profile-help" key={v.label}>{v.label}: {v.value===null?'미확인':v.unit==='원/월'?won(v.value):v.value+' '+v.unit} · {v.state} · {v.basis}</p>)}</section>)}

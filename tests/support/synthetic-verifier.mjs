@@ -37,7 +37,7 @@ export function verifySyntheticCase(c){
  for(const row of r.teacherBenefits.rows){assert.equal(row.combinedWon,f.profile.retirement==='early'&&row.honoraryWon!==null&&row.allowanceWon!==null?row.allowanceWon+row.honoraryWon:null);}
  for(const row of r.allowanceReference.rows){assert.equal(row.combinedWon,row.amountWon!==null&&r.honorary.amountWon!==null?row.amountWon+r.honorary.amountWon:null);}
  for(const y of r.teacherPay.rows){assert.equal(y.homeroomWon,y.months*200000);assert.equal(y.teachingWon,y.months*250000);assert.equal(y.mealWon,y.months*160000);assert.equal(y.grossWon,y.taxableWon+y.mealWon);if(y.year>2026)assert.equal(y.salaryWon,futureSalary(f.profile,y.year,basisDate,new Date(Date.parse(date+'T00:00:00Z')-86400000).toISOString().slice(0,10)));}
- if(r.teacherPay.finalSalaryWon!==null){let salary=salary2026Reference[r.step-1];for(let y=2027;y<=Number(date.slice(0,4));y++)salary*=1.03;assert.equal(r.teacherPay.finalSalaryWon,Math.round(salary));}
+ if(r.teacherPay.finalSalaryWon!==null){const salary=salary2026Reference[r.step-1]*1.025**Math.max(0,Number(date.slice(0,4))-2026);assert.equal(r.teacherPay.finalSalaryWon,Math.round(salary));}
  const a=calculateRetirementAnalysis(f,r);finiteTree(a);assert.equal(a.accumulationWon,r.accumulationTotal);assert.equal(a.pensionWon,r.pension.amountWon);assert.equal(a.accountWithdrawalSchedule,null);
  if(r.pensionStartDate)assert.equal(a.gapDays,Math.max(0,daysBetween(date,r.pensionStartDate)));
  for(const w of a.windows){if(a.expenseWon===null||w.subtotalWon===null||!w.expenseComparable)assert.equal(w.differenceWon,null);else assert.equal(w.differenceWon,w.subtotalWon-a.expenseWon);

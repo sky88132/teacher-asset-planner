@@ -3,7 +3,7 @@ import type { SimpleProfile } from './model.ts';
 import { hasEnteredPensionIncome } from './pension-income.ts';
 import { estimateCivilPension } from './occupational-pension.ts';
 import type { PensionEstimate, PensionEstimateInput } from './pension-types.ts';
-import { teacherPayAssumptions, teacherPriceNote, teacherPaySources, salaryGrowth, type TeacherPayProjection } from './teacher-pay.ts';
+import { teacherPayAssumptions, teacherPriceNote, teacherPaySources, salaryGrowth, growthPercentText, type TeacherPayProjection } from './teacher-pay.ts';
 
 import { newEntrantFactor } from './application-ratio.ts';
 export { newEntrantFactors, newEntrantFactor } from './application-ratio.ts';
@@ -36,7 +36,7 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
   if(v.complexCareer)errors.push('휴직·중단·시간제·재임용 등 별도 이력은 표준 보수 경로에 적용하지 않습니다.');
   if(!base.normalStartDate||base.months===null||base.months<120||base.capMonths===null)errors.push('정상 개시일·10년 이상 인정기간을 확인해야 표준 월연금을 계산할 수 있습니다.');
   let remaining=base.capMonths??0, weighted=0n, months=0;
-  const whole = projectWholeIncome(date?Number(date.slice(0,4)):0,base.normalStartDate?Number(base.normalStartDate.slice(0,4)):0,v.simulationInflation??'0');
+  const whole = projectWholeIncome(date?Number(date.slice(0,4)):0,base.normalStartDate?Number(base.normalStartDate.slice(0,4)):0,v.simulationInflation??'0',pay.growthRate);
   if(eligible) errors.push(...whole.errors);
   const assumedWholeIncome=whole.basis2026Won??wholeIncome2026; // A proxy for the 3-year whole-civil-service average, NOT personal income.
   for(const row of pay.rows){
@@ -49,7 +49,7 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
   const startYear=base.normalStartDate?Number(base.normalStartDate.slice(0,4)):null;
   const rows=eligible&&!errors.length&&average!==null&&k!==null&&date&&startYear!==null?teacherIncomeSensitivities.map(s=>{
     const income=Math.min(Math.floor(average*s.percent/100),Math.floor(wholeIncome2026*1.6));
-    const nominalIncome=Math.round(income*salaryGrowth(startYear));
+    const nominalIncome=Math.round(income*salaryGrowth(startYear,pay.growthRate));
     // Compare B and A at the same pension-start price basis, before display conversion.
     const redistribution=redistributionPercent(nominalIncome,whole.startWon!)!;
     const redistributed=Number(BigInt(income)*BigInt(Math.round(redistribution*100))/10000n);
@@ -57,7 +57,7 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
     const generated={...v, incomeMode:'average' as const, averageIncome:String(income), redistributedIncome:String(redistributed), factorPercent:String(k),
       confirmedRetirementDate:date, confirmedAppointmentDate:p.appointmentDate};
     const basis=estimateCivilPension(modelProfile,generated,date,today);
-    // The statutory revaluation direction is reused; future civil pay growth is a 3% planning assumption.
+    // The statutory revaluation direction is reused; future civil pay growth is a user-adjustable planning assumption (default 2.5%).
     const nominal=estimateCivilPension(modelProfile,{...generated,averageIncome:String(nominalIncome),
       redistributedIncome:String(nominalRedistributed)},date,today);
     nominal.priceYear=startYear;nominal.method='교원 표준 보수 경로·법정 구간식 기반 가정 시뮬레이션 (개시연도 미래 명목)';
@@ -68,7 +68,7 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
       '연도별 과거 실제 급여와 과거 법정 재평가계수는 확보하지 못해 2026 표 기준 역산 경로로 대체했습니다. 전년도 보수/5월 적용·1~4월 예외/직종별 평균수당까지 완성한 공식 기준소득월액이 아닙니다.',
       '재분배 비교 전체 평균 A는 595만원 고시를 퇴직 전 3년 평균의 대리 가정으로 고정합니다. 실제 퇴직 전 3년 평균·물가/보수 환산 자료가 아닙니다. 2010~2015 상한 1.8배·2016 이후 1.6배도 같은 가정 A를 사용합니다.',
       `소득 민감도 ${s.percent}% · 이행률 ${k}% (2010년 이후 신규자 표,33년 초과는33년 기준) · 재분배 적용 ${redistribution}%. 민감도 세 값은 법정·통계 최저/최고나 실제 개인 지급범위가 아닙니다.`,
-      '미래 공무원 보수인상률도 연3%로 가정해 정상 개시연도까지 재평가했습니다. 최초 지급대상월·입금일 및 이후 연금 물가조정은 별개입니다.');
+      `미래 공무원 보수인상률도 연${growthPercentText(pay.growthRate)}로 가정해 정상 개시연도까지 재평가했습니다. 최초 지급대상월·입금일 및 이후 연금 물가조정은 별개입니다.`);
     nominal.sources=[...nominal.sources,...teacherPaySources,...wholeIncomeSources];
     nominal.notes=nominal.notes.filter(n=>!n.includes('대리 가정'));
     nominal.notes.push(whole.note);
@@ -76,7 +76,7 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
     if(militaryEntered)nominal.notes.push(`군복무 산입 ${v.militaryMonths}개월을 인정 재직기간·적용비율·재직기간 상한에 포함했습니다. 산입 기간의 소득은 임용 후 표준 보수 평균과 같다고 가정했습니다. 산입 개월·연도는 공단 확인값을 입력하세요.`);
     const variables:PensionVariable[]=[
       {label:'개인 평균소득 B (2026 보수수준)',value:income,unit:'원/월',state:'사용자 지정 가정값',basis:'2026 표 기반 호봉 역산·표준 수당·90/100/110% 민감도. 실제 과거 봉급표·법정 재평가·직종별 평균 수당 미확인'},
-      {label:'개인 평균소득 B (개시연도)',value:nominalIncome,unit:'원/월',state:'사용자 지정 가정값',basis:'2026 보수수준 B를 미래 보수 연3% 가정으로 환산·A와 같은 기준에서 비교'},
+      {label:'개인 평균소득 B (개시연도)',value:nominalIncome,unit:'원/월',state:'사용자 지정 가정값',basis:`2026 보수수준 B를 미래 보수 연${growthPercentText(pay.growthRate)} 가정으로 환산·A와 같은 기준에서 비교`},
       {label:'공무원 전체 평균 A (개시연도)',value:whole.startWon,unit:'원/월',state:'공식 통계에 근거한 추정값',basis:whole.note},
       {label:'소득재분배 평균소득 (개시연도)',value:nominalRedistributed,unit:'원/월',state:'사용자 지정 가정값',basis:'가정 B/A와 법률13387호 부칙9조2항 구간표·원 미만 최종 절사'},
       {label:'재직기간별 적용비율',value:k,unit:'%',state:'공식 확인값',basis:'시행령 부칙10조10항 신규자 표·개인 재직기간은 연속경력 가정'},

@@ -8,9 +8,16 @@ export const teacherPaySources = [
   { title: '수당규정 제7·18·18의3조 및 별표2·11', url: 'https://www.law.go.kr/LSW/lsInfoR.do?lsiSeq=290323&efYd=20261002&chrClsCd=010202&ancYnChk=0' },
   { title: '기준소득·재평가 규정 제4·5·8·10조', url: 'https://www.nhis.or.kr/lm/lmxsrv/law/lawFullContent.do?SEQ=228&SEQ_HISTORY=' },
 ] as const;
-export const teacherPayAssumptions = '봉급표 연 3% 상승·승급월 1일 정기승급·40호봉 상한·담임수당 계속 월20만원·교직수당 월25만원·기타 표준 수당. 실제 소득이 아닌 가정 기반 추정. 급식비 월16만원은 비과세 제외. 성과·초과근무 등 직종별 평균수당은 미확인·미포함이며 실제 기준소득월액이 아님.';
-export const teacherPriceNote = '2026 환산은 봉급상승률 3% 가정으로 환산한 보수수준 비교액이며 물가할인에 따른 구매력 현재가치가 아닙니다. 과거 소득은 실제 급여·공식 과거 재평가액이 아닌 2026 표 기반 대체 경로입니다.';
-export function salaryGrowth(year: number) { return 1.03 ** Math.max(0, year - 2026); }
+export const teacherPayAssumptions = '봉급표 연 상승률 가정(기본 2.5%, 01에서 변경 가능)·승급월 1일 정기승급·40호봉 상한·담임수당 계속 월20만원·교직수당 월25만원·기타 표준 수당. 실제 소득이 아닌 가정 기반 추정. 급식비 월16만원은 비과세 제외. 성과·초과근무 등 직종별 평균수당은 미확인·미포함이며 실제 기준소득월액이 아님.';
+export const teacherPriceNote = '2026 환산은 같은 봉급 상승률 가정으로 환산한 보수수준 비교액이며 물가할인에 따른 구매력 현재가치가 아닙니다. 과거 소득은 실제 급여·공식 과거 재평가액이 아닌 2026 표 기반 대체 경로입니다.';
+export const defaultSalaryGrowthPercent = '2.5';
+/** Yearly pay-growth rate from the profile (0~10%, up to 2 decimals). null = invalid input. */
+export function salaryGrowthRate(p: Pick<SimpleProfile, 'salaryGrowthPercent'>): number | null {
+  const raw = (p.salaryGrowthPercent ?? '') === '' ? defaultSalaryGrowthPercent : p.salaryGrowthPercent!;
+  return /^\d+(?:\.\d{1,2})?$/.test(raw) && Number(raw) <= 10 ? Number(raw) / 100 : null;
+}
+export const growthPercentText = (rate: number) => `${Math.round(rate * 10000) / 100}%`;
+export function salaryGrowth(year: number, rate = 0.025) { return (1 + rate) ** Math.max(0, year - 2026); }
 function rounded(n: number) {
   const result = Math.round(n);
   if (!Number.isSafeInteger(result) || result < 0) throw new Error('교원 보수 추정의 원 단위 범위를 초과했습니다.');
@@ -47,11 +54,13 @@ export function projectTeacherPay(p: SimpleProfile, date: string | null, today: 
   if (p.teacherModel === false) errors.push('교원 표준 보수 가정을 사용하지 않았습니다.');
   if (p.scheme !== 'civil') errors.push('새 보수 모델은 일반 국공립 초·중등 호봉제 교원 시나리오에만 자동 적용합니다.');
   errors.push(...validateSimpleProfile(p, today));
+  const rate = salaryGrowthRate(p) ?? 0.025;
+  if (salaryGrowthRate(p) === null) errors.push('공무원 보수 상승률 가정은 0~10% 사이 숫자(소수점 둘째 자리까지)로 입력해 주세요.');
   const lastDay = date ? new Date(Date.parse(date + 'T00:00:00Z') - 86400000).toISOString().slice(0, 10) : null;
-  if (!date || !lastDay || errors.length) return { rows, errors: [...new Set(errors)], historyErrors, final: null, finalSalaryWon: null, assumptions: teacherPayAssumptions };
+  if (!date || !lastDay || errors.length) return { rows, errors: [...new Set(errors)], historyErrors, final: null, finalSalaryWon: null, assumptions: teacherPayAssumptions, growthRate: rate };
   const start = monthIndex(p.appointmentDate), end = monthIndex(lastDay);
   if (end - start > 1200) errors.push('100년 초과 보수 경로는 지원하지 않습니다.');
-  if (errors.length) return { rows, errors, historyErrors, final: null, finalSalaryWon: null, assumptions: teacherPayAssumptions };
+  if (errors.length) return { rows, errors, historyErrors, final: null, finalSalaryWon: null, assumptions: teacherPayAssumptions, growthRate: rate };
   // Monthly remuneration reference, not an agency payroll or exact lunar-holiday cash schedule.
   for (let year = Number(p.appointmentDate.slice(0, 4)); year <= Number(lastDay.slice(0, 4)); year++) {
     let salary = 0, homeroom = 0, teaching = 0, serviceBonus = 0, regular = 0, holiday = 0, meal = 0;
@@ -63,7 +72,7 @@ export function projectTeacherPay(p: SimpleProfile, date: string | null, today: 
       // Current month uses the currently supplied step, including an increment due today.
       const step = when.slice(0, 7) === today.slice(0, 7) ? Number(p.step) : teacherStepAt(p, when, today);
       if (step === null) { historyErrors.push('현재40호봉 또는 역산 호봉 범위로 과거 소득 경로를 확인할 수 없습니다.'); continue; }
-      const base = rounded(teacherSalary2026[step - 1] * salaryGrowth(year));
+      const base = rounded(teacherSalary2026[step - 1] * salaryGrowth(year, rate));
       const years = Math.max(0, Math.floor((index - start) / 12));
       steps.push(step); salary += base; homeroom += 200000; teaching += 250000;
       serviceBonus += serviceBonusMonthly(years); meal += 160000;
@@ -80,10 +89,10 @@ export function projectTeacherPay(p: SimpleProfile, date: string | null, today: 
       homeroomWon: homeroom, teachingWon: teaching, serviceBonusWon: serviceBonus, regularBonusWon: regular,
       holidayBonusWon: holiday, mealWon: meal, taxableWon: taxable, grossWon: rounded(taxable + meal),
       annualizedTaxableWon: annualized, incomeProxyWon: rounded(annualized / 12),
-      basis2026IncomeWon: rounded(annualized / 12 / salaryGrowth(year)), reconstructed: year < Number(today.slice(0, 4)) });
+      basis2026IncomeWon: rounded(annualized / 12 / salaryGrowth(year, rate)), reconstructed: year < Number(today.slice(0, 4)) });
   }
   const final = rows.at(-1) ?? null, step = projectedStep(p, date, today);
-  const finalSalaryWon = step === null ? null : rounded(teacherSalary2026[step - 1] * salaryGrowth(Number(date.slice(0, 4))));
-  return { rows, errors, historyErrors: [...new Set(historyErrors)], final, finalSalaryWon, assumptions: teacherPayAssumptions };
+  const finalSalaryWon = step === null ? null : rounded(teacherSalary2026[step - 1] * salaryGrowth(Number(date.slice(0, 4)), rate));
+  return { rows, errors, historyErrors: [...new Set(historyErrors)], final, finalSalaryWon, assumptions: teacherPayAssumptions, growthRate: rate };
 }
 export type TeacherPayProjection = ReturnType<typeof projectTeacherPay>;
