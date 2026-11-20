@@ -4,6 +4,7 @@ import { isCalendarDate } from '../profile-validation.ts';
 import { monthIndex, occupationalPensionAge, birthAnniversary, setPensionTiming } from './pension-dates.ts';
 import { checkPensionContext, pensionIncome, positiveMoney } from './pension-income.ts';
 import { ageAt } from '../finance/cashflow-validation.ts';
+import { newEntrantFactor } from './application-ratio.ts';
 
 const rates = [18780,18560,18340,18120,17900,17800,17700,17600,17500,17400,17360,17320,17280,17240,17200,17160,17120,17080,17040];
 /** Annual service rates, millionths. 2035 onward: 1.7%; not a retirement-year-only rate. */
@@ -97,7 +98,14 @@ function calculateOccupational(p: SimpleProfile, v: PensionEstimateInput, date: 
   }
   r.earlyNote = '조기퇴직연금은 10년 이상 재직·퇴직 후 정상 개시보다 최대 5년 전 신청이 가능하며 미달 1년당 5%(최대 25%) 감액됩니다. 자동 선택하지 않았으며 월별 감액·개인 예외는 공단 확인이 필요합니다.';
   const average = pensionIncome(v, r);
-  const k = factor(v.factorPercent, r);
+  // 2010+ civil appointees: the agency applies the decree's new-entrant column even though its
+  // screen may not show a ratio (verified: 155 months → 84.62%, 905,680원). Empty input uses the table.
+  const tableFactor = scheme === 'civil' && p.appointmentDate >= '2010-01-01' && oldMonths === 0 && r.months !== null ? newEntrantFactor(r.months) : null;
+  const k = v.factorPercent === '' && tableFactor !== null ? factor(String(tableFactor), r) : factor(v.factorPercent, r);
+  if (tableFactor !== null) {
+    if (v.factorPercent === '') r.notes.push(`적용비율은 시행령 부칙 제10조제10항 신규자 표의 ${tableFactor}%(인정 ${r.months}개월)를 자동 적용했습니다. 공단 조회 화면의 값이 다르면 직접 입력해 주세요.`);
+    else if (Number(v.factorPercent) !== tableFactor) r.notes.push(`입력한 적용비율 ${v.factorPercent}%가 신규자 표의 ${tableFactor}%(인정 ${r.months}개월)와 다릅니다. 공단 화면에 적용비율이 '해당 없음'으로 보여도 2010년 이후 임용자에게는 표의 비율이 적용됩니다.`);
+  }
   const legacy = oldMonths ? positiveMoney(v.legacyIncome, '2009년 이전분의 재평가된 평균보수월액', r) : 0;
   const redistributed = recentMonths ? positiveMoney(v.redistributedIncome, '소득재분배가 반영된 평균기준소득월액', r) : 0;
   // Civil Act (Law 15523) supplementary Art.24 caps total service at 33~36 years. Months beyond the cap are
@@ -122,7 +130,9 @@ function calculateOccupational(p: SimpleProfile, v: PensionEstimateInput, date: 
     if (post > prior) r.notes.push(`${scheme === 'civil' ? '공무원연금법 부칙 제13조제4항' : '사학연금법 시행령의 2016년 개정 부칙 제3조'}에 따라 2016년 이후분에 종전 1.9% 산식 비교 상한을 적용했습니다.`);
     post = post < prior ? post : prior;
     if (!r.errors.length) {
-      r.amountWon = money(old + mid + post);
+      // The civil agency pays in 10-won units (verified against an agency quote and its early-pension rows).
+      const total = money(old + mid + post);
+      r.amountWon = scheme === 'civil' ? total - total % 10 : total;
       [old, mid, post].forEach((n, i) => { r.periods[i].amountWon = money(n); });
       r.confidence = '조건부 추정값 · 입력 소득 기반 · 세전';
     }

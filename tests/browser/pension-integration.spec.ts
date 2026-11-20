@@ -24,5 +24,5 @@ test('호봉·승급월·명퇴일 변경은 월연금과 수당을 갱신·정�
  if(info.project.name==='mobile')await page.setViewportSize({width:320,height:844});for(let i=0;i<6;i++){await menu(page,i);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
 });
 test('구기간 미확인은 월액 생성하지 않고 정상개시·구체적 차단 사유 유지',async({page})=>{
- await menu(page,0);await page.getByLabel('최초 임용일',{exact:true}).fill('2007-04-01');await page.getByLabel('현재 호봉',{exact:true}).fill('33');await menu(page,4);const p=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(p.locator('.benefit-amount').first()).toHaveText('추정에 필요한 정보 확인');await expect(p).toContainText('2009년 이전');await expect(p).toContainText('2052-02-12');
+ await menu(page,0);await page.getByLabel('최초 임용일',{exact:true}).fill('2007-04-01');await page.getByLabel('현재 호봉',{exact:true}).fill('33');await menu(page,4);const p=page.getByRole('region',{name:'공적연금 요약',exact:true});await expect(p.locator('.benefit-amount').first()).toHaveText('준비 중 · 2009년 이전 임용자 자동 추정');await expect(p).toContainText('2009년 이전');await expect(p).toContainText('2052-02-12');
 });

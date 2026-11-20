@@ -46,7 +46,7 @@ test('현재40/역산불능은 월액 보류하되 정상 개시일 유지',()=>
  f.profile.step='2';r=calculateSimple(f,today);assert.ok(r.teacherPay.historyErrors.length);assert.equal(r.pension.amountWon,null);assert.ok(r.pensionStartDate);
 });
 test('공식 신규자 이행률 표의 기간 경계 및33년 고정',()=>{
- for(const [m,want]of [[1,77.25],[12,77.25],[13,78],[120,82.45],[156,84.62],[168,85.65],[312,96.07],[324,97.02],[360,100],[372,101.09],[396,103.44],[432,103.44]])assert.equal(newEntrantFactor(m),want);
+ for(const [m,want]of [[1,77.25],[12,77.25],[13,78.03],[72,80.06],[132,82.89],[288,94.53],[336,97.9],[120,82.45],[156,84.62],[168,85.65],[312,96.07],[324,97.02],[360,100],[372,101.09],[396,103.44],[432,103.44]])assert.equal(newEntrantFactor(m),want);
  assert.equal(newEntrantFactor(0),null);assert.equal(newEntrantFactor(12.5),null);
 });
 test('재분배 비율은 공식 경계표를 적용·전체평균을 개인소득으로 복사하지 않음',()=>{

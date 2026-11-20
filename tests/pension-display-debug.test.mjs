@@ -9,7 +9,7 @@ import {calculateRetirementAnalysis} from '../src/lib/simple/retirement-analysis
 for(const id of ['A','B','C'])test(`월액 재현 ${id}: 반환상태·05용월액·06·입력불변`,()=>{
  const f=pensionDisplayCase(id),before=structuredClone(f),r=calculateSimple(f,today);
  assert.equal(r.pensionStatus.state,'available');assert.deepEqual(r.pensionStatus.codes,[]);assert.equal(r.pensionSource,'teacher-model');assert.equal(r.teacherPension.rows.length,3);
- assert.equal(r.pension.amountWon,id==='A'?4094909:id==='C'?7554963:8369703);assert.equal(r.pension.amountWon,r.teacherPension.selected.amountWon);assert.equal(r.pension.amountWon,r.pensionDetails.amountWon);assert.deepEqual(r.pension.errors,[]);
+ assert.equal(r.pension.amountWon,id==='A'?4094900:id==='C'?7554960:8369700);assert.equal(r.pension.amountWon,r.teacherPension.selected.amountWon);assert.equal(r.pension.amountWon,r.pensionDetails.amountWon);assert.deepEqual(r.pension.errors,[]);
  assert.ok(generateSimplePrompt(f,{...createPromptWorkspace().settings,money:'exact'},today).includes(formatWonAsKoreanCurrency(r.pension.amountWon)));assert.deepEqual(f,before);
  if(id!=='A'){assert.equal(r.step,40);assert.equal(r.teacherPay.historyErrors.length,0);}if(id==='B'){assert.equal(r.pensionStatus.scope,'appointment-service-only');assert.deepEqual(r.pensionStatus.limitationCodes,['MILITARY_CREDIT_EXCLUDED']);assert.match(r.pension.confidence,/군복무 산입분 제외/);const g=structuredClone(f);g.profile.military='not';const plain=calculateSimple(g,today);assert.equal(r.pension.amountWon,plain.pension.amountWon);assert.equal(r.pensionDetails.months,plain.pensionDetails.months);}
 });
@@ -25,7 +25,7 @@ test('현재1~39에서 미래40은 차단하지 않음·호봉과 승급월 변�
 });
 test('확인 날짜·소득 방식·동의만 바꿔도 실제 소득이 없으면 자동 모형 유지',()=>{
  for(const patch of [{confirmedRetirementDate:'2047-08-31'},{confirmedAppointmentDate:'2010-03-01'},{incomeMode:'current'},{incomeMode:'current',constantIncome:true}]){
-  const f=pensionDisplayCase('C');Object.assign(f.benefits.civil.pensionEstimate,patch);assert.equal(calculateSimple(f,today).pension.amountWon,7554963);
+  const f=pensionDisplayCase('C');Object.assign(f.benefits.civil.pensionEstimate,patch);assert.equal(calculateSimple(f,today).pension.amountWon,7554960);
  }
 });
 test('일부·0·잘못된 수동 소득이나 계수는 입력 오류를 자동값으로 숨기지 않음',()=>{
@@ -40,6 +40,7 @@ for(const [label,patch,code]of [
  const f=pensionDisplayCase('C');Object.assign(f.profile,patch);const r=calculateSimple(f,today);
  assert.equal(r.pension.amountWon,null);assert.ok(r.pensionStartDate);assert.ok(r.pensionStatus.codes.includes(code));assert.deepEqual(r.pensionStatus.reasons,r.teacherPension.errors);assert.ok(r.pension.errors.length);
  assert.ok(!r.pension.errors.some(x=>x.includes('재평가된 평균기준소득월액이 필요')));
+ assert.equal(r.pensionStatus.preparing,code==='PRE_2010_INCOME_REQUIRED');if(r.pensionStatus.preparing)assert.match(r.pensionStatus.reasons.join(),/자동 추정은 준비 중/);
  const prompt=generateSimplePrompt(f,createPromptWorkspace().settings,today);assert.ok(prompt.includes('계산 보류 이유'));assert.ok(prompt.includes(r.pensionStatus.reasons[0]));assert.ok(!prompt.includes(f.profile.birthDate));
 });
 test('유효 조회 우선 및 오래된 조회는 모형 대체 금지 유지',()=>{

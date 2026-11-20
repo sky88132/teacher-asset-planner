@@ -153,6 +153,8 @@ export function calculateSimple(input: SimpleInputs, today: string) {
     attemptedSource:pensionSource==='automatic'&&teacherPension.eligible?'teacher-model' as const:pensionSource,
     scope:pensionSource==='teacher-model'&&teacherPension.excludesMilitary?'appointment-service-only' as const:'selected-input-or-model' as const,
     limitationCodes:pensionSource==='teacher-model'&&teacherPension.excludesMilitary?['MILITARY_CREDIT_EXCLUDED']:[],
+    // Basic-info-only estimate for pre-2010 appointees is a not-yet-offered feature, not a missing input.
+    preparing:pension.amountWon===null&&pensionSource==='automatic'&&teacherPension.eligible&&teacherPension.errorCodes.includes('PRE_2010_INCOME_REQUIRED'),
   };
   const pensionStartDate = pensionSource === 'quote' ? pension.amountWon !== null ? quotes.pension.startDate : null
     : pensionDetails.firstPaymentMonth ? pensionDetails.firstPaymentMonth + '-01' : null;

@@ -5,13 +5,8 @@ import { estimateCivilPension } from './occupational-pension.ts';
 import type { PensionEstimate, PensionEstimateInput } from './pension-types.ts';
 import { teacherPayAssumptions, teacherPriceNote, teacherPaySources, salaryGrowth, type TeacherPayProjection } from './teacher-pay.ts';
 
-// Civil decree supplementary Art.10(10), NEW ENTRANT column only, <=1 through <=33 years.
-// Read against all three images in the official NHIS law mirror. Never used for pre-2010 careers.
-export const newEntrantFactors = [77.25,78.00,78.35,78.91,79.56,80.05,80.72,81.32,81.75,82.45,82.88,83.70,84.62,
-  85.65,86.70,87.89,89.00,90.25,91.42,92.52,92.86,93.30,93.81,94.58,95.33,96.07,97.02,97.98,98.99,100.00,101.09,102.23,103.44] as const;
-export function newEntrantFactor(months: number): number | null {
-  return Number.isInteger(months) && months > 0 ? newEntrantFactors[Math.min(33, Math.ceil(months / 12)) - 1] : null;
-}
+import { newEntrantFactor } from './application-ratio.ts';
+export { newEntrantFactors, newEntrantFactor } from './application-ratio.ts';
 // Law 13387 supplementary Art.9(2), MPM's official redistribution table.
 export function redistributionPercent(personal: number, whole: number): number | null {
   if (![personal, whole].every(n=>Number.isSafeInteger(n)&&n>0)) return null;
@@ -19,6 +14,8 @@ export function redistributionPercent(personal: number, whole: number): number |
   for (let i=0;i<percentages.length;i++) if(BigInt(personal)*10n<BigInt(whole)*BigInt(i+3)) return percentages[i];
   return 81.25;
 }
+/** 2007~2009 pay records and revaluation rates are not available, so basic-info-only estimates are not offered yet. */
+export const pre2010PreparingMessage = '2009년 이전 임용자의 기본정보 자동 추정은 준비 중입니다. 공무원연금공단 홈페이지 → 내연금보기 → 예상퇴직금 상세보기의 1기간 평균보수월액·평균기준소득월액·소득재분배 반영 평균소득·적용비율을 상세 설정에 입력하거나, 공식 조회 월액을 직접 입력해 주세요.';
 export const teacherIncomeSensitivities = [
   { id: 'low', label: '보수적', percent: 90 }, { id: 'base', label: '기준', percent: 100 }, { id: 'high', label: '높은 소득 시나리오', percent: 110 },
 ] as const;
@@ -32,7 +29,7 @@ export function estimateTeacherPension(p: SimpleProfile, v: PensionEstimateInput
   const modelProfile = excludesMilitary ? {...p,military:'not' as const} : p;
   const base = excludesMilitary ? estimateCivilPension(modelProfile,v,date,today) : confirmedBase;
   const limitations = excludesMilitary ? ['군복무 산입 승인 이력은 있으나 이 참고액은 임용 후 재직분만 계산했습니다. 군복무 산입분·산입에 따른 이행률과 상한 변화는 제외했으며 전체 예상 연금액이 아닙니다. 실제 전체액의 하한·최솟값도 아닙니다. 산입 개월·연도·소득과 경과규정은 공단 확인이 필요합니다.'] : [];
-  if(p.appointmentDate<'2010-01-01') errors.push('2009년 이전 평균보수 현가액·재직기간별 이행률은 교원 봉급만으로 확인할 수 없습니다. 전체 월연금은 공단 확인 자료가 필요합니다.');
+  if(p.appointmentDate<'2010-01-01') errors.push(pre2010PreparingMessage);
   if(v.complexCareer)errors.push('휴직·중단·시간제·재임용 등 별도 이력은 표준 보수 경로에 적용하지 않습니다.');
   if(!base.normalStartDate||base.months===null||base.months<120||base.capMonths===null)errors.push('정상 개시일·10년 이상 인정기간을 확인해야 표준 월연금을 계산할 수 있습니다.');
   let remaining=base.capMonths??0, weighted=0n, months=0;

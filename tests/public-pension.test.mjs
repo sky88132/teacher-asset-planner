@@ -33,7 +33,24 @@ for(const scheme of ['civil','private-school'])test(`${scheme} 2009년 이전·2
 });
 test('2010년 이후 신규 임용자는 구기간 소득 없이 평균소득·재분배·이행률로 계산',()=>{
   const f=fixture('civil','2010-01-01');f.benefits.civil.pensionEstimate.legacyIncome='';const r=estimate(f);assert.equal(r.pension.amountWon,456000+788240);assert.equal(r.pensionDetails.periods[0].months,0);
-  const v=f.benefits.civil.pensionEstimate;v.factorPercent='';assert.equal(estimate(f).pension.amountWon,null);v.factorPercent='100';v.redistributedIncome='';assert.equal(estimate(f).pension.amountWon,null);
+  const v=f.benefits.civil.pensionEstimate;v.redistributedIncome='';assert.equal(estimate(f).pension.amountWon,null);
+});
+test('2010년 이후 공무원 임용자는 적용비율을 비우면 신규자 표를 자동 적용하고 다른 입력값은 안내',()=>{
+  const f=fixture('civil','2010-01-01'),v=f.benefits.civil.pensionEstimate;v.factorPercent='';const r=estimate(f); // 204개월 → 17년차 89%
+  assert.equal(r.pension.amountWon,1107370);assert.match(r.pensionDetails.notes.join(),/신규자 표의 89%\(인정 204개월\)를 자동 적용/);
+  v.factorPercent='100';const typed=estimate(f);assert.equal(typed.pension.amountWon,456000+788240);assert.match(typed.pensionDetails.notes.join(),/100%가 신규자 표의 89%.*와 다릅니다/);
+  v.factorPercent='89';assert.ok(!estimate(f).pensionDetails.notes.join().includes('와 다릅니다'));
+  const old=fixture('civil','2005-01-01');old.benefits.civil.pensionEstimate.factorPercent='';assert.equal(estimate(old).pension.amountWon,null); // 2009년 이전은 자동 적용 안 함
+  const priv=fixture('private-school','2010-01-01');priv.benefits['private-school'].pensionEstimate.factorPercent='';assert.equal(estimate(priv).pension.amountWon,null); // 사학 보정률은 별도 확인
+});
+// 2026-11-20 공단 '현재예상 퇴직급여' 실제 조회 1건(2016년 임용·군 산입 26개월·III기간 155개월·적용비율 84.62%·
+// 종전 1.9% 상한 적용)을 이 엔진으로 905,680원 재현했다(조기연금 95~75% 행도 일치). 개인 값 대신 같은 구조의 가상 값으로 고정한다.
+test('공단 조회 구조 재현: 신규자 적용비율 자동·군 산입·1.9% 비교 상한·10원 미만 절사',()=>{
+  const date='2026-11-20',p={birthDate:'1985-04-10',appointmentDate:'2016-03-01',scheme:'civil',step:'20',promotionMonth:'3',military:'approved',retirement:'early',earlyDate:date,manualNormal:false,normalDate:''};
+  const v={...createPensionEstimateInput(),averageIncome:'4000000',redistributedIncome:'5000000',militaryMonths:'26',militaryCreditYear:'2020',confirmedRetirementDate:date,confirmedAppointmentDate:p.appointmentDate};
+  const r=estimateCivilPension(p,v,date,'2026-11-20');
+  assert.equal(r.months,155);assert.match(r.notes.join(),/84.62%/);assert.match(r.notes.join(),/비교 상한/);
+  const unrounded=Math.floor(4000000*0.8462*0.019*155/12);assert.equal(r.amountWon,unrounded-unrounded%10);assert.equal(r.amountWon%10,0);
 });
 test('소득재분배 1%와 개인소득 초과분을 분리하고 종전액 비교 상한 적용',()=>{
   const f=fixture();f.benefits.civil.pensionEstimate.redistributedIncome='4500000';const r=estimate(f);assert.equal(r.pension.amountWon,836000);assert.match(r.pensionDetails.notes.join(),/비교 상한/);

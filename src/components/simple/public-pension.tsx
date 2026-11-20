@@ -3,6 +3,7 @@ import type { SimpleInputs } from '@/lib/simple/model';
 import { schemeNames } from '@/lib/simple/model';
 import { createPensionEstimateInput, type PensionEstimateInput } from '@/lib/simple/pension-types';
 import { nationalEndMonth } from '@/lib/simple/national-pension';
+import { newEntrantFactor } from '@/lib/simple/application-ratio';
 import type { SimpleResults } from '@/lib/simple/calculation';
 import { Field, MoneyField, OfficialLink, won } from './shared';
 import { SimpleQuoteEditor } from './benefits';
@@ -14,7 +15,7 @@ export function SimplePublicPension({ input, onChange, result: r }: { input: Sim
   const update = (patch: Partial<PensionEstimateInput>) => onChange({ ...input, benefits: { ...input.benefits, [p.scheme]: { ...q, pensionEstimate: { ...v, ...patch } } } });
   const checked = !!r.retirement.date && v.confirmedRetirementDate === r.retirement.date && v.confirmedAppointmentDate === p.appointmentDate;
   return <section className="benefit-result" aria-label="공적연금 요약"><h3>{r.pensionStatus.scope==='appointment-service-only'?'공적연금 참고 월액 · 군 산입분 제외':'공적연금 예상 월수령액'}</h3>
-    <strong className="benefit-amount">{won(r.pension.amountWon, '추정에 필요한 정보 확인')}{r.pension.amountWon !== null ? ' / 월' : ''}</strong>
+    <strong className="benefit-amount">{won(r.pension.amountWon, r.pensionStatus.preparing ? '준비 중 · 2009년 이전 임용자 자동 추정' : '추정에 필요한 정보 확인')}{r.pension.amountWon !== null ? ' / 월' : ''}</strong>
     <p className="profile-help">{schemeNames[p.scheme]} · {r.pension.confidence} · {r.pensionSource === 'quote' ? q.pension.taxBasis === 'net' ? '입력액 세후' : q.pension.taxBasis === 'gross' ? '세전' : '세금 기준 확인 필요' : r.pensionSource === 'teacher-model' ? `세전 · ${details.priceYear}년 개시 명목 가정` : '세전 · 2026년 가격 고정'}</p>
     <p className="profile-help">{r.pensionSource === 'quote' ? '직접 입력한 조회액을 우선 표시합니다. 기관에 자동 조회하거나 진위를 검증한 값은 아닙니다.' : '웹앱의 조건부 추정이며 공단이 확정한 실제 지급액이 아닙니다. ' + details.externalValidation + '.'}</p>
     <p className="profile-context">정상 개시 예상일 {details.normalStartDate??'개인별 경과규정 확인 필요'} · 최초 지급대상월 {details.firstPaymentMonth??'확인 필요'} · 개시 전 공백 {r.pensionGapMonths===null?'미확인':r.pensionGapMonths+'개월(완료 월)·'+r.pensionGapDays+'일'}</p>
@@ -50,6 +51,7 @@ export function SimplePublicPension({ input, onChange, result: r }: { input: Sim
         {p.appointmentDate < '2010-01-01' && <MoneyField label="구기간 평균보수월액 현가액 (만원)" valueWon={v.legacyIncome} onChangeWon={legacyIncome => update({ legacyIncome })} />}
         <MoneyField label="공단 확인 소득재분배 반영 평균소득 (만원)" valueWon={v.redistributedIncome} onChangeWon={redistributedIncome => update({ redistributedIncome })} />
         <Field label="공단 확인 이행률·보정률 (%)" inputMode="decimal" value={v.factorPercent} onChange={factorPercent => update({ factorPercent })} />
+        {p.scheme === 'civil' && p.appointmentDate >= '2010-01-01' && <p className="profile-help">2010년 이후 임용자는 비워 두면 시행령 부칙 신규자 표의 적용비율{r.pensionDetails.months ? ` ${newEntrantFactor(r.pensionDetails.months)}%(인정 ${r.pensionDetails.months}개월)` : ''}을 자동 적용합니다. 공단 화면에 적용비율이 '해당 없음'으로 보여도 이 비율이 적용되므로 100%를 입력하지 마세요.</p>}
         <p className="profile-help">재분배 반영 평균소득과 이행률은 해당 제도에서 확인한 값입니다. 공무원 전체 평균액 하나나 최종 봉급만으로 임의 산정하지 않습니다. 평균소득·구기간 소득은 과거 소득을 같은 2026년 가격 수준으로 환산한 값을 입력하세요.</p>
         {p.military === 'approved' && <><Field label="공단 확인 직역연금 군복무 인정 개월" value={v.militaryMonths} onChange={militaryMonths => update({ militaryMonths })} /><Field label="군복무 실제 산입연도" value={v.militaryCreditYear} onChange={militaryCreditYear => update({ militaryCreditYear })} />{p.appointmentDate < '2016-01-01' && <Field label="공단 확인 2016년 기준 인정 재직개월 (경과 상한 확인 시)" value={v.recognizedAt2016} onChange={recognizedAt2016 => update({ recognizedAt2016 })} />}<p className="profile-help">2016년 이후 실제 산입연도의 지급률을 적용합니다. 실제 복무연도와 다를 수 있습니다. 2015년 이전 산입이나 경력 합산은 별도 경과 검증이 필요합니다. 군복무 인정으로 2016년 기준 재직 상한 구간이 바뀌면 당시의 공단 인정기간도 필요합니다.</p></>}
       </>}
