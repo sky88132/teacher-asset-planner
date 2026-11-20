@@ -26,6 +26,7 @@ export function SimplePlanner() {
     <div className="privacy"><span>◈ 개인정보 보호</span><p>입력 정보는 저장되지 않으며, 새로고침하면 초기화됩니다.</p></div><div className="sidebar-bottom">선생님의 오늘과 내일을 잇는 설계</div></aside>
     <div className="workspace"><header><span>나의 은퇴 설계 <span className="breadcrumb">/ {menus[active]}</span></span><span className="status"><i />로그인 없는 간편 계산</span></header><main>
       <div className="eyebrow">RETIREMENT PLANNING</div><div className="page-heading"><div><h1>{menus[active]}</h1><p>{descriptions[active]}</p></div><span className="step-badge">STEP {String(active + 1).padStart(2, '0')} <span>/ 06</span></span></div>
+      <div className="step-progress" aria-hidden="true"><i style={{ width: `${(active + 1) / 6 * 100}%` }} /></div>
       <div className="mode-bar"><div><strong>간편 계산 모드</strong><span>퇴직일은 기본정보에서 한 번만 입력합니다.</span></div><span className="coming">정밀 계산 모드 · 준비 중</span></div>
       <div className="content-grid"><section className={`card form-card panel-${active}`}><div className="card-heading"><div><span className="section-tag">{String(active + 1).padStart(2, '0')} · SIMPLE PLAN</span><h2>{['나의 은퇴 기준 설정', '장기저축 계획', '연금계좌별 납입 계획', '퇴직급여 예상액 계산', '나의 은퇴 대시보드', '분석 요청문 만들기'][active]}</h2></div><span className="panel-step">{String(active + 1).padStart(2, '0')}</span></div>
         {active === 0 ? <SimpleProfilePanel value={input.profile} onChange={profile => setInput({ ...input, profile })} result={result}
