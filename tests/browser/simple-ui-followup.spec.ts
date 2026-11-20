@@ -15,7 +15,7 @@ test('생활비는06 분석 유형 앞에 한 번만·05 연동·생성후 변�
  const cost=page.getByLabel('은퇴 후 희망 월 생활비(만원)',{exact:true});await expect(cost).toHaveCount(1);await cost.fill('300.0001');
  const order=await cost.evaluate(node=>!!(node.compareDocumentPosition(document.querySelector('fieldset')!)&Node.DOCUMENT_POSITION_FOLLOWING));expect(order).toBe(true);
  await page.getByLabel('포함 정보·익명화·누락 사항을 확인했습니다.',{exact:true}).check();await page.getByRole('button',{name:'AI 요청문 생성',exact:true}).click();await expect(page.getByLabel('AI 분석 요청문',{exact:true})).toHaveValue(/300만원/);await cost.fill('350');await expect(page.getByRole('button',{name:'전체 복사',exact:true})).toBeDisabled();
- await menu(page,4);await expect(page.getByRole('region',{name:'월 생활비와 수입 비교',exact:true})).toContainText('350만원');await menu(page,5);await expect(cost).toHaveValue('350');await cost.fill('');await page.getByRole('button',{name:'AI 요청문 다시 생성',exact:true}).click();await expect(page.getByLabel('AI 분석 요청문',{exact:true})).toHaveValue(/생활비.*미입력/);
+ await menu(page,4);await page.getByText('구간별 월수입·생활비 비교 자세히 보기',{exact:true}).click();await expect(page.getByRole('region',{name:'월 생활비와 수입 비교',exact:true})).toContainText('350만원');await menu(page,5);await expect(cost).toHaveValue('350');await cost.fill('');await page.getByRole('button',{name:'AI 요청문 다시 생성',exact:true}).click();await expect(page.getByLabel('AI 분석 요청문',{exact:true})).toHaveValue(/생활비.*미입력/);
 });
 test('대시보드 핵심·그래프·세 조언 범주·상세 기본 접힘·전 메뉴320px',async({page},info)=>{
  await profile(page);await menu(page,4);await expect(page.getByRole('region',{name:'은퇴설계 핵심 요약',exact:true})).toBeVisible();await expect(page.getByRole('figure',{name:'주요 적립금 구성 그래프',exact:true})).toBeVisible();

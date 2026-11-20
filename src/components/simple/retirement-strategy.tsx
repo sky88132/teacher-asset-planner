@@ -5,25 +5,19 @@ import { calculateRetirementAnalysis } from '@/lib/simple/retirement-analysis';
 import { generateRetirementAdvice } from '@/lib/simple/retirement-advice';
 import { won } from './shared';
 import { AccountReceiptSummary } from './account-receipt';
+import { IncomeFlowChart, KeyFacts } from './dashboard-visuals';
 
 export function RetirementStrategy({ input, children, result: r }: { input: SimpleInputs; children?: ReactNode; result: SimpleResults }) {
   const a = calculateRetirementAnalysis(input, r), advice = generateRetirementAdvice(input, r, a);
   const maximum = Math.max(1, ...a.windows.flatMap(w => w.subtotalWon === null ? [] : [w.subtotalWon]));
   return <section className="retirement-strategy" aria-label="은퇴설계 종합 분석">
-    <section className="benefit-result" aria-label="은퇴설계 핵심 요약"><h3>나의 은퇴 후 자산 활용</h3>
-      <dl className="retirement-summary"><div><dt>예상 퇴직</dt><dd>{a.retirement ?? '확인 필요'} · {a.retirementAge === null ? '연령 확인 필요' : `만 ${a.retirementAge}세`}<br /><small>퇴직 참고 {r.step===null?'호봉 확인 필요':r.step+'호봉'} · 조건부</small></dd></div>
-        <div><dt>분석에 적용한 연금 개시</dt><dd>{a.publicStart ?? '확인 필요'}</dd></div>
-        <div><dt>{input.profile.retirement === 'early' ? '명예퇴직 후 소득 공백' : '퇴직 후 개시 전 기간'}</dt><dd>{a.gapDays === null ? '확인 필요' : `${a.gapMonths}개월(완료 월) · ${a.gapDays}일`}</dd></div>
-        <div><dt>{r.pensionStatus.scope==='appointment-service-only'?'공적연금 참고 월액 (군 산입분 제외)':'예상 월 공적연금'}</dt><dd>{won(a.pensionWon, '월액 미확인')} / 월<br /><small>{r.pension.confidence}<br />{r.pensionSource==='teacher-model'?r.pensionDetails.priceYear+'년 개시 명목 가정':r.pensionSource==='automatic'?'2026년 고정 기준':'직접 입력 기준'}</small></dd></div></dl>
-      <p className="profile-help">조건부 추정 · 세금 별도 확인 · 적립금은 즉시 인출 가능액과 다릅니다.</p>
-      {r.pensionStatus.state==='unavailable'&&<div className="profile-context" aria-label="월연금 계산 보류 이유"><strong>{r.pensionStatus.preparing?'2009년 이전 임용자의 자동 월연금 추정은 준비 중입니다.':'월연금을 계산하려면 확인이 필요합니다.'}</strong>{r.pensionStatus.reasons.map(reason=><p className="profile-help" key={reason}>{reason}</p>)}{!r.pensionStatus.preparing&&<p className="profile-help">퇴직 시 40호봉이 되는 것 자체는 차단 사유가 아닙니다. 현재40호봉의 과거 이력이나 2009년 이전 소득 등 필요한 자료가 없으면 금액을 만들지 않습니다. 아래 공식 조회액 직접 입력 또는 해당 공단 확인 자료를 이용해 주세요. 정상 개시일은 별도로 확인할 수 있습니다.</p>}</div>}
-    </section>
+    <KeyFacts input={input} result={r} analysis={a} />
+    <IncomeFlowChart input={input} analysis={a} />
     {children}
-    <section className="benefit-result" aria-label="은퇴 시기 타임라인"><h3>은퇴 후 두 시기</h3>
-      <ol className="retirement-timeline"><li><span className="section-tag">A · 공적연금 개시 전</span><strong>{a.validTiming && a.gapDays === 0 ? '퇴직 후 개시 전 공백 없음' : <>{a.retirement ?? '퇴직일 확인 필요'} → {a.publicStart ?? '개시일 확인 필요'}</>}</strong><p>{!a.validTiming ? '날짜가 확인되면 공백을 계산합니다.' : a.gapDays === 0 ? '개시 전 공백 0: 연금이 퇴직일 또는 그 전에 이미 개시됩니다.' : `${a.gapMonths}개월(완료 월) · ${a.gapDays}일. ${input.profile.retirement === 'early' ? '명예퇴직 후 생활비 재원과 수령 시점을 먼저 확인하세요.' : '이 기간의 생활비 재원을 확인하세요.'}`}</p></li>
-        <li><span className="section-tag">B · 공적연금 개시 후</span><strong>{a.publicStart ?? '개시일 확인 필요'} 이후</strong><p>예상 월 공적연금 {won(a.pensionWon,'미확인')}. 분할급여가 끝난 뒤의 월수입 변화도 확인하세요.</p></li></ol>
-      <p className="profile-help">공적연금 정상 조건 충족일과 분석 개시 기준은 다를 수 있습니다. 자동 추정은 최초 지급대상월 1일, 직접 조회값은 입력한 개시일을 사용합니다. 실제 입금일·감액·세금은 별도 확인합니다.</p>
+    <section className="benefit-result" aria-label="규칙 기반 맞춤형 조언"><h3>나의 은퇴 준비, 세 가지 점검</h3>
+      {[{title:'소득 공백과 생활비', ids:['gap','living']},{title:'공제회와 퇴직급여',ids:['ktcu','benefits']},{title:'연금계좌 수령 전략',ids:['accounts']}].map(group => <div className="retirement-advice-group" key={group.title}><h4>{group.title}</h4><p>{advice.find(x=>x.id===group.ids[0])?.situation}</p><p>{advice.find(x=>x.id===group.ids[0])?.action}</p><details className="simple-details"><summary>{group.title} 조언 자세히 보기</summary>{advice.filter(x=>group.ids.includes(x.id)).map(item=><article className="retirement-advice" key={item.id}><h4>{item.title}</h4><p><strong>현재 상황</strong> {item.situation}</p><p><strong>문제·선택지</strong> {item.issue}</p><p><strong>검토할 대응</strong> {item.action}</p><p className="profile-help"><strong>추가 확인</strong> {item.confirm}</p></article>)}</details></div>)}
     </section>
+    <details className="simple-details dashboard-more"><summary>구간별 월수입·생활비 비교 자세히 보기</summary>
     <section className="benefit-result" aria-label="월 생활비와 수입 비교"><h3>월수입과 생활비를 함께 보기</h3>
       <p>희망 월 생활비 {won(a.expenseWon, '생활비 미입력')} · 06 AI 분석 요청문에서 선택 입력</p>
       <p className="profile-help">근로·임대·기타수입과 연금계좌 월 인출은 미반영입니다. 생활비와의 차이는 확인된 월액만 비교하며 실제 부족액·잉여액을 확정하지 않습니다.</p>
@@ -38,6 +32,7 @@ export function RetirementStrategy({ input, children, result: r }: { input: Simp
       </figure>)}
       <details className="simple-details"><summary>월수입 비교 기준 자세히 보기</summary><p className="profile-help">구간별 월 지급액 예시이며 구간 전체 평균이나 매일 같은 금액을 받는다는 뜻이 아닙니다. 첫 지급 전·마지막 지급일의 정산·분할 종료 후를 나눴습니다. 일시금은 그래프에서 제외하고, 미확인 월액은 막대를 그리지 않습니다. 세전·세후 기준이 다른 월액도 합산하지 않습니다. 가정 수익률·물가·세금·실제 월별 지급 변동은 별도 확인해야 합니다.</p></details>
     </section>
+    </details>
     <details className="simple-details"><summary>자산 활용 조건 자세히 보기</summary>    <section className="benefit-result" aria-label="자산 활용 방식 구분"><h3>일시금·분할·연금계좌 활용 조건</h3>
       <div className="retirement-asset-groups"><div><span className="section-tag">A · 일시 수령 검토 재원</span>{a.lumpItems.map(x => <p key={x.label}>{x.label} {won(x.won,'추정 불가')}</p>)}<strong>조건부 세전 합계 {won(a.lumpTotalWon,a.lumpPriceCompatible?'누락 항목으로 합산 불가':'2026 기준과 미래 명목 혼합으로 합산 보류')}</strong><p className="profile-help">지급·선정·세금·입금일까지 확인해야 합니다. 사용 가능한 현금으로 확정한 금액이 아닙니다. 2026 고정 기준 수당과 공제회 미래 명목액은 자동 합산하지 않습니다. 각 항목은 실제 세후 현금과 다릅니다.</p></div>
         <div><span className="section-tag">B · 기간을 정해 분할</span><p>{a.split.selected ? `${a.split.years}년 선택 · 가상 정기 월 ${won(a.split.monthlyWon,'계산 불가')}` : '공제회 일시금 선택 · 분할 월수입 미반영'}</p>
@@ -47,8 +42,5 @@ export function RetirementStrategy({ input, children, result: r }: { input: Simp
           <p className="profile-help">즉시 사용 가능한 목돈에 합산하지 않습니다. 실제 신청·가입기간·재원·한도·세금을 확인하세요. 03의 연간 한도 산입 인출액은 월 인출계획이 아닙니다. 이번 분석은 계좌 인출을 실행·차감하지 않으며 위 금액을 미래의 남은 잔액으로 표시하지 않습니다. 인출 전략을 만들 때는 지급액만큼 잔액을 차감해야 합니다.</p></div></div>
     </section>
 </details>
-    <section className="benefit-result" aria-label="규칙 기반 맞춤형 조언"><h3>나의 은퇴 준비, 세 가지 점검</h3>
-      {[{title:'소득 공백과 생활비', ids:['gap','living']},{title:'공제회와 퇴직급여',ids:['ktcu','benefits']},{title:'연금계좌 수령 전략',ids:['accounts']}].map(group => <div className="retirement-advice-group" key={group.title}><h4>{group.title}</h4><p>{advice.find(x=>x.id===group.ids[0])?.situation}</p><p>{advice.find(x=>x.id===group.ids[0])?.action}</p><details className="simple-details"><summary>{group.title} 조언 자세히 보기</summary>{advice.filter(x=>group.ids.includes(x.id)).map(item=><article className="retirement-advice" key={item.id}><h4>{item.title}</h4><p><strong>현재 상황</strong> {item.situation}</p><p><strong>문제·선택지</strong> {item.issue}</p><p><strong>검토할 대응</strong> {item.action}</p><p className="profile-help"><strong>추가 확인</strong> {item.confirm}</p></article>)}</details></div>)}
-    </section>
   </section>;
 }

@@ -174,3 +174,52 @@
 
 @media(max-width:640px){.planner-ui .panel-4 .retirement-dashboard .benefit-result{padding:16px}.planner-ui .panel-4 .retirement-dashboard .retirement-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.planner-ui .panel-4 .retirement-dashboard .retirement-summary dd{font-size:12px}.planner-ui .panel-4 .retirement-dashboard .simple-composition{padding:16px}}
 @media(max-width:359px){.planner-ui .panel-4 .retirement-dashboard .ktcu-cards{grid-template-columns:minmax(0,1fr)}}
+/* 05 dashboard: headline facts, income flow chart, lump-sum bar */
+.planner-ui .retirement-dashboard{--c-ktcu:#2f6fd0;--c-irp:#7c5cd6;--c-saving:#e39a2d;--c-pension:#16977a;--c-other:#9aa5b4}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.planner-ui .retirement-dashboard .seg-ktcu{background:var(--c-ktcu)}.planner-ui .retirement-dashboard .seg-irp{background:var(--c-irp)}.planner-ui .retirement-dashboard .seg-saving{background:var(--c-saving)}.planner-ui .retirement-dashboard .seg-pension{background:var(--c-pension)}.planner-ui .retirement-dashboard .seg-other{background:var(--c-other)}
+.planner-ui .panel-4 .retirement-dashboard .dashboard-hero{background:linear-gradient(180deg,#eef4fd,#f7f9fd);border-color:#d6e2f4}
+.planner-ui .dashboard-headline{font-size:15px!important;line-height:1.75!important;color:var(--ink)!important;font-weight:600;margin:10px 0 4px}
+.planner-ui .panel-4 .retirement-dashboard .retirement-summary>div.fact{position:relative;padding:14px 14px 12px 16px;border-radius:12px;border:1px solid #dfe7f2;background:#fff;overflow:hidden}
+.planner-ui .panel-4 .retirement-dashboard .retirement-summary>div.fact:before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--fact,#275fbc)}
+.planner-ui .fact-retire{--fact:#275fbc}.planner-ui .fact-start{--fact:#16977a}.planner-ui .fact-gap{--fact:#e39a2d}.planner-ui .fact-pension{--fact:#16977a}
+.planner-ui .panel-4 .retirement-dashboard .retirement-summary dd b{display:block;font-size:20px;font-weight:700;letter-spacing:-.03em;color:var(--ink);line-height:1.35}
+.planner-ui .panel-4 .retirement-dashboard .retirement-summary dd small{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:4px;line-height:1.5}
+.planner-ui .flow-chart{margin:14px 0 0}
+.planner-ui .flow-groups{display:flex;gap:6px;min-width:0}
+.planner-ui .flow-group{flex-basis:0;min-width:0;display:flex;flex-direction:column}
+.planner-ui .flow-band{font-size:11px;font-weight:700;padding:6px 8px;border-radius:7px;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.planner-ui .flow-before .flow-band{background:#fdf1de;color:#8a5a12}.planner-ui .flow-after .flow-band{background:#dff3ec;color:#0f6b56}
+.planner-ui .flow-columns{display:flex;gap:4px;align-items:stretch}
+.planner-ui .flow-col{flex-basis:0;min-width:0;display:flex;flex-direction:column}
+.planner-ui .flow-plot{height:150px;display:flex;flex-direction:column;justify-content:flex-end;border-bottom:2px solid #c9d4e3;background:repeating-linear-gradient(0deg,transparent 0 37px,#eef2f7 37px 38px)}
+.planner-ui .flow-amount{font-size:11px;font-weight:700;color:var(--ink);text-align:center;line-height:1.3;padding:0 2px 4px;overflow-wrap:anywhere}
+.planner-ui .flow-stack{display:flex;flex-direction:column-reverse;border-radius:5px 5px 0 0;overflow:hidden;min-height:4px}
+.planner-ui .flow-stack>i{display:block;flex-basis:0;min-height:2px}
+.planner-ui .flow-uncertain{opacity:.45;background:repeating-linear-gradient(45deg,#c9d4e3 0 4px,#fff 4px 8px)}
+.planner-ui .flow-axis{font-size:10px;color:var(--muted);line-height:1.4;padding-top:5px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.planner-ui .flow-legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:11px;color:#52627a;margin-top:12px}
+.planner-ui .flow-legend span{display:inline-flex;align-items:center;gap:5px}
+.planner-ui .flow-legend i,.planner-ui .lump-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.planner-ui .lump-chart{margin:16px 0 4px}
+.planner-ui .lump-bar{display:flex;height:22px;border-radius:7px;overflow:hidden;background:#e6ecf4;gap:2px}
+.planner-ui .lump-bar>i{display:block;flex-basis:0;min-width:3px}
+.planner-ui .lump-legend{list-style:none;padding:0!important;margin:12px 0 0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.planner-ui .lump-legend li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:2px 6px;padding:9px 10px;background:#fff;border:1px solid #e3e9f2;border-radius:9px;font-size:11px;color:#52627a}
+.planner-ui .lump-legend strong{grid-column:1/-1;font-size:14px;color:var(--ink)}
+.planner-ui .lump-legend em{font-style:normal;font-size:10px;color:var(--muted);grid-row:1;grid-column:3}
+.planner-ui .lump-benefits{margin-top:16px;padding-top:12px;border-top:1px dashed #cfd9e8}
+.planner-ui .lump-benefits ul{list-style:none;padding:0!important;margin:8px 0 0;display:flex;flex-wrap:wrap;gap:8px}
+.planner-ui .lump-benefits li{display:flex;gap:8px;align-items:baseline;padding:8px 12px;border-radius:9px;background:#fff7ea;border:1px solid #f3e1c2;font-size:11px;color:#6c5530}
+.planner-ui .lump-benefits li strong{font-size:14px;color:#4d3a17}
+.planner-ui .panel-4 .retirement-dashboard .benefit-result[aria-label="규칙 기반 맞춤형 조언"]{counter-reset:advice}
+.planner-ui .panel-4 .retirement-dashboard .retirement-advice-group{position:relative;padding:14px 0 6px 40px}
+.planner-ui .panel-4 .retirement-dashboard .retirement-advice-group:before{counter-increment:advice;content:counter(advice);position:absolute;left:0;top:14px;width:26px;height:26px;border-radius:50%;background:#275fbc;color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
+.planner-ui .panel-4 .retirement-dashboard .retirement-advice-group>p{margin:4px 0}
+.planner-ui .dashboard-more{border:1px solid #e0e8f4;border-radius:12px;padding:4px 16px;background:#fff;margin:14px 0}
+.planner-ui .dashboard-more>summary{font-weight:600;font-size:13px;padding:10px 0}
+.planner-ui .scenario-row{display:grid;grid-template-columns:minmax(0,1fr);gap:3px;margin:10px 0}
+.planner-ui .scenario-bar{display:block;height:8px;border-radius:4px;background:#e6ecf4;overflow:hidden}
+.planner-ui .scenario-bar i{display:block;height:100%;background:#9fbbe4;border-radius:4px}
+.planner-ui .scenario-base .scenario-bar i{background:#275fbc}
+@media(max-width:640px){.planner-ui .panel-4 .retirement-dashboard .retirement-summary dd b{font-size:16px}.planner-ui .lump-legend{grid-template-columns:minmax(0,1fr)}.planner-ui .flow-plot{height:120px}.planner-ui .flow-amount{font-size:10px}.planner-ui .flow-band{font-size:10px;padding:5px 6px}.planner-ui .dashboard-headline{font-size:14px!important}}
